@@ -11,18 +11,18 @@
       .card { border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); border: none; }
       .form-label { font-weight: bold; color: #495057; }
       
-      /* --- 新增：自訂灰藍色主題 --- */
+      /* --- 更新：灰藍色主題 (#40587f) --- */
       .text-theme { 
-        color: #5C7E9A !important; /* 灰藍色文字 */
+        color: #40587f !important; 
       }
       .btn-theme { 
-        background-color: #5C7E9A; /* 灰藍色按鈕背景 */
-        border-color: #5C7E9A;
+        background-color: #40587f; 
+        border-color: #40587f;
         color: white; 
       }
       .btn-theme:hover {
-        background-color: #4A657C; /* 滑鼠移過去時顏色稍微加深 */
-        border-color: #4A657C;
+        background-color: #304260; /* 滑鼠移過去顏色加深 */
+        border-color: #304260;
         color: white;
       }
     </style>
@@ -33,9 +33,8 @@
         <div class="col-md-8 col-lg-6">
           <div class="card p-4">
             
-            <!-- 標題與自訂 Logo 圖片區塊 -->
+            <!-- 標題與 Logo -->
             <h3 class="text-center mb-4 text-theme">
-              <!-- 請將 src 裡面的檔名換成您上傳到 GitHub 的圖片檔名 -->
               <img src="logo.jpg" alt="Logo" style="height: 35px; vertical-align: middle; margin-right: 10px; border-radius: 5px;">
               OPH Eats 眼科訂餐系統
             </h3>
@@ -57,7 +56,7 @@
                 </select>
               </div>
 
-              <!-- 職級選擇 (選非診間時隱藏) -->
+              <!-- 職級選擇 -->
               <div class="mb-3" id="rankDiv">
                 <label class="form-label">職級</label>
                 <select class="form-select" id="rank">
@@ -71,7 +70,7 @@
                 </select>
               </div>
 
-              <!-- 姓名輸入 (選非診間時才顯示) -->
+              <!-- 姓名輸入 (非診間顯示) -->
               <div class="mb-3 d-none" id="nameDiv">
                 <label class="form-label">姓名</label>
                 <input type="text" class="form-control" id="name" placeholder="請輸入姓名">
@@ -83,7 +82,7 @@
               <div class="row mb-3">
                 <div class="col-8">
                   <label class="form-label">🍱 便當品項</label>
-                  <input type="text" class="form-control" id="bentoItem" placeholder="例如：烤肉飯 (不訂請留空)">
+                  <input type="text" class="form-control" id="bentoItem" placeholder="例如：烤肉飯">
                 </div>
                 <div class="col-4">
                   <label class="form-label">金額</label>
@@ -95,7 +94,7 @@
               <div class="row mb-3">
                 <div class="col-8">
                   <label class="form-label">🥤 飲料品項</label>
-                  <input type="text" class="form-control" id="drinkItem" placeholder="例如：春芽冷露 無糖去冰">
+                  <input type="text" class="form-control" id="drinkItem" placeholder="例如：春芽冷露">
                 </div>
                 <div class="col-4">
                   <label class="form-label">金額</label>
@@ -103,13 +102,13 @@
                 </div>
               </div>
               
-              <!-- 備註區 -->
+              <!-- 備註 -->
               <div class="mb-4">
                 <label class="form-label">備註</label>
-                <input type="text" class="form-control" id="notes" placeholder="其他特殊需求...">
+                <input type="text" class="form-control" id="notes" placeholder="其他需求...">
               </div>
 
-              <!-- 送出按鈕 (套用灰藍色主題) -->
+              <!-- 送出按鈕 -->
               <div class="d-grid">
                 <button type="button" class="btn btn-theme btn-lg" id="submitBtn" onclick="submitOrder()">送出訂單</button>
               </div>
@@ -121,12 +120,9 @@
     </div>
 
     <script>
-      // =========================================================================
-      // ⚠️ 請把下方引號內的網址，換成您剛剛在 Google Apps Script 取得的 Web App 網址
-      // =========================================================================
+      // 後端 API 網址
       const GAS_API_URL = "https://script.google.com/macros/s/AKfycbxCYuW1EjxLHqBvppXBlEKs2jXMdUJ7k7qIclgarxQpjlpk5N1j4UDcvCVHpkts2jKJ/exec";
 
-      // 控制「非診間」要填姓名而不是選職級的邏輯
       function toggleRankName() {
         const clinic = document.getElementById('clinic').value;
         const rankDiv = document.getElementById('rankDiv');
@@ -141,27 +137,19 @@
         }
       }
 
-      // 傳送資料到 Google API
       function submitOrder() {
         const btn = document.getElementById('submitBtn');
         const clinic = document.getElementById('clinic').value;
         const rank = document.getElementById('rank').value;
         const name = document.getElementById('name').value;
         
-        // 基礎防呆檢查
         if(!clinic) { alert("⚠️ 請選擇診次！"); return; }
         if(clinic === "非診間" && !name) { alert("⚠️ 請填寫姓名！"); return; }
         if(clinic !== "非診間" && !rank) { alert("⚠️ 請選擇職級！"); return; }
 
-        if(GAS_API_URL === "您的_Google_Apps_Script_部署網址_貼在這裡"){
-           alert("❌ 開發者尚未填寫後端 API 網址！"); return;
-        }
-
-        // 按鈕變為載入中
         btn.disabled = true;
         btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> 處理中...';
 
-        // 收集資料
         const orderData = {
           clinic: clinic,
           rank: rank,
@@ -173,7 +161,6 @@
           notes: document.getElementById('notes').value
         };
 
-        // 使用標準 Fetch API 送出資料到 Google
         fetch(GAS_API_URL, {
           method: 'POST',
           headers: { 'Content-Type': 'text/plain;charset=utf-8' },
@@ -183,8 +170,8 @@
         .then(data => {
           if(data.success) {
             alert(data.message);
-            document.getElementById('orderForm').reset(); // 清空表單
-            toggleRankName(); // 恢復預設介面
+            document.getElementById('orderForm').reset();
+            toggleRankName();
           } else {
             alert("❌ 發生錯誤：" + data.message);
           }
@@ -193,7 +180,6 @@
           alert("❌ 網路連線錯誤：" + error);
         })
         .finally(() => {
-          // 恢復按鈕狀態
           btn.disabled = false;
           btn.innerText = '送出訂單';
         });
