@@ -10,20 +10,15 @@
       .card { border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); border: none; }
       .form-label { font-weight: bold; color: #495057; margin-bottom: 8px; }
       
-      /* --- 灰藍色主題 (#40587f) --- */
       .text-theme { color: #40587f !important; }
       .btn-theme { background-color: #40587f; border-color: #40587f; color: white; }
       .btn-theme:hover, .btn-theme:focus { background-color: #304260; border-color: #304260; color: white; }
       
-      /* 單選按鈕主題 */
       .btn-outline-theme { color: #40587f; border-color: #40587f; margin: 2px; border-radius: 5px !important; }
       .btn-outline-theme:hover { background-color: #e2e8f0; color: #40587f; }
       .btn-check:checked + .btn-outline-theme { background-color: #40587f; color: white; border-color: #40587f; }
       
-      /* 載入畫面 */
       #loadingScreen, #closedScreen { text-align: center; padding: 40px 20px; }
-      
-      /* 菜單圖片設定 */
       .menu-img { width: 100%; border-radius: 10px; margin-bottom: 15px; display: none; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
     </style>
   </head>
@@ -33,28 +28,22 @@
         <div class="col-md-8 col-lg-6">
           <div class="card p-4">
             
-            <!-- 標題與 Logo -->
             <h3 class="text-center mb-3 text-theme">
               <img src="logo.jpg" alt="Logo" style="height: 35px; vertical-align: middle; margin-right: 10px; border-radius: 5px;">
               OPH Eats 眼科訂餐系統
             </h3>
             
-            <!-- 載入中畫面 -->
             <div id="loadingScreen">
               <div class="spinner-border text-theme" role="status"></div>
               <h5 class="mt-3 text-secondary">連線中，請稍候...</h5>
             </div>
 
-            <!-- 已關閉畫面 -->
             <div id="closedScreen" class="d-none">
               <h2 class="text-danger fw-bold mb-3">⛔ 今日點餐已關閉</h2>
               <p class="text-secondary">目前不在開放點餐時間，請稍後再試或洽詢管理員。</p>
             </div>
             
-            <!-- 訂餐表單與菜單區 (預設隱藏，確認開放後顯示) -->
             <div id="mainContent" class="d-none">
-              
-              <!-- 菜單顯示區 -->
               <div id="menuArea">
                 <img id="bentoMenuImg" class="menu-img" alt="今日便當菜單">
                 <img id="drinkMenuImg" class="menu-img" alt="今日飲料菜單">
@@ -63,48 +52,19 @@
               <hr class="my-4">
 
               <form id="orderForm">
-                
-                <!-- 診次選擇 (單選鈕) -->
+                <!-- 動態診次按鈕容器 -->
                 <div class="mb-4">
                   <label class="form-label d-block">🏥 診次</label>
-                  <div class="btn-group flex-wrap w-100" role="group">
-                    <input type="radio" class="btn-check clinic-radio" name="clinic" id="c1" value="1診" onchange="toggleRankName()">
-                    <label class="btn btn-outline-theme" for="c1">1診</label>
-                    <input type="radio" class="btn-check clinic-radio" name="clinic" id="c2" value="2診" onchange="toggleRankName()">
-                    <label class="btn btn-outline-theme" for="c2">2診</label>
-                    <input type="radio" class="btn-check clinic-radio" name="clinic" id="c3" value="3診" onchange="toggleRankName()">
-                    <label class="btn btn-outline-theme" for="c3">3診</label>
-                    <input type="radio" class="btn-check clinic-radio" name="clinic" id="c4" value="4診" onchange="toggleRankName()">
-                    <label class="btn btn-outline-theme" for="c4">4診</label>
-                    <input type="radio" class="btn-check clinic-radio" name="clinic" id="c5" value="5診" onchange="toggleRankName()">
-                    <label class="btn btn-outline-theme" for="c5">5診</label>
-                    <input type="radio" class="btn-check clinic-radio" name="clinic" id="c6" value="6診" onchange="toggleRankName()">
-                    <label class="btn btn-outline-theme" for="c6">6診</label>
-                    <input type="radio" class="btn-check clinic-radio" name="clinic" id="c7" value="非診間" onchange="toggleRankName()">
-                    <label class="btn btn-outline-theme" for="c7">非診間</label>
-                  </div>
+                  <div class="btn-group flex-wrap w-100" role="group" id="clinicGroup"></div>
                 </div>
 
-                <!-- 職級選擇 (單選鈕) -->
+                <!-- 動態職級按鈕容器 -->
                 <div class="mb-4" id="rankDiv">
                   <label class="form-label d-block">🧑‍⚕️ 職級</label>
-                  <div class="btn-group flex-wrap w-100" role="group">
-                    <input type="radio" class="btn-check rank-radio" name="rank" id="r1" value="醫師">
-                    <label class="btn btn-outline-theme" for="r1">醫師</label>
-                    <input type="radio" class="btn-check rank-radio" name="rank" id="r2" value="住院醫師">
-                    <label class="btn btn-outline-theme" for="r2">住院</label>
-                    <input type="radio" class="btn-check rank-radio" name="rank" id="r3" value="PGY">
-                    <label class="btn btn-outline-theme" for="r3">PGY</label>
-                    <input type="radio" class="btn-check rank-radio" name="rank" id="r4" value="護理師1">
-                    <label class="btn btn-outline-theme" for="r4">護理1</label>
-                    <input type="radio" class="btn-check rank-radio" name="rank" id="r5" value="護理師2">
-                    <label class="btn btn-outline-theme" for="r5">護理2</label>
-                    <input type="radio" class="btn-check rank-radio" name="rank" id="r6" value="助理員">
-                    <label class="btn btn-outline-theme" for="r6">助理員</label>
-                  </div>
+                  <div class="btn-group flex-wrap w-100" role="group" id="rankGroup"></div>
                 </div>
 
-                <!-- 姓名輸入 (非診間顯示) -->
+                <!-- 姓名 (非診間) -->
                 <div class="mb-4 d-none" id="nameDiv">
                   <label class="form-label">👤 姓名</label>
                   <input type="text" class="form-control" id="name" placeholder="請輸入姓名">
@@ -140,11 +100,9 @@
                   <input type="text" class="form-control" id="notes" placeholder="其他需求...">
                 </div>
 
-                <!-- 送出按鈕 -->
                 <div class="d-grid">
                   <button type="button" class="btn btn-theme btn-lg fw-bold" id="submitBtn" onclick="submitOrder()">送出訂單</button>
                 </div>
-
               </form>
             </div>
 
@@ -154,19 +112,9 @@
     </div>
 
     <script>
-      // =========================================================================
-      // ⚠️ 替換您的後端 API 網址 (請確認是最新發布的那串)
-      // =========================================================================
       const GAS_API_URL = "https://script.google.com/macros/s/AKfycbxCYuW1EjxLHqBvppXBlEKs2jXMdUJ7k7qIclgarxQpjlpk5N1j4UDcvCVHpkts2jKJ/exec";
 
-      // 網頁載入完成後，立刻向後端檢查系統狀態
       window.onload = function() {
-        if(GAS_API_URL === "您的_Google_Apps_Script_部署網址_貼在這裡") {
-          alert("請開發者先設定 GAS_API_URL！");
-          return;
-        }
-
-        // 發送獲取狀態請求
         fetch(GAS_API_URL, {
           method: 'POST',
           headers: { 'Content-Type': 'text/plain;charset=utf-8' },
@@ -177,20 +125,41 @@
           document.getElementById('loadingScreen').classList.add('d-none');
           
           if(response.success && response.data.isOpen) {
-            // 系統開放
             document.getElementById('mainContent').classList.remove('d-none');
             
-            // 載入菜單圖片 (如果有設定網址的話)
+            // 1. 圖片渲染
             if(response.data.bentoMenuUrl) {
-              document.getElementById('bentoMenuImg').src = response.data.bentoMenuUrl;
-              document.getElementById('bentoMenuImg').style.display = 'block';
+              const bImg = document.getElementById('bentoMenuImg');
+              bImg.src = response.data.bentoMenuUrl;
+              bImg.style.display = 'block';
             }
             if(response.data.drinkMenuUrl) {
-              document.getElementById('drinkMenuImg').src = response.data.drinkMenuUrl;
-              document.getElementById('drinkMenuImg').style.display = 'block';
+              const dImg = document.getElementById('drinkMenuImg');
+              dImg.src = response.data.drinkMenuUrl;
+              dImg.style.display = 'block';
             }
+
+            // 2. 動態生成診次單選鈕
+            const clinicContainer = document.getElementById('clinicGroup');
+            clinicContainer.innerHTML = '';
+            response.data.clinics.forEach((c, idx) => {
+              clinicContainer.innerHTML += `
+                <input type="radio" class="btn-check clinic-radio" name="clinic" id="c_${idx}" value="${c}" onchange="toggleRankName()">
+                <label class="btn btn-outline-theme" for="c_${idx}">${c}</label>
+              `;
+            });
+
+            // 3. 動態生成職級單選鈕
+            const rankContainer = document.getElementById('rankGroup');
+            rankContainer.innerHTML = '';
+            response.data.ranks.forEach((r, idx) => {
+              rankContainer.innerHTML += `
+                <input type="radio" class="btn-check rank-radio" name="rank" id="r_${idx}" value="${r}">
+                <label class="btn btn-outline-theme" for="r_${idx}">${r}</label>
+              `;
+            });
+
           } else {
-            // 系統關閉
             document.getElementById('closedScreen').classList.remove('d-none');
           }
         })
@@ -199,12 +168,9 @@
         });
       };
 
-      // 切換非診間姓名欄位
       function toggleRankName() {
-        // 取得目前選取的診次
         const clinicRadio = document.querySelector('input[name="clinic"]:checked');
         const clinic = clinicRadio ? clinicRadio.value : "";
-        
         const rankDiv = document.getElementById('rankDiv');
         const nameDiv = document.getElementById('nameDiv');
         
@@ -217,11 +183,9 @@
         }
       }
 
-      // 送出訂單
       function submitOrder() {
         const clinicRadio = document.querySelector('input[name="clinic"]:checked');
         const rankRadio = document.querySelector('input[name="rank"]:checked');
-        
         const clinic = clinicRadio ? clinicRadio.value : "";
         const rank = rankRadio ? rankRadio.value : "";
         const name = document.getElementById('name').value.trim();
@@ -235,9 +199,7 @@
         btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> 處理中...';
 
         const orderData = {
-          clinic: clinic,
-          rank: rank,
-          name: name,
+          clinic: clinic, rank: rank, name: name,
           bentoItem: document.getElementById('bentoItem').value,
           bentoAmount: document.getElementById('bentoAmount').value,
           drinkItem: document.getElementById('drinkItem').value,
@@ -245,22 +207,15 @@
           notes: document.getElementById('notes').value
         };
 
-        // 打包傳給後端的資料 (包含 action 指令)
-        const payload = {
-          action: "submitOrder",
-          data: orderData
-        };
-
         fetch(GAS_API_URL, {
           method: 'POST',
           headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-          body: JSON.stringify(payload)
+          body: JSON.stringify({ action: "submitOrder", data: orderData })
         })
         .then(response => response.json())
         .then(data => {
           if(data.success) {
             alert(data.message);
-            // 清空表單與單選鈕狀態
             document.getElementById('orderForm').reset();
             document.querySelectorAll('.btn-check').forEach(radio => radio.checked = false);
             toggleRankName();
@@ -268,9 +223,7 @@
             alert("❌ 發生錯誤：" + data.message);
           }
         })
-        .catch(error => {
-          alert("❌ 網路連線錯誤：" + error);
-        })
+        .catch(error => alert("❌ 網路連線錯誤：" + error))
         .finally(() => {
           btn.disabled = false;
           btn.innerText = '送出訂單';
