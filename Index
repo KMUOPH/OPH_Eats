@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>眼科訂餐系統</title>
+    <!-- 引入 Bootstrap 使網頁在手機上美觀 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+      body { background-color: #f2f5f8; padding: 20px 0; font-family: "微軟正黑體", sans-serif; }
+      .card { border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); border: none; }
+      .form-label { font-weight: bold; color: #495057; }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+          <div class="card p-4">
+            <h3 class="text-center mb-4 text-primary">🩺 眼科訂餐系統</h3>
+            <form id="orderForm">
+              
+              <!-- 診次選擇 -->
+              <div class="mb-3">
+                <label class="form-label">診次</label>
+                <select class="form-select" id="clinic" required onchange="toggleRankName()">
+                  <option value="" disabled selected>請選擇...</option>
+                  <option value="1診">1診</option>
+                  <option value="2診">2診</option>
+                  <option value="3診">3診</option>
+                  <option value="4診">4診</option>
+                  <option value="5診">5診</option>
+                  <option value="6診">6診</option>
+                  <option value="非診間">非診間</option>
+                </select>
+              </div>
+
+              <!-- 職級選擇 (選非診間時隱藏) -->
+              <div class="mb-3" id="rankDiv">
+                <label class="form-label">職級</label>
+                <select class="form-select" id="rank">
+                  <option value="" disabled selected>請選擇...</option>
+                  <option value="醫師">醫師 (主治)</option>
+                  <option value="住院醫師">住院醫師</option>
+                  <option value="PGY">PGY</option>
+                  <option value="護理師1">護理師1</option>
+                  <option value="護理師2">護理師2</option>
+                  <option value="助理員">助理員</option>
+                </select>
+              </div>
+
+              <!-- 姓名輸入 (選非診間時才顯示) -->
+              <div class="mb-3 d-none" id="nameDiv">
+                <label class="form-label">姓名</label>
+                <input type="text" class="form-control" id="name" placeholder="請輸入姓名">
+              </div>
+
+              <hr class="my-4">
+
+              <!-- 便當區 -->
+              <div class="row mb-3">
+                <div class="col-8">
+                  <label class="form-label">🍱 便當品項</label>
+                  <input type="text" class="form-control" id="bentoItem" placeholder="例如：烤肉飯 (不訂請留空)">
+                </div>
+                <div class="col-4">
+                  <label class="form-label">金額</label>
+                  <input type="number" class="form-control" id="bentoAmount" placeholder="0">
+                </div>
+              </div>
+
+              <!-- 飲料區 -->
+              <div class="row mb-3">
+                <div class="col-8">
+                  <label class="form-label">🥤 飲料品項</label>
+                  <input type="text" class="form-control" id="drinkItem" placeholder="例如：春芽冷露 無糖去冰">
+                </div>
+                <div class="col-4">
+                  <label class="form-label">金額</label>
+                  <input type="number" class="form-control" id="drinkAmount" placeholder="0">
+                </div>
+              </div>
+              
+              <!-- 備註區 -->
+              <div class="mb-4">
+                <label class="form-label">備註</label>
+                <input type="text" class="form-control" id="notes" placeholder="其他特殊需求...">
+              </div>
+
+              <!-- 送出按鈕 -->
+              <div class="d-grid">
+                <button type="button" class="btn btn-primary btn-lg" id="submitBtn" onclick="submitOrder()">送出訂單</button>
+              </div>
+
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // =========================================================================
+      // ⚠️ 請把下方引號內的網址，換成您剛剛在 Google Apps Script 取得的 Web App 網址
+      // =========================================================================
+      const GAS_API_URL = "您的_Google_Apps_Script_部署網址_貼在這裡";
+
+      // 控制「非診間」要填姓名而不是選職級的邏輯
+      function toggleRankName() {
+        const clinic = document.getElementById('clinic').value;
+        const rankDiv = document.getElementById('rankDiv');
+        const nameDiv = document.getElementById('nameDiv');
+        
+        if (clinic === "非診間") {
+          rankDiv.classList.add('d-none');
+          nameDiv.classList.remove('d-none');
+        } else {
+          rankDiv.classList.remove('d-none');
+          nameDiv.classList.add('d-none');
+        }
+      }
+
+      // 傳送資料到 Google API
+      function submitOrder() {
+        const btn = document.getElementById('submitBtn');
+        const clinic = document.getElementById('clinic').value;
+        const rank = document.getElementById('rank').value;
+        const name = document.getElementById('name').value;
+        
+        // 基礎防呆檢查
+        if(!clinic) { alert("⚠️ 請選擇診次！"); return; }
+        if(clinic === "非診間" && !name) { alert("⚠️ 請填寫姓名！"); return; }
+        if(clinic !== "非診間" && !rank) { alert("⚠️ 請選擇職級！"); return; }
+
+        if(GAS_API_URL === "您的_Google_Apps_Script_部署網址_貼在這裡"){
+           alert("❌ 開發者尚未填寫後端 API 網址！"); return;
+        }
+
+        // 按鈕變為載入中
+        btn.disabled = true;
+        btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> 處理中...';
+
+        // 收集資料
+        const orderData = {
+          clinic: clinic,
+          rank: rank,
+          name: name,
+          bentoItem: document.getElementById('bentoItem').value,
+          bentoAmount: document.getElementById('bentoAmount').value,
+          drinkItem: document.getElementById('drinkItem').value,
+          drinkAmount: document.getElementById('drinkAmount').value,
+          notes: document.getElementById('notes').value
+        };
+
+        // 使用標準 Fetch API 送出資料到 Google
+        fetch(GAS_API_URL, {
+          method: 'POST',
+          // 💡 重要：使用 text/plain 可以避開麻煩的跨網域 (CORS) 預檢請求限制
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify(orderData)
+        })
+        .then(response => response.json())
+        .then(data => {
+          if(data.success) {
+            alert(data.message);
+            document.getElementById('orderForm').reset(); // 清空表單
+            toggleRankName(); // 恢復預設介面
+          } else {
+            alert("❌ 發生錯誤：" + data.message);
+          }
+        })
+        .catch(error => {
+          alert("❌ 網路連線錯誤：" + error);
+        })
+        .finally(() => {
+          // 恢復按鈕狀態
+          btn.disabled = false;
+          btn.innerText = '送出訂單';
+        });
+      }
+    </script>
+  </body>
+</html>
