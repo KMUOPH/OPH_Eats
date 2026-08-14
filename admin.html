@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>OPH Eats - 維護者後台</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body { background-color: #f2f5f8; padding: 20px 0; font-family: "微軟正黑體", sans-serif; }
+    .card { border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); border: none; }
+    .text-theme { color: #40587f !important; }
+    .btn-theme { background-color: #40587f; color: white; }
+    .btn-theme:hover { background-color: #304260; color: white; }
+    .tag-item { display: inline-block; background: #e2e8f0; color: #40587f; padding: 5px 12px; border-radius: 20px; margin: 4px; font-weight: 500; }
+    .tag-close { cursor: pointer; margin-left: 6px; font-weight: bold; color: #dc3545; }
+    #adminPanel { display: none; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-md-8 col-lg-6">
+        <div class="card p-4">
+          <h3 class="text-center mb-4 text-theme">⚙️ OPH Eats 管理後台</h3>
+          
+          <!-- 登入區 -->
+          <div id="loginSection">
+            <input type="password" id="adminPwd" class="form-control mb-3" placeholder="請輸入管理員密碼">
+            <button class="btn btn-theme w-100" onclick="login()">登入</button>
+          </div>
+
+          <!-- 管理主面板 -->
+          <div id="adminPanel">
+            
+            <!-- 系統開關 -->
+            <div class="card mb-4 border-primary">
+              <div class="card-body text-center">
+                <h5 class="card-title mb-3">今日點餐系統狀態</h5>
+                <button class="btn btn-success me-2" onclick="toggleSys(true)">✅ 開放點餐</button>
+                <button class="btn btn-danger" onclick="toggleSys(false)">⛔ 關閉點餐</button>
+              </div>
+            </div>
+
+            <!-- 菜單上傳 -->
+            <div class="card mb-4 border-secondary">
+              <div class="card-body">
+                <h5 class="card-title mb-3">上傳今日菜單照片</h5>
+                <label class="form-label fw-bold">🍱 便當菜單</label>
+                <div class="input-group mb-3">
+                  <input type="file" class="form-control" id="bentoFile" accept="image/*">
+                  <button class="btn btn-outline-secondary" onclick="uploadMenu('bento')">上傳</button>
+                </div>
+                
+                <label class="form-label fw-bold mt-2">🥤 飲料菜單</label>
+                <div class="input-group">
+                  <input type="file" class="form-control" id="drinkFile" accept="image/*">
+                  <button class="btn btn-outline-secondary" onclick="uploadMenu('drink')">上傳</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- 動態選單管理區 -->
+            <div class="card mb-4 border-info">
+              <div class="card-body">
+                <h5 class="card-title mb-3">🏷️ 診次與職級選單設定</h5>
+                
+                <!-- 診次管理 -->
+                <label class="form-label fw-bold">🏥 診次清單 (依順序排序)</label>
+                <div id="clinicTags" class="mb-2"></div>
+                <div class="input-group mb-3">
+                  <input type="text" class="form-control" id="newClinicInput" placeholder="例如：7診">
+                  <button class="btn btn-outline-primary" onclick="addOption('clinic')">新增診次</button>
+                </div>
+
+                <!-- 職級管理 -->
+                <label class="form-label fw-bold">🧑‍⚕️ 職級清單 (依順序排序)</label>
+                <div id="rankTags" class="mb-2"></div>
+                <div class="input-group mb-3">
+                  <input type="text" class="form-control" id="newRankInput" placeholder="例如：實習醫師">
+                  <button class="btn btn-outline-primary" onclick="addOption('rank')">新增職級</button>
+                </div>
+
+                <div class="d-grid mt-3">
+                  <button class="btn btn-theme" onclick="saveOptions()">💾 儲存並套用選單設定</button>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const GAS_API_URL = "https://script.google.com/macros/s/AKfycbxCYuW1EjxLHqBvppXBlEKs2jXMdUJ7k7qIclgarxQpjlpk5N1j4UDcvCVHpkts2jKJ/exec"; 
+    let currentPwd = "";
+    let clinicsList = [];
+    let ranksList = [];
+
+    function apiCall(payload, successMsg, callback) {
+      fetch(GAS_API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify(payload)
+      })
+      .then(res => res.json())
+      .then(data => {
+        if(data.success) {
+          if(successMsg) alert(successMsg);
+          if(callback) callback(data);
+        } else {
+          alert("❌ 錯誤：" + data.message);
+        }
+      })
+      .catch(err => alert("網路錯誤：" + err));
+    }
+
+    function login() {
+      currentPwd = document.getElementById('adminPwd').value;
+      apiCall({ action: "adminLogin", password: currentPwd }, "✅ 登入成功！", () => {
+        document.getElementById('loginSection').style.display = 'none';
+        document.getElementById('adminPanel').style.display = 'block';
+        loadCurrentOptions();
+      });
+    }
+
+    function loadCurrentOptions() {
+      apiCall({ action: "getSystemData" }, null, (res) => {
+        clinicsList = res.data.clinics || [];
+        ranksList = res.data.ranks || [];
+        renderTags();
+      });
+    }
+
+    function renderTags() {
+      const cContainer = document.getElementById('clinicTags');
+      cContainer.innerHTML = clinicsList.map((c, i) => `
+        <span class="tag-item">${c} <span class="tag-close" onclick="removeOption('clinic', ${i})">&times;</span></span>
+      `).join('');
+
+      const rContainer = document.getElementById('rankTags');
+      rContainer.innerHTML = ranksList.map((r, i) => `
+        <span class="tag-item">${r} <span class="tag-close" onclick="removeOption('rank', ${i})">&times;</span></span>
+      `).join('');
+    }
+
+    function addOption(type) {
+      const input = document.getElementById(type === 'clinic' ? 'newClinicInput' : 'newRankInput');
+      const val = input.value.trim();
+      if (!val) return;
+      if (type === 'clinic') clinicsList.push(val);
+      else ranksList.push(val);
+      input.value = '';
+      renderTags();
+    }
+
+    function removeOption(type, index) {
+      if (type === 'clinic') clinicsList.splice(index, 1);
+      else ranksList.splice(index, 1);
+      renderTags();
+    }
+
+    function saveOptions() {
+      apiCall({
+        action: "updateOptions",
+        clinics: clinicsList,
+        ranks: ranksList,
+        password: currentPwd
+      }, "✅ 選項設定已儲存！點餐頁面將自動更新。");
+    }
+
+    function toggleSys(isOpen) {
+      if(!confirm(`確定要${isOpen ? '開放' : '關閉'}系統嗎？`)) return;
+      apiCall({ action: "toggleSystem", status: isOpen, password: currentPwd }, null, (data) => {
+        alert(data.message);
+      });
+    }
+
+    function uploadMenu(type) {
+      const fileInput = document.getElementById(type + 'File');
+      if (!fileInput.files[0]) { alert("請先選擇圖片！"); return; }
+      
+      const file = fileInput.files[0];
+      const reader = new FileReader();
+      
+      reader.onload = function(e) {
+        alert("照片上傳中，請稍候...");
+        apiCall({
+          action: "uploadMenu",
+          menuType: type,
+          filename: `menu_${type}_${new Date().getTime()}.jpg`,
+          image: e.target.result,
+          password: currentPwd
+        }, null, (data) => {
+          alert(data.message);
+          fileInput.value = "";
+        });
+      };
+      reader.readAsDataURL(file);
+    }
+  </script>
+</body>
+</html>
