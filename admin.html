@@ -11,13 +11,10 @@
     .text-theme { color: #40587f !important; }
     .btn-theme { background-color: #40587f; color: white; }
     .btn-theme:hover { background-color: #304260; color: white; }
-    
-    /* 標籤樣式優化 */
     .tag-item { display: inline-block; background: #e2e8f0; color: #40587f; padding: 5px 10px; border-radius: 8px; margin: 4px; font-weight: 500; border: 1px solid #cbd5e1;}
     .tag-action { cursor: pointer; color: #64748b; padding: 0 4px; font-size: 0.9em;}
     .tag-action:hover { color: #40587f; font-weight: bold;}
     .tag-close { cursor: pointer; margin-left: 6px; font-weight: bold; color: #dc3545; }
-    
     #adminPanel { display: none; }
   </style>
 </head>
@@ -47,10 +44,9 @@
             <div class="card mb-4 border-secondary">
               <div class="card-body">
                 <div class="d-flex justify-content-between align-items-center mb-3">
-                  <h5 class="card-title m-0">選擇今日菜單</h5>
+                  <h5 class="card-title m-0">選擇舊菜單</h5>
                   <button class="btn btn-sm btn-outline-secondary" onclick="loadDriveFiles()">🔄 重新整理清單</button>
                 </div>
-                <p class="text-muted small">系統已自動連結您的 Google 雲端硬碟菜單資料夾。</p>
                 
                 <label class="form-label fw-bold">🍱 便當菜單</label>
                 <div class="input-group mb-3">
@@ -66,22 +62,42 @@
               </div>
             </div>
 
+            <!-- 菜單上傳區 (新增輸入檔名功能) -->
+            <div class="card mb-4 border-success">
+              <div class="card-body">
+                <h5 class="card-title mb-3">📸 拍照/上傳新菜單</h5>
+                
+                <label class="form-label fw-bold">🍱 便當菜單</label>
+                <div class="input-group mb-3">
+                  <input type="text" class="form-control" id="bentoFileName" placeholder="店家名稱(如: 老紀牛肉)">
+                  <input type="file" class="form-control" id="bentoFile" accept="image/*">
+                  <button class="btn btn-outline-success" onclick="uploadMenu('bento')">上傳</button>
+                </div>
+                
+                <label class="form-label fw-bold mt-2">🥤 飲料菜單</label>
+                <div class="input-group">
+                  <input type="text" class="form-control" id="drinkFileName" placeholder="店家名稱(如: 珍煮丹)">
+                  <input type="file" class="form-control" id="drinkFile" accept="image/*">
+                  <button class="btn btn-outline-success" onclick="uploadMenu('drink')">上傳</button>
+                </div>
+              </div>
+            </div>
+
             <!-- 動態選單管理區 -->
             <div class="card mb-4 border-info">
               <div class="card-body">
                 <h5 class="card-title mb-3">🏷️ 診次與職級選單設定</h5>
-                
-                <label class="form-label fw-bold">🏥 診次清單 (使用箭頭調整順序)</label>
+                <label class="form-label fw-bold">🏥 診次清單</label>
                 <div id="clinicTags" class="mb-2"></div>
                 <div class="input-group mb-3">
-                  <input type="text" class="form-control" id="newClinicInput" placeholder="新增診次，例如：7診">
+                  <input type="text" class="form-control" id="newClinicInput" placeholder="新增診次">
                   <button class="btn btn-outline-primary" onclick="addOption('clinic')">新增</button>
                 </div>
 
-                <label class="form-label fw-bold">🧑‍⚕️ 職級清單 (使用箭頭調整順序)</label>
+                <label class="form-label fw-bold">🧑‍⚕️ 職級清單</label>
                 <div id="rankTags" class="mb-2"></div>
                 <div class="input-group mb-3">
-                  <input type="text" class="form-control" id="newRankInput" placeholder="新增職級，例如：實習醫師">
+                  <input type="text" class="form-control" id="newRankInput" placeholder="新增職級">
                   <button class="btn btn-outline-primary" onclick="addOption('rank')">新增</button>
                 </div>
 
@@ -98,8 +114,8 @@
   </div>
 
   <script>
-    // ⚠️ 貼上您重新部署拿到的最新網址
-    const GAS_API_URL = "您的_Google_Apps_Script_部署網址_貼在這裡"; 
+    // ⚠️ 貼上您的 API 網址 (與剛剛的相同，或是您重新部署產生的最新網址)
+    const GAS_API_URL = "https://script.google.com/macros/s/AKfycbxCYuW1EjxLHqBvppXBlEKs2jXMdUJ7k7qIclgarxQpjlpk5N1j4UDcvCVHpkts2jKJ/exec"; 
     
     let currentPwd = "";
     let clinicsList = [];
@@ -127,11 +143,11 @@
         document.getElementById('loginSection').style.display = 'none';
         document.getElementById('adminPanel').style.display = 'block';
         loadCurrentOptions();
-        loadDriveFiles(); // 登入後自動載入雲端硬碟檔案
+        loadDriveFiles(); 
       });
     }
 
-    // --- 雲端硬碟菜單選擇 ---
+    // --- 雲端硬碟菜單選擇 (透過 [餐點] 與 [飲料] 自動分類) ---
     function loadDriveFiles() {
       const bSelect = document.getElementById('bentoSelect');
       const dSelect = document.getElementById('drinkSelect');
@@ -139,12 +155,25 @@
       dSelect.innerHTML = '<option value="">讀取雲端硬碟中...</option>';
       
       apiCall({ action: "getDriveFiles", password: currentPwd }, null, (res) => {
-        let optionsHtml = '<option value="">-- 請選擇菜單圖片 --</option>';
+        let bentoHtml = '<option value="">-- 請選擇便當菜單 --</option>';
+        let drinkHtml = '<option value="">-- 請選擇飲料菜單 --</option>';
+        
         res.files.forEach(f => {
-          optionsHtml += `<option value="${f.url}">${f.name}</option>`;
+          const optionStr = `<option value="${f.url}">${f.name}</option>`;
+          // 根據 [方括號] 自動分類
+          if (f.name.startsWith('[餐點]')) {
+            bentoHtml += optionStr;
+          } else if (f.name.startsWith('[飲料]')) {
+            drinkHtml += optionStr;
+          } else {
+            // 防呆：如果沒有前綴，兩邊都顯示
+            bentoHtml += optionStr;
+            drinkHtml += optionStr;
+          }
         });
-        bSelect.innerHTML = optionsHtml;
-        dSelect.innerHTML = optionsHtml;
+        
+        bSelect.innerHTML = bentoHtml;
+        dSelect.innerHTML = drinkHtml;
       });
     }
 
@@ -155,7 +184,41 @@
       
       apiCall({
         action: "setMenuUrl", menuType: type, url: url, password: currentPwd
-      }, "✅ 菜單已套用！前端頁面將顯示此圖片。");
+      }, "✅ 舊菜單已套用！");
+    }
+
+    // --- 上傳新菜單 (自動加上 [方括號] 前綴) ---
+    function uploadMenu(type) {
+      const fileInput = document.getElementById(type + 'File');
+      const nameInput = document.getElementById(type + 'FileName');
+      
+      if (!nameInput.value.trim()) { alert("⚠️ 請先輸入店家名稱！"); return; }
+      if (!fileInput.files[0]) { alert("⚠️ 請先選擇圖片或拍照！"); return; }
+      
+      const file = fileInput.files[0];
+      const reader = new FileReader();
+      const prefix = type === 'bento' ? '[餐點]' : '[飲料]';
+      const customName = nameInput.value.trim();
+      
+      // 產生格式化檔名，加上時間戳記避免重複：[餐點]老紀牛肉_169123456.jpg
+      const finalFilename = `${prefix}${customName}_${new Date().getTime()}.jpg`;
+      
+      reader.onload = function(e) {
+        alert("照片上傳中，請稍候...");
+        apiCall({
+          action: "uploadMenu",
+          menuType: type,
+          filename: finalFilename, // 傳送自動組裝好的檔名
+          image: e.target.result,
+          password: currentPwd
+        }, null, (data) => {
+          alert(data.message);
+          fileInput.value = "";
+          nameInput.value = "";
+          loadDriveFiles(); // 上傳成功後自動重新整理下拉選單
+        });
+      };
+      reader.readAsDataURL(file);
     }
 
     // --- 選單排序與編輯 ---
@@ -170,25 +233,20 @@
     function renderTags() {
       const buildTags = (arr, type) => arr.map((item, i) => `
         <span class="tag-item">
-          <span class="tag-action" onclick="moveOption('${type}', ${i}, -1)" title="往前移">◀</span>
+          <span class="tag-action" onclick="moveOption('${type}', ${i}, -1)">◀</span>
           ${item}
-          <span class="tag-action" onclick="moveOption('${type}', ${i}, 1)" title="往後移">▶</span>
+          <span class="tag-action" onclick="moveOption('${type}', ${i}, 1)">▶</span>
           <span class="tag-close" onclick="removeOption('${type}', ${i})">&times;</span>
         </span>
       `).join('');
-      
       document.getElementById('clinicTags').innerHTML = buildTags(clinicsList, 'clinic');
       document.getElementById('rankTags').innerHTML = buildTags(ranksList, 'rank');
     }
 
-    // 新增的移動排序功能
     function moveOption(type, idx, direction) {
       const arr = type === 'clinic' ? clinicsList : ranksList;
-      if (direction === -1 && idx > 0) { // 往前
-        [arr[idx-1], arr[idx]] = [arr[idx], arr[idx-1]];
-      } else if (direction === 1 && idx < arr.length - 1) { // 往後
-        [arr[idx], arr[idx+1]] = [arr[idx+1], arr[idx]];
-      }
+      if (direction === -1 && idx > 0) [arr[idx-1], arr[idx]] = [arr[idx], arr[idx-1]];
+      else if (direction === 1 && idx < arr.length - 1) [arr[idx], arr[idx+1]] = [arr[idx+1], arr[idx]];
       renderTags();
     }
 
