@@ -187,7 +187,7 @@
       }, "✅ 舊菜單已套用！");
     }
 
-    // --- 升級版上傳：自動壓縮照片，防止手機傳輸過大卡住 ---
+    // --- 上傳新菜單 (自動加上 [方括號] 前綴) ---
     function uploadMenu(type) {
       const fileInput = document.getElementById(type + 'File');
       const nameInput = document.getElementById(type + 'FileName');
@@ -196,55 +196,38 @@
       if (!fileInput.files[0]) { alert("⚠️ 請先選擇圖片或拍照！"); return; }
       
       const file = fileInput.files[0];
+      const reader = new FileReader();
       const prefix = type === 'bento' ? '[餐點]' : '[飲料]';
       const customName = nameInput.value.trim();
+      
+      // 產生格式化檔名，加上時間戳記避免重複：[餐點]老紀牛肉_169123456.jpg
       const finalFilename = `${prefix}${customName}_${new Date().getTime()}.jpg`;
       
-      alert("照片處理與上傳中，請稍候...");
-
-      // 使用 Canvas 將圖片自動縮小壓縮，避免檔案過大卡住
-      const reader = new FileReader();
       reader.onload = function(e) {
-        const img = new Image();
-        img.onload = function() {
-          const canvas = document.createElement('canvas');
-          let width = img.width;
-          let height = img.height;
-          
-          // 設定最大寬高限制 (例如 1000 像素)，確保檔案變小但字體依然清晰
-          const MAX_WIDTH = 1000;
-          const MAX_HEIGHT = 1000;
-          if (width > height) {
-            if (width > MAX_WIDTH) { height *= MAX_WIDTH / width; width = MAX_WIDTH; }
-          } else {
-            if (height > MAX_HEIGHT) { width *= MAX_HEIGHT / height; height = MAX_HEIGHT; }
-          }
-          
-          canvas.width = width;
-          canvas.height = height;
-          const ctx = canvas.getContext('2d');
-          ctx.drawImage(img, 0, 0, width, height);
-          
-          // 壓縮為 JPEG，品質 0.8 (既清晰又省流量)
-          const compressedBase64 = canvas.toDataURL('image/jpeg', 0.8);
-          
-          // 發送 API 請求
-          apiCall({
-            action: "uploadMenu",
-            menuType: type,
-            filename: finalFilename,
-            image: compressedBase64,
-            password: currentPwd
-          }, null, (data) => {
-            alert(data.message);
-            fileInput.value = "";
-            nameInput.value = "";
-            loadDriveFiles(); 
-          });
-        };
-        img.src = e.target.result;
+        alert("照片上傳中，請稍候...");
+        apiCall({
+          action: "uploadMenu",
+          menuType: type,
+          filename: finalFilename, // 傳送自動組裝好的檔名
+          image: e.target.result,
+          password: currentPwd
+        }, null, (data) => {
+          alert(data.message);
+          fileInput.value = "";
+          nameInput.value = "";
+          loadDriveFiles(); // 上傳成功後自動重新整理下拉選單
+        });
       };
       reader.readAsDataURL(file);
+    }
+
+    // --- 選單排序與編輯 ---
+    function loadCurrentOptions() {
+      apiCall({ action: "getSystemData" }, null, (res) => {
+        clinicsList = res.data.clinics || [];
+        ranksList = res.data.ranks || [];
+        renderTags();
+      });
     }
 
     function renderTags() {
