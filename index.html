@@ -107,9 +107,9 @@
 
                 <!-- 餐點區 -->
                 <div class="section-box">
-                  <label class="form-label fw-bold fs-5 text-theme border-bottom pb-2 mb-3 d-block">🍱 今日餐點</label>
+                  <label class="form-label fw-bold fs-5 text-theme border-bottom pb-2 mb-3 d-block">🍱 餐點</label>
                   <div class="text-muted small mb-2">💡 點擊圖片可放大查看</div>
-                  <img id="bentoMenuImg" class="menu-img" alt="今日餐點菜單" onclick="openModal(this.src)">
+                  <img id="bentoMenuImg" class="menu-img" alt="餐點菜單" onclick="openModal(this.src)">
                   <div class="row g-2">
                     <div class="col-5"><input type="text" class="form-control" id="bentoName" placeholder="名稱"></div>
                     <div class="col-4"><input type="text" class="form-control" id="bentoCustom" placeholder="客製項目"></div>
@@ -119,9 +119,9 @@
 
                 <!-- 飲料區 -->
                 <div class="section-box">
-                  <label class="form-label fw-bold fs-5 text-theme border-bottom pb-2 mb-3 d-block">🥤 今日飲料</label>
+                  <label class="form-label fw-bold fs-5 text-theme border-bottom pb-2 mb-3 d-block">🥤 飲料</label>
                   <div class="text-muted small mb-2">💡 點擊圖片可放大查看</div>
-                  <img id="drinkMenuImg" class="menu-img" alt="今日飲料菜單" onclick="openModal(this.src)">
+                  <img id="drinkMenuImg" class="menu-img" alt="飲料菜單" onclick="openModal(this.src)">
                   <div class="row g-2">
                     <div class="col-5"><input type="text" class="form-control" id="drinkName" placeholder="名稱"></div>
                     <div class="col-4"><input type="text" class="form-control" id="drinkCustom" placeholder="客製項目"></div>
@@ -279,13 +279,13 @@
         const finalMealItem = [bName, bCustom].filter(Boolean).join(" - ");
         const finalDrinkItem = [dName, dCustom].filter(Boolean).join(" - ");
         
-        // --- 送出前確認視窗 ---
+        // --- 送出前確認視窗 (無標題版) ---
         const confirmMsg = `請確認您的訂餐內容：\n
-🏥 診次：${clinic}
-🧑‍⚕️ 職級/姓名：${clinic === '非診間' ? name : rank}
-🍱 餐點：${finalMealItem || '無'} ($${bAmt || 0})
-🥤 飲料：${finalDrinkItem || '無'} ($${dAmt || 0})
-📝 備註：${notes || '無'}\n
+🏥 ${clinic}
+🧑‍⚕️ ${clinic === '非診間' ? name : rank}
+🍱 ${finalMealItem || '無'} ($${bAmt || 0})
+🥤 ${finalDrinkItem || '無'} ($${dAmt || 0})
+📝 ${notes || '無'}\n
 👉 確定要送出嗎？`;
 
         if (!confirm(confirmMsg)) return;
