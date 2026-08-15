@@ -18,6 +18,8 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
       body { background-color: #f2f5f8; padding: 0; padding-bottom: 30px; font-family: "微軟正黑體", sans-serif; }
+      body.modal-open { padding-right: 0 !important; overflow: auto !important; }
+      
       .card { border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); border: none; overflow: hidden; }
       .form-label { font-weight: bold; color: #495057; margin-bottom: 8px; }
       
@@ -32,32 +34,27 @@
       #loadingScreen, #closedScreen { text-align: center; padding: 40px 20px; }
       .menu-img { width: 100%; border-radius: 8px; margin-bottom: 15px; display: none; box-shadow: 0 2px 5px rgba(0,0,0,0.15); border: 1px solid #e2e8f0; cursor: pointer; }
       
-      /* 全寬無圓角橫幅樣式 */
       .banner-header { background-color: #536e86; color: white; height: 65px; margin-bottom: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); width: 100%; display: flex; justify-content: center; align-items: center; padding: 0; position: relative; }
-      
       .section-box { background-color: #ffffff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 15px; margin-bottom: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
       
-      /* 診次 6 格排版 (非診間佔 2 格) */
       .clinic-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; }
       .clinic-grid label { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; padding: 8px 0; font-size: 0.9rem; margin: 0; }
       
-      /* 客製化捲軸 */
       .quick-notes::-webkit-scrollbar { display: none; }
-      
-      /* 清除按鈕樣式 */
       .btn-clear { border-color: #ced4da; color: #6c757d; }
       .btn-clear:hover { background-color: #e9ecef; color: #495057; }
+      
+      .high-contrast-close { background-color: rgba(255, 255, 255, 0.95) !important; opacity: 1 !important; border-radius: 50% !important; box-shadow: 0 3px 8px rgba(0, 0, 0, 0.4) !important; padding: 0.6rem !important; z-index: 1050; }
     </style>
   </head>
   <body>
     
-    <!-- 滿版橫幅 (加入重新整理按鈕) -->
+    <!-- 滿版橫幅 -->
     <div class="banner-header">
       <div class="d-flex align-items-center justify-content-center h-100 w-100 position-relative">
         <img src="logo.jpg" alt="Logo" style="height: 40px; margin-right: 12px; object-fit: contain;">
         <h3 class="mb-0 fw-bold" style="font-size: 1.5rem;">OPH Eats 眼科訂餐系統</h3>
-        <!-- 手動重新載入按鈕 -->
-        <button class="btn btn-sm text-white position-absolute end-0 me-3" style="background: rgba(255,255,255,0.2); border-radius: 50%; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem;" onclick="location.reload()">🔄</button>
+        <button class="btn btn-sm text-white position-absolute end-0 me-3" style="background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.5); border-radius: 15px; padding: 4px 10px; font-size: 0.85rem; font-weight: bold;" onclick="location.reload()">重新整理</button>
       </div>
     </div>
 
@@ -66,7 +63,7 @@
       <div class="modal-dialog modal-dialog-centered modal-lg">
         <div class="modal-content bg-transparent border-0">
           <div class="modal-body text-center position-relative p-0">
-            <button type="button" class="btn-close btn-close-white position-absolute top-0 end-0 m-3" data-bs-dismiss="modal" style="z-index: 10;"></button>
+            <button type="button" class="btn-close high-contrast-close position-absolute top-0 end-0 m-3" data-bs-dismiss="modal" aria-label="Close"></button>
             <img id="modalImage" src="" class="img-fluid rounded" alt="放大菜單">
           </div>
         </div>
@@ -76,9 +73,6 @@
     <div class="container">
       <div class="row justify-content-center">
         <div class="col-md-8 col-lg-6">
-          
-          <!-- 日期警示區塊 -->
-          <div id="dateAlertBox" class="mb-3 text-center d-none"></div>
 
           <div class="card p-3 p-md-4">
             
@@ -95,27 +89,24 @@
             <div id="mainContent" class="d-none">
               <form id="orderForm">
                 
-                <!-- 診次區 (1行6格) -->
                 <div class="mb-4">
                   <label class="form-label d-block fs-6">🏥 診次 <span class="text-danger">*</span></label>
                   <div class="clinic-grid" id="clinicGroup"></div>
                 </div>
 
-                <!-- 職級區 (一列三個) -->
                 <div class="mb-4" id="rankDiv">
                   <label class="form-label d-block fs-6">🧑‍⚕️ 職級 <span class="text-danger">*</span></label>
                   <div class="row g-2" id="rankGroup"></div>
                 </div>
 
-                <!-- 姓名 (非診間) -->
                 <div class="mb-4 d-none" id="nameDiv">
                   <label class="form-label">👤 姓名 <span class="text-danger">*</span></label>
                   <input type="text" class="form-control" id="name" placeholder="請輸入姓名" onfocus="this.select()">
                 </div>
 
-                <!-- 餐點區 -->
+                <!-- 餐點區 (動態整合日期標題) -->
                 <div class="section-box">
-                  <label class="form-label fw-bold fs-5 text-theme border-bottom pb-2 mb-3 d-block">🍱 餐點</label>
+                  <label class="form-label fw-bold fs-5 border-bottom pb-2 mb-3 d-block text-theme" id="bentoSectionTitle">🍱 餐點</label>
                   <div class="text-muted small mb-2">💡 點擊圖片可放大查看</div>
                   <img id="bentoMenuImg" class="menu-img" alt="餐點菜單" onclick="openModal(this.src)">
                   <div class="row g-2">
@@ -125,9 +116,9 @@
                   </div>
                 </div>
 
-                <!-- 飲料區 -->
+                <!-- 飲料區 (動態整合日期標題) -->
                 <div class="section-box">
-                  <label class="form-label fw-bold fs-5 text-theme border-bottom pb-2 mb-3 d-block">🥤 飲料</label>
+                  <label class="form-label fw-bold fs-5 border-bottom pb-2 mb-3 d-block text-theme" id="drinkSectionTitle">🥤 飲料</label>
                   <div class="text-muted small mb-2">💡 點擊圖片可放大查看</div>
                   <img id="drinkMenuImg" class="menu-img" alt="飲料菜單" onclick="openModal(this.src)">
                   <div class="row g-2">
@@ -137,7 +128,6 @@
                   </div>
                 </div>
                 
-                <!-- 備註區 -->
                 <div class="mb-4">
                   <label class="form-label fs-6">📝 備註</label>
                   <div class="d-flex gap-2 mb-2 quick-notes" style="overflow-x: auto; white-space: nowrap;">
@@ -161,31 +151,19 @@
       </div>
     </div>
 
-    <!-- Bootstrap 與 Modal 功能 -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-      // ⚠️ 確保這裡是您的最新網址
       const GAS_API_URL = "https://script.google.com/macros/s/AKfycbxCYuW1EjxLHqBvppXBlEKs2jXMdUJ7k7qIclgarxQpjlpk5N1j4UDcvCVHpkts2jKJ/exec";
 
-      // 轉換 Drive 圖片為可靠的縮圖格式 (解決破圖)
       function formatDriveImageUrl(url) {
         if (!url) return ''; let id = '';
-        const match1 = url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/);
-        const match2 = url.match(/id=([a-zA-Z0-9_-]+)/);
+        const match1 = url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/); const match2 = url.match(/id=([a-zA-Z0-9_-]+)/);
         if (match1) id = match1[1]; else if (match2) id = match2[1];
-        if (id) return "https://drive.google.com/thumbnail?id=" + id + "&sz=w1200"; 
-        return url; 
+        if (id) return "https://drive.google.com/thumbnail?id=" + id + "&sz=w1200"; return url; 
       }
 
-      function openModal(src) {
-        document.getElementById('modalImage').src = src;
-        new bootstrap.Modal(document.getElementById('imageModal')).show();
-      }
-
-      function addNote(text) {
-        const n = document.getElementById('notes');
-        n.value = n.value ? n.value + "，" + text : text;
-      }
+      function openModal(src) { document.getElementById('modalImage').src = src; new bootstrap.Modal(document.getElementById('imageModal')).show(); }
+      function addNote(text) { const n = document.getElementById('notes'); n.value = n.value ? n.value + "。" + text : text; }
 
       window.onload = function() {
         fetch(GAS_API_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action: "getSystemData" }) })
@@ -195,132 +173,89 @@
           if(response.success && response.data.isOpen) {
             document.getElementById('mainContent').classList.remove('d-none');
             
-            // 處理日期檢查
+            // 日期與標題整合邏輯
+            let isToday = false; let m = "", d = "", w = "";
             const today = new Date();
             const todayStr = `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`;
-            const days = ['日', '一', '二', '三', '四', '五', '六'];
-            const dayOfWeek = days[today.getDay()];
             
-            const alertBox = document.getElementById('dateAlertBox');
-            alertBox.classList.remove('d-none');
+            if (response.data.menuDate) {
+              const parts = response.data.menuDate.split('-');
+              const dObj = new Date(parts[0], parts[1]-1, parts[2]);
+              m = parts[1].replace(/^0+/, ''); d = parts[2].replace(/^0+/, ''); // 去除開頭的 0
+              w = ['日', '一', '二', '三', '四', '五', '六'][dObj.getDay()];
+              isToday = (response.data.menuDate === todayStr);
+            }
+
+            // 設定餐點標題
+            const bTitle = document.getElementById('bentoSectionTitle');
+            if (response.data.bentoMenuUrl && response.data.menuDate) {
+              bTitle.innerText = `🍱 ${m}/${d} 週${w} 餐點 ${response.data.bentoShopName}` + (isToday ? "" : " (非今日)");
+              bTitle.className = `form-label fw-bold fs-5 border-bottom pb-2 mb-3 d-block ${isToday ? 'text-theme' : 'text-danger'}`;
+            }
             
-            if (response.data.menuDate === todayStr) {
-              alertBox.innerHTML = `<span class="badge bg-success py-2 px-3 fs-6 rounded-pill shadow-sm">✅ 菜單為今日 (${todayStr} 週${dayOfWeek}) 最新版</span>`;
-            } else {
-              alertBox.innerHTML = `<div class="alert alert-danger fw-bold shadow-sm p-2">⚠️ 警告：目前菜單更新於 ${response.data.menuDate || '未知日期'}，非今日菜單！<br><span class="small fw-normal">今日為 ${todayStr} (週${dayOfWeek})</span></div>`;
+            // 設定飲料標題
+            const dTitle = document.getElementById('drinkSectionTitle');
+            if (response.data.drinkMenuUrl && response.data.menuDate) {
+              dTitle.innerText = `🥤 ${m}/${d} 週${w} 飲料 ${response.data.drinkShopName}` + (isToday ? "" : " (非今日)");
+              dTitle.className = `form-label fw-bold fs-5 border-bottom pb-2 mb-3 d-block ${isToday ? 'text-theme' : 'text-danger'}`;
             }
             
             // 圖片渲染
-            if(response.data.bentoMenuUrl) {
-              const bImg = document.getElementById('bentoMenuImg');
-              bImg.src = formatDriveImageUrl(response.data.bentoMenuUrl);
-              bImg.style.display = 'block';
-            }
-            if(response.data.drinkMenuUrl) {
-              const dImg = document.getElementById('drinkMenuImg');
-              dImg.src = formatDriveImageUrl(response.data.drinkMenuUrl);
-              dImg.style.display = 'block';
-            }
+            if(response.data.bentoMenuUrl) { const bImg = document.getElementById('bentoMenuImg'); bImg.src = formatDriveImageUrl(response.data.bentoMenuUrl); bImg.style.display = 'block'; }
+            if(response.data.drinkMenuUrl) { const dImg = document.getElementById('drinkMenuImg'); dImg.src = formatDriveImageUrl(response.data.drinkMenuUrl); dImg.style.display = 'block'; }
 
-            // 動態生成診次 (6格網格)
-            const clinicContainer = document.getElementById('clinicGroup');
-            clinicContainer.innerHTML = '';
+            // 診次生成
+            const clinicContainer = document.getElementById('clinicGroup'); clinicContainer.innerHTML = '';
             response.data.clinics.forEach((c, idx) => {
               const spanClass = (c === '非診間') ? 'style="grid-column: span 2;"' : '';
-              clinicContainer.innerHTML += `
-                <div ${spanClass}>
-                  <input type="radio" class="btn-check clinic-radio" name="clinic" id="c_${idx}" value="${c}" onchange="toggleRankName()">
-                  <label class="btn btn-outline-theme" for="c_${idx}">${c}</label>
-                </div>`;
+              clinicContainer.innerHTML += `<div ${spanClass}><input type="radio" class="btn-check clinic-radio" name="clinic" id="c_${idx}" value="${c}" onchange="toggleRankName()"><label class="btn btn-outline-theme" for="c_${idx}">${c}</label></div>`;
             });
 
-            // 動態生成職級 (一列三個 col-4)
-            const rankContainer = document.getElementById('rankGroup');
-            rankContainer.innerHTML = '';
+            // 職級生成
+            const rankContainer = document.getElementById('rankGroup'); rankContainer.innerHTML = '';
             response.data.ranks.forEach((r, idx) => {
-              rankContainer.innerHTML += `
-                <div class="col-4">
-                  <input type="radio" class="btn-check rank-radio" name="rank" id="r_${idx}" value="${r}">
-                  <label class="btn btn-outline-theme w-100 p-2 text-center" style="margin:0; font-size:0.95rem;" for="r_${idx}">${r}</label>
-                </div>`;
+              rankContainer.innerHTML += `<div class="col-4"><input type="radio" class="btn-check rank-radio" name="rank" id="r_${idx}" value="${r}"><label class="btn btn-outline-theme w-100 p-2 text-center" style="margin:0; font-size:0.95rem;" for="r_${idx}">${r}</label></div>`;
             });
 
-          } else {
-            document.getElementById('closedScreen').classList.remove('d-none');
-          }
+          } else { document.getElementById('closedScreen').classList.remove('d-none'); }
         }).catch(err => alert("網路連線錯誤，無法取得系統狀態。"));
       };
 
       function toggleRankName() {
         const c = document.querySelector('input[name="clinic"]:checked');
-        if (c && c.value === "非診間") {
-          document.getElementById('rankDiv').classList.add('d-none'); document.getElementById('nameDiv').classList.remove('d-none');
-        } else {
-          document.getElementById('rankDiv').classList.remove('d-none'); document.getElementById('nameDiv').classList.add('d-none');
-        }
+        if (c && c.value === "非診間") { document.getElementById('rankDiv').classList.add('d-none'); document.getElementById('nameDiv').classList.remove('d-none'); }
+        else { document.getElementById('rankDiv').classList.remove('d-none'); document.getElementById('nameDiv').classList.add('d-none'); }
       }
 
       function submitOrder() {
-        const cRadio = document.querySelector('input[name="clinic"]:checked');
-        const rRadio = document.querySelector('input[name="rank"]:checked');
-        const clinic = cRadio ? cRadio.value : "";
-        const rank = rRadio ? rRadio.value : "";
+        const clinic = document.querySelector('input[name="clinic"]:checked') ? document.querySelector('input[name="clinic"]:checked').value : "";
+        const rank = document.querySelector('input[name="rank"]:checked') ? document.querySelector('input[name="rank"]:checked').value : "";
         const name = document.getElementById('name').value.trim();
         
-        // --- 基礎驗證 ---
-        if(!clinic) return alert("⚠️ 請選擇診次！");
-        if(clinic === "非診間" && !name) return alert("⚠️ 請填寫姓名！");
-        if(clinic !== "非診間" && !rank) return alert("⚠️ 請選擇職級！");
+        if(!clinic) return alert("⚠️ 請選擇診次！"); if(clinic === "非診間" && !name) return alert("⚠️ 請填寫姓名！"); if(clinic !== "非診間" && !rank) return alert("⚠️ 請選擇職級！");
 
-        // --- 讀取欄位並驗證金額 ---
-        const bName = document.getElementById('bentoName').value.trim();
-        const bCustom = document.getElementById('bentoCustom').value.trim();
-        const bAmt = document.getElementById('bentoAmount').value.trim();
+        const bName = document.getElementById('bentoName').value.trim(); const bCustom = document.getElementById('bentoCustom').value.trim(); const bAmt = document.getElementById('bentoAmount').value.trim();
+        const dName = document.getElementById('drinkName').value.trim(); const dCustom = document.getElementById('drinkCustom').value.trim(); const dAmt = document.getElementById('drinkAmount').value.trim();
         
-        const dName = document.getElementById('drinkName').value.trim();
-        const dCustom = document.getElementById('drinkCustom').value.trim();
-        const dAmt = document.getElementById('drinkAmount').value.trim();
-        
-        if ((bName || bCustom) && !bAmt) return alert("⚠️ 請輸入【餐點】的金額！");
-        if ((dName || dCustom) && !dAmt) return alert("⚠️ 請輸入【飲料】的金額！");
-        
+        if ((bName || bCustom) && !bAmt) return alert("⚠️ 請輸入【餐點】的金額！"); if ((dName || dCustom) && !dAmt) return alert("⚠️ 請輸入【飲料】的金額！");
         const notes = document.getElementById('notes').value.trim();
         
-        // 組合品項與客製化文字：名稱 (客製項目)
-        let finalMealItem = bName;
-        if (bCustom) finalMealItem = finalMealItem ? `${finalMealItem} (${bCustom})` : `(${bCustom})`;
-        let finalDrinkItem = dName;
-        if (dCustom) finalDrinkItem = finalDrinkItem ? `${finalDrinkItem} (${dCustom})` : `(${dCustom})`;
+        let finalMealItem = bName; if (bCustom) finalMealItem = finalMealItem ? `${finalMealItem} (${bCustom})` : `(${bCustom})`;
+        let finalDrinkItem = dName; if (dCustom) finalDrinkItem = finalDrinkItem ? `${finalDrinkItem} (${dCustom})` : `(${dCustom})`;
         
-        // --- 送出前確認視窗 (金額無括號、客製化有括號) ---
-        const confirmMsg = `請確認您的訂餐內容：\n
-🏥 ${clinic}
-🧑‍⚕️ ${clinic === '非診間' ? name : rank}
-🍱 ${finalMealItem || '無'} $${bAmt || 0}
-🥤 ${finalDrinkItem || '無'} $${dAmt || 0}
-📝 ${notes || '無'}\n
-👉 確定要送出嗎？`;
+        const confirmMsg = `請確認您的訂餐內容：\n\n🏥 ${clinic}\n🧑‍⚕️ ${clinic === '非診間' ? name : rank}\n🍱 ${finalMealItem || '無'} $${bAmt || 0}\n🥤 ${finalDrinkItem || '無'} $${dAmt || 0}\n📝 ${notes || '無'}\n\n👉 確定要送出嗎？`;
 
         if (!confirm(confirmMsg)) return;
 
-        const btn = document.getElementById('submitBtn');
-        btn.disabled = true; btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> 處理中...';
+        const btn = document.getElementById('submitBtn'); btn.disabled = true; btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> 處理中...';
 
         fetch(GAS_API_URL, {
           method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-          body: JSON.stringify({ action: "submitOrder", data: {
-            clinic: clinic, rank: rank, name: name, notes: notes,
-            bentoItem: finalMealItem, bentoAmount: bAmt, drinkItem: finalDrinkItem, drinkAmount: dAmt
-          }})
+          body: JSON.stringify({ action: "submitOrder", data: { clinic: clinic, rank: rank, name: name, notes: notes, bentoItem: finalMealItem, bentoAmount: bAmt, drinkItem: finalDrinkItem, drinkAmount: dAmt }})
         }).then(res => res.json()).then(data => {
-          if(data.success) {
-            alert(data.message);
-            document.getElementById('orderForm').reset();
-            document.querySelectorAll('.btn-check').forEach(radio => radio.checked = false);
-            toggleRankName(); window.scrollTo({ top: 0, behavior: 'smooth' });
+          if(data.success) { alert(data.message); document.getElementById('orderForm').reset(); document.querySelectorAll('.btn-check').forEach(radio => radio.checked = false); toggleRankName(); window.scrollTo({ top: 0, behavior: 'smooth' });
           } else alert("❌ 發生錯誤：" + data.message);
-        }).catch(error => alert("❌ 網路連線錯誤：" + error))
-        .finally(() => { btn.disabled = false; btn.innerText = '送出訂單'; });
+        }).catch(error => alert("❌ 網路連線錯誤：" + error)).finally(() => { btn.disabled = false; btn.innerText = '送出訂單'; });
       }
     </script>
   </body>
