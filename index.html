@@ -33,7 +33,7 @@
       .menu-img { width: 100%; border-radius: 8px; margin-bottom: 15px; display: none; box-shadow: 0 2px 5px rgba(0,0,0,0.15); border: 1px solid #e2e8f0; cursor: pointer; }
       
       /* 全寬無圓角橫幅樣式 */
-      .banner-header { background-color: #536e86; color: white; height: 65px; margin-bottom: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); width: 100%; display: flex; justify-content: center; align-items: center; padding: 0; }
+      .banner-header { background-color: #536e86; color: white; height: 65px; margin-bottom: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); width: 100%; display: flex; justify-content: center; align-items: center; padding: 0; position: relative; }
       
       .section-box { background-color: #ffffff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 15px; margin-bottom: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
       
@@ -43,14 +43,22 @@
       
       /* 客製化捲軸 */
       .quick-notes::-webkit-scrollbar { display: none; }
+      
+      /* 清除按鈕樣式 */
+      .btn-clear { border-color: #ced4da; color: #6c757d; }
+      .btn-clear:hover { background-color: #e9ecef; color: #495057; }
     </style>
   </head>
   <body>
     
-    <!-- 滿版橫幅 -->
+    <!-- 滿版橫幅 (加入重新整理按鈕) -->
     <div class="banner-header">
-      <img src="logo.jpg" alt="Logo" style="height: 100%; margin-right: 12px; object-fit: contain;">
-      <h3 class="mb-0 fw-bold" style="font-size: 1.5rem;">OPH Eats 眼科訂餐系統</h3>
+      <div class="d-flex align-items-center justify-content-center h-100 w-100 position-relative">
+        <img src="logo.jpg" alt="Logo" style="height: 40px; margin-right: 12px; object-fit: contain;">
+        <h3 class="mb-0 fw-bold" style="font-size: 1.5rem;">OPH Eats 眼科訂餐系統</h3>
+        <!-- 手動重新載入按鈕 -->
+        <button class="btn btn-sm text-white position-absolute end-0 me-3" style="background: rgba(255,255,255,0.2); border-radius: 50%; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem;" onclick="location.reload()">🔄</button>
+      </div>
     </div>
 
     <!-- 圖片放大視窗 -->
@@ -102,7 +110,7 @@
                 <!-- 姓名 (非診間) -->
                 <div class="mb-4 d-none" id="nameDiv">
                   <label class="form-label">👤 姓名 <span class="text-danger">*</span></label>
-                  <input type="text" class="form-control" id="name" placeholder="請輸入姓名">
+                  <input type="text" class="form-control" id="name" placeholder="請輸入姓名" onfocus="this.select()">
                 </div>
 
                 <!-- 餐點區 -->
@@ -111,9 +119,9 @@
                   <div class="text-muted small mb-2">💡 點擊圖片可放大查看</div>
                   <img id="bentoMenuImg" class="menu-img" alt="餐點菜單" onclick="openModal(this.src)">
                   <div class="row g-2">
-                    <div class="col-5"><input type="text" class="form-control" id="bentoName" placeholder="名稱"></div>
-                    <div class="col-4"><input type="text" class="form-control" id="bentoCustom" placeholder="客製項目"></div>
-                    <div class="col-3"><input type="number" inputmode="numeric" pattern="[0-9]*" class="form-control" id="bentoAmount" placeholder="金額"></div>
+                    <div class="col-5"><input type="text" class="form-control" id="bentoName" placeholder="名稱" onfocus="this.select()"></div>
+                    <div class="col-4"><input type="text" class="form-control" id="bentoCustom" placeholder="客製項目" onfocus="this.select()"></div>
+                    <div class="col-3"><input type="number" inputmode="numeric" pattern="[0-9]*" class="form-control" id="bentoAmount" placeholder="金額" onfocus="this.select()"></div>
                   </div>
                 </div>
 
@@ -123,9 +131,9 @@
                   <div class="text-muted small mb-2">💡 點擊圖片可放大查看</div>
                   <img id="drinkMenuImg" class="menu-img" alt="飲料菜單" onclick="openModal(this.src)">
                   <div class="row g-2">
-                    <div class="col-5"><input type="text" class="form-control" id="drinkName" placeholder="名稱"></div>
-                    <div class="col-4"><input type="text" class="form-control" id="drinkCustom" placeholder="客製項目"></div>
-                    <div class="col-3"><input type="number" inputmode="numeric" pattern="[0-9]*" class="form-control" id="drinkAmount" placeholder="金額"></div>
+                    <div class="col-5"><input type="text" class="form-control" id="drinkName" placeholder="名稱" onfocus="this.select()"></div>
+                    <div class="col-4"><input type="text" class="form-control" id="drinkCustom" placeholder="客製項目" onfocus="this.select()"></div>
+                    <div class="col-3"><input type="number" inputmode="numeric" pattern="[0-9]*" class="form-control" id="drinkAmount" placeholder="金額" onfocus="this.select()"></div>
                   </div>
                 </div>
                 
@@ -136,7 +144,10 @@
                     <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill" onclick="addNote('改單，以這筆為主')">改單，以這筆為主</button>
                     <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill" onclick="addNote('兩筆都要')">兩筆都要</button>
                   </div>
-                  <input type="text" class="form-control" id="notes" placeholder="其他需求...">
+                  <div class="input-group">
+                    <input type="text" class="form-control" id="notes" placeholder="其他需求..." onfocus="this.select()">
+                    <button class="btn btn-clear" type="button" onclick="document.getElementById('notes').value='';" title="清除內容">✖</button>
+                  </div>
                 </div>
 
                 <div class="d-grid mt-2">
@@ -275,16 +286,18 @@
         
         const notes = document.getElementById('notes').value.trim();
         
-        // 組合品項與客製化文字
-        const finalMealItem = [bName, bCustom].filter(Boolean).join(" - ");
-        const finalDrinkItem = [dName, dCustom].filter(Boolean).join(" - ");
+        // 組合品項與客製化文字：名稱 (客製項目)
+        let finalMealItem = bName;
+        if (bCustom) finalMealItem = finalMealItem ? `${finalMealItem} (${bCustom})` : `(${bCustom})`;
+        let finalDrinkItem = dName;
+        if (dCustom) finalDrinkItem = finalDrinkItem ? `${finalDrinkItem} (${dCustom})` : `(${dCustom})`;
         
-        // --- 送出前確認視窗 (無標題版) ---
+        // --- 送出前確認視窗 (金額無括號、客製化有括號) ---
         const confirmMsg = `請確認您的訂餐內容：\n
 🏥 ${clinic}
 🧑‍⚕️ ${clinic === '非診間' ? name : rank}
-🍱 ${finalMealItem || '無'} ($${bAmt || 0})
-🥤 ${finalDrinkItem || '無'} ($${dAmt || 0})
+🍱 ${finalMealItem || '無'} $${bAmt || 0}
+🥤 ${finalDrinkItem || '無'} $${dAmt || 0}
 📝 ${notes || '無'}\n
 👉 確定要送出嗎？`;
 
