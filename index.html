@@ -50,12 +50,13 @@
   <body>
     
     <div class="banner-header">
-      <div class="d-flex align-items-center h-100 overflow-hidden ms-3">
-        <!-- 調整 Logo：加入白底、縮小內距、導圓角 -->
-        <img src="logo.jpg" alt="Logo" style="height: 42px; width: 42px; object-fit: contain; background-color: white; padding: 4px; border-radius: 8px; margin-right: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.2);">
+      <div class="d-flex align-items-center h-100 overflow-hidden">
+        <!-- 調整 Logo：白底滿版高度 -->
+        <img src="logo.jpg" alt="Logo" style="height: 100%; aspect-ratio: 1/1; object-fit: contain; background-color: white; padding: 6px; margin-right: 12px; box-shadow: 2px 0 5px rgba(0,0,0,0.15);">
         <h3 class="mb-0 fw-bold text-truncate" style="font-size: 1.5rem;">OPH Eats 眼科訂餐</h3>
       </div>
-      <button class="btn btn-sm text-white flex-shrink-0 ms-2" style="background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.5); border-radius: 15px; padding: 4px 10px; font-size: 0.85rem; font-weight: bold;" onclick="loadData(false)">重新整理</button>
+      <!-- 重新命名為「更新菜單」 -->
+      <button class="btn btn-sm text-white flex-shrink-0 ms-2" style="background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.5); border-radius: 15px; padding: 4px 10px; font-size: 0.85rem; font-weight: bold;" onclick="loadData(false)">更新菜單</button>
     </div>
 
     <!-- 圖片放大視窗 -->
@@ -73,8 +74,6 @@
     <div class="container">
       <div class="row justify-content-center">
         <div class="col-md-8 col-lg-6">
-
-          <div id="dateAlertBox" class="mb-3 text-center d-none"></div>
 
           <div class="card p-3 p-md-4">
             
@@ -153,7 +152,6 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-      // 🔗 全新的網址已更新
       const GAS_API_URL = "https://script.google.com/macros/s/AKfycbwGOrIyoQ-XUBcn_nExeZuKkuQIvWx6aZhdYhB10qq6HW6uDxCa9tGUA_pwByVC7cSw/exec";
 
       document.getElementById('imageModal').addEventListener('show.bs.modal', function () {
@@ -208,13 +206,6 @@
               m = parts[1].replace(/^0+/, ''); d = parts[2].replace(/^0+/, '');
               w = ['日', '一', '二', '三', '四', '五', '六'][dObj.getDay()];
               isToday = (response.data.menuDate === todayStr);
-            }
-
-            const alertBox = document.getElementById('dateAlertBox'); alertBox.classList.remove('d-none');
-            if (response.data.menuDate === todayStr) {
-              alertBox.innerHTML = `<span class="badge bg-success py-2 px-3 fs-6 rounded-pill shadow-sm">✅ 菜單為今日 (${todayStr} 週${w}) 最新版</span>`;
-            } else {
-              alertBox.innerHTML = `<div class="alert alert-danger fw-bold shadow-sm p-2">⚠️ 警告：目前菜單更新於 ${response.data.menuDate || '未知日期'}，非今日菜單！<br><span class="small fw-normal">今日為 ${todayStr} (週${w})</span></div>`;
             }
 
             const bTitle = document.getElementById('bentoSectionTitle');
