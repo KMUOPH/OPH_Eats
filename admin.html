@@ -31,7 +31,6 @@
     #overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 9999; justify-content: center; align-items: center; color: white; flex-direction: column; }
     .file-list-item { display: flex; justify-content: space-between; align-items: center; padding: 8px; border-bottom: 1px solid #eee; }
     
-    /* 橫幅樣式：與螢幕同寬、滿版高度、無圓角 */
     .banner-header { background-color: #9b727a; color: white; height: 65px; margin-bottom: 25px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); width: 100%; display: flex; justify-content: center; align-items: center; padding: 0; }
   </style>
 </head>
@@ -42,7 +41,6 @@
     <h4 id="overlayText">處理中，請稍候...</h4>
   </div>
 
-  <!-- 滿版橫幅 -->
   <div class="banner-header">
     <img src="logo.jpg" alt="Logo" style="height: 100%; margin-right: 12px; object-fit: contain;">
     <h3 class="mb-0 fw-bold" style="font-size: 1.4rem;">OPH Eats 眼科訂餐系統維護</h3>
@@ -163,7 +161,6 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
   <script>
-    // ⚠️ 確保這裡是您的最新網址
     const GAS_API_URL = "https://script.google.com/macros/s/AKfycbxCYuW1EjxLHqBvppXBlEKs2jXMdUJ7k7qIclgarxQpjlpk5N1j4UDcvCVHpkts2jKJ/exec"; 
     let currentPwd = ""; let clinicsList = []; let ranksList = []; let currentDriveFiles = [];
 
@@ -200,15 +197,20 @@
     }
 
     function setMenu(type) {
-      const url = document.getElementById(type + 'Select').value; if(!url) return alert("請選擇圖片！");
-      showLoading("套用設定中..."); apiCall({ action: "setMenuUrl", menuType: type, url: url, password: currentPwd }, "✅ 菜單已套用！");
+      const select = document.getElementById(type + 'Select');
+      const url = select.value; if(!url) return alert("請選擇圖片！");
+      const text = select.options[select.selectedIndex].text;
+      const shopName = text.replace(/^\[.*?\]/, '').replace(/_\d+\.jpg$/, ''); // 擷取店家名
+      showLoading("套用設定中..."); 
+      apiCall({ action: "setMenuUrl", menuType: type, url: url, shopName: shopName, password: currentPwd }, "✅ 菜單已套用！");
     }
 
     function processAndUpload(type, isSetToToday) {
       const fileInput = document.getElementById(type + 'File'); const nameInput = document.getElementById(type + 'FileName');
       if (!nameInput.value.trim()) return alert("⚠️ 請輸入店家名稱！"); if (!fileInput.files[0]) return alert("⚠️ 請選擇圖片！");
       const file = fileInput.files[0]; const prefix = type === 'bento' ? '[餐點]' : '[飲料]';
-      const finalFilename = `${prefix}${nameInput.value.trim()}_${new Date().getTime()}.jpg`;
+      const shopName = nameInput.value.trim();
+      const finalFilename = `${prefix}${shopName}_${new Date().getTime()}.jpg`;
       
       showLoading("照片壓縮與上傳中...");
       const reader = new FileReader();
@@ -218,7 +220,7 @@
           const canvas = document.createElement('canvas'); let width = img.width, height = img.height; const MAX_SIZE = 1200;
           if (width > height && width > MAX_SIZE) { height *= MAX_SIZE / width; width = MAX_SIZE; } else if (height > MAX_SIZE) { width *= MAX_SIZE / height; height = MAX_SIZE; }
           canvas.width = width; canvas.height = height; canvas.getContext('2d').drawImage(img, 0, 0, width, height);
-          apiCall({ action: isSetToToday ? "uploadMenu" : "uploadOnly", menuType: type, filename: finalFilename, image: canvas.toDataURL('image/jpeg', 0.8), password: currentPwd }, isSetToToday ? "✅ 照片上傳並套用成功！" : "✅ 檔案已上傳至圖庫！", () => { fileInput.value = ""; nameInput.value = ""; loadDriveFiles(); });
+          apiCall({ action: isSetToToday ? "uploadMenu" : "uploadOnly", menuType: type, filename: finalFilename, image: canvas.toDataURL('image/jpeg', 0.8), shopName: shopName, password: currentPwd }, isSetToToday ? "✅ 照片上傳並套用成功！" : "✅ 檔案已上傳至圖庫！", () => { fileInput.value = ""; nameInput.value = ""; loadDriveFiles(); });
         }; img.src = e.target.result;
       }; reader.readAsDataURL(file);
     }
