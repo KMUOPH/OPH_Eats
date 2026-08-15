@@ -2,8 +2,8 @@
 <html lang="zh-TW">
   <head>
     <meta charset="UTF-8">
-    <!-- 強制鎖定螢幕比例，徹底解決放大後縮不回來的問題 -->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <!-- ⚠️ 加上 id="viewport"，讓程式可以動態控制縮放 -->
+    <meta id="viewport" name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>眼科訂餐</title>
     
     <!-- ================= App 圖示設定 ================= -->
@@ -19,6 +19,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
       body { background-color: #f2f5f8; padding: 0; padding-bottom: 30px; font-family: "微軟正黑體", sans-serif; }
+      body.modal-open { padding-right: 0 !important; overflow: auto !important; }
       
       .card { border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); border: none; overflow: hidden; }
       .form-label { font-weight: bold; color: #495057; margin-bottom: 8px; }
@@ -34,7 +35,7 @@
       #loadingScreen, #closedScreen { text-align: center; padding: 40px 20px; }
       .menu-img { width: 100%; border-radius: 8px; margin-bottom: 15px; display: none; box-shadow: 0 2px 5px rgba(0,0,0,0.15); border: 1px solid #e2e8f0; cursor: pointer; }
       
-      /* 橫幅樣式：完美彈性排版，永不重疊 */
+      /* 橫幅樣式 */
       .banner-header { background-color: #536e86; color: white; height: 65px; margin-bottom: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); width: 100%; display: flex; justify-content: space-between; align-items: center; padding-right: 15px; }
       
       .section-box { background-color: #ffffff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 15px; margin-bottom: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
@@ -46,12 +47,13 @@
       .btn-clear { border-color: #ced4da; color: #6c757d; }
       .btn-clear:hover { background-color: #e9ecef; color: #495057; }
       
+      /* 高對比關閉按鈕 */
       .high-contrast-close { background-color: rgba(255, 255, 255, 0.95) !important; opacity: 1 !important; border-radius: 50% !important; box-shadow: 0 3px 8px rgba(0, 0, 0, 0.4) !important; padding: 0.6rem !important; z-index: 1050; }
     </style>
   </head>
   <body>
     
-    <!-- 滿版橫幅：Logo等高、自動對齊 -->
+    <!-- 滿版橫幅 -->
     <div class="banner-header">
       <div class="d-flex align-items-center h-100 overflow-hidden">
         <img src="logo.jpg" alt="Logo" style="height: 100%; object-fit: cover; margin-right: 10px;">
@@ -60,7 +62,7 @@
       <button class="btn btn-sm text-white flex-shrink-0 ms-2" style="background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.5); border-radius: 15px; padding: 4px 10px; font-size: 0.85rem; font-weight: bold;" onclick="location.reload()">重新整理</button>
     </div>
 
-    <!-- 圖片放大視窗 (加高 z-index 確保最上層顯示) -->
+    <!-- 圖片放大視窗 -->
     <div class="modal fade" id="imageModal" tabindex="-1" aria-hidden="true" style="z-index: 10000;">
       <div class="modal-dialog modal-dialog-centered modal-lg">
         <div class="modal-content bg-transparent border-0">
@@ -108,7 +110,7 @@
 
                 <div class="section-box">
                   <label class="form-label fw-bold fs-5 border-bottom pb-2 mb-3 d-block text-theme" id="bentoSectionTitle">🍱 餐點</label>
-                  <div class="text-muted small mb-2">💡 點擊圖片可放大查看</div>
+                  <div class="text-muted small mb-2">💡 點擊圖片可雙指放大查看</div>
                   <img id="bentoMenuImg" class="menu-img" alt="餐點菜單" onclick="openModal(this.src)">
                   <div class="row g-2">
                     <div class="col-5"><input type="text" class="form-control" id="bentoName" placeholder="名稱" onfocus="this.select()"></div>
@@ -119,7 +121,7 @@
 
                 <div class="section-box">
                   <label class="form-label fw-bold fs-5 border-bottom pb-2 mb-3 d-block text-theme" id="drinkSectionTitle">🥤 飲料</label>
-                  <div class="text-muted small mb-2">💡 點擊圖片可放大查看</div>
+                  <div class="text-muted small mb-2">💡 點擊圖片可雙指放大查看</div>
                   <img id="drinkMenuImg" class="menu-img" alt="飲料菜單" onclick="openModal(this.src)">
                   <div class="row g-2">
                     <div class="col-5"><input type="text" class="form-control" id="drinkName" placeholder="名稱" onfocus="this.select()"></div>
@@ -156,6 +158,16 @@
     <script>
       const GAS_API_URL = "https://script.google.com/macros/s/AKfycbxCYuW1EjxLHqBvppXBlEKs2jXMdUJ7k7qIclgarxQpjlpk5N1j4UDcvCVHpkts2jKJ/exec";
 
+      // --- 動態縮放控制 (Dynamic Zoom) ---
+      // 當放大圖片開啟時，允許雙指縮放
+      document.getElementById('imageModal').addEventListener('show.bs.modal', function () {
+        document.getElementById('viewport').setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes');
+      });
+      // 當按下 X 關閉圖片時，瞬間鎖死縮放，迫使手機畫面彈回 100% 原始大小
+      document.getElementById('imageModal').addEventListener('hidden.bs.modal', function () {
+        document.getElementById('viewport').setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no');
+      });
+
       function formatDriveImageUrl(url) {
         if (!url) return ''; let id = '';
         const match1 = url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/); const match2 = url.match(/id=([a-zA-Z0-9_-]+)/);
@@ -163,13 +175,10 @@
         if (id) return "https://drive.google.com/thumbnail?id=" + id + "&sz=w1200"; return url; 
       }
 
-      // 修正後的穩定放大功能
       let imageModalInstance = null;
       function openModal(src) { 
         document.getElementById('modalImage').src = src; 
-        if (!imageModalInstance) {
-          imageModalInstance = new bootstrap.Modal(document.getElementById('imageModal'));
-        }
+        if (!imageModalInstance) { imageModalInstance = new bootstrap.Modal(document.getElementById('imageModal')); }
         imageModalInstance.show(); 
       }
 
