@@ -27,15 +27,18 @@
       .btn-theme { background-color: #536e86; border-color: #536e86; color: white; }
       .btn-theme:hover, .btn-theme:focus { background-color: #40586e; border-color: #40586e; color: white; }
       
-      .btn-outline-theme { color: #536e86; border-color: #536e86; margin: 2px; border-radius: 5px !important; }
+      .btn-outline-theme { color: #536e86; border-color: #536e86; border-radius: 5px !important; }
       .btn-outline-theme:hover { background-color: #e5ebf0; color: #536e86; }
       .btn-check:checked + .btn-outline-theme { background-color: #536e86; color: white; border-color: #536e86; }
       
       #loadingScreen, #closedScreen { text-align: center; padding: 40px 20px; }
-      .menu-img { width: 100%; border-radius: 10px; margin-bottom: 15px; display: none; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+      .menu-img { width: 100%; border-radius: 8px; margin-bottom: 15px; display: none; box-shadow: 0 2px 5px rgba(0,0,0,0.15); border: 1px solid #e2e8f0; }
       
       /* 全寬無圓角橫幅樣式 */
       .banner-header { background-color: #536e86; color: white; padding: 15px 20px; margin-bottom: 25px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); width: 100%; }
+      
+      /* 區塊外框美化 */
+      .section-box { background-color: #ffffff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 15px; margin-bottom: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
     </style>
   </head>
   <body>
@@ -51,7 +54,7 @@
     <div class="container">
       <div class="row justify-content-center">
         <div class="col-md-8 col-lg-6">
-          <div class="card p-4">
+          <div class="card p-3 p-md-4">
             
             <div id="loadingScreen">
               <div class="spinner-border text-theme" role="status"></div>
@@ -59,29 +62,23 @@
             </div>
 
             <div id="closedScreen" class="d-none">
-              <h2 class="text-danger fw-bold mb-3">⛔ 今日點餐已關閉</h2>
-              <p class="text-secondary">目前不在開放點餐時間，請稍後再試或洽詢管理員。</p>
+              <h2 class="text-danger fw-bold mb-3 text-center">⛔ 今日點餐已關閉</h2>
+              <p class="text-secondary text-center">目前不在開放點餐時間，請稍後再試或洽詢管理員。</p>
             </div>
             
             <div id="mainContent" class="d-none">
-              <div id="menuArea">
-                <img id="bentoMenuImg" class="menu-img" alt="今日便當菜單">
-                <img id="drinkMenuImg" class="menu-img" alt="今日飲料菜單">
-              </div>
-
-              <hr class="my-4">
-
               <form id="orderForm">
-                <!-- 動態診次按鈕容器 -->
+                
+                <!-- 診次區 -->
                 <div class="mb-4">
-                  <label class="form-label d-block">🏥 診次</label>
-                  <div class="btn-group flex-wrap w-100" role="group" id="clinicGroup"></div>
+                  <label class="form-label d-block fs-6">🏥 診次</label>
+                  <div class="d-flex flex-wrap gap-2" id="clinicGroup"></div>
                 </div>
 
-                <!-- 動態職級按鈕容器 -->
+                <!-- 職級區 (一列三個) -->
                 <div class="mb-4" id="rankDiv">
-                  <label class="form-label d-block">🧑‍⚕️ 職級</label>
-                  <div class="btn-group flex-wrap w-100" role="group" id="rankGroup"></div>
+                  <label class="form-label d-block fs-6">🧑‍⚕️ 職級</label>
+                  <div class="row g-2" id="rankGroup"></div>
                 </div>
 
                 <!-- 姓名 (非診間) -->
@@ -91,37 +88,41 @@
                 </div>
 
                 <!-- 便當區 -->
-                <div class="row mb-3">
-                  <div class="col-8">
-                    <label class="form-label">🍱 便當品項</label>
-                    <input type="text" class="form-control" id="bentoItem" placeholder="例如：烤肉飯">
-                  </div>
-                  <div class="col-4">
-                    <label class="form-label">金額</label>
-                    <input type="number" class="form-control" id="bentoAmount" placeholder="0">
+                <div class="section-box">
+                  <label class="form-label fw-bold fs-5 text-theme border-bottom pb-2 mb-3 d-block">🍱 今日便當</label>
+                  <img id="bentoMenuImg" class="menu-img" alt="今日便當菜單">
+                  <div class="row g-2">
+                    <div class="col-8">
+                      <input type="text" class="form-control" id="bentoItem" placeholder="名稱">
+                    </div>
+                    <div class="col-4">
+                      <input type="number" class="form-control" id="bentoAmount" placeholder="金額">
+                    </div>
                   </div>
                 </div>
 
                 <!-- 飲料區 -->
-                <div class="row mb-3">
-                  <div class="col-8">
-                    <label class="form-label">🥤 飲料品項</label>
-                    <input type="text" class="form-control" id="drinkItem" placeholder="例如：春芽冷露">
-                  </div>
-                  <div class="col-4">
-                    <label class="form-label">金額</label>
-                    <input type="number" class="form-control" id="drinkAmount" placeholder="0">
+                <div class="section-box">
+                  <label class="form-label fw-bold fs-5 text-theme border-bottom pb-2 mb-3 d-block">🥤 今日飲料</label>
+                  <img id="drinkMenuImg" class="menu-img" alt="今日飲料菜單">
+                  <div class="row g-2">
+                    <div class="col-8">
+                      <input type="text" class="form-control" id="drinkItem" placeholder="名稱及客製項目">
+                    </div>
+                    <div class="col-4">
+                      <input type="number" class="form-control" id="drinkAmount" placeholder="金額">
+                    </div>
                   </div>
                 </div>
                 
                 <!-- 備註 -->
                 <div class="mb-4">
-                  <label class="form-label">📝 備註</label>
-                  <input type="text" class="form-control" id="notes" placeholder="其他需求...">
+                  <label class="form-label fs-6">📝 備註</label>
+                  <input type="text" class="form-control" id="notes" placeholder="[其他需求...]">
                 </div>
 
-                <div class="d-grid">
-                  <button type="button" class="btn btn-theme btn-lg fw-bold" id="submitBtn" onclick="submitOrder()">送出訂單</button>
+                <div class="d-grid mt-2">
+                  <button type="button" class="btn btn-theme btn-lg fw-bold shadow-sm" id="submitBtn" onclick="submitOrder()">送出訂單</button>
                 </div>
               </form>
             </div>
@@ -132,7 +133,18 @@
     </div>
 
     <script>
+      // ⚠️ 確保這裡是您的最新網址
       const GAS_API_URL = "https://script.google.com/macros/s/AKfycbxCYuW1EjxLHqBvppXBlEKs2jXMdUJ7k7qIclgarxQpjlpk5N1j4UDcvCVHpkts2jKJ/exec";
+
+      // 自動轉換 Google Drive 網址的工具函式 (解決圖片破圖問題)
+      function formatDriveImageUrl(url) {
+        if (!url) return '';
+        const match = url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/);
+        if (match) {
+          return "https://drive.google.com/uc?export=view&id=" + match[1];
+        }
+        return url; 
+      }
 
       window.onload = function() {
         fetch(GAS_API_URL, {
@@ -147,15 +159,15 @@
           if(response.success && response.data.isOpen) {
             document.getElementById('mainContent').classList.remove('d-none');
             
-            // 1. 圖片渲染
+            // 1. 圖片渲染 (經過格式化處理)
             if(response.data.bentoMenuUrl) {
               const bImg = document.getElementById('bentoMenuImg');
-              bImg.src = response.data.bentoMenuUrl;
+              bImg.src = formatDriveImageUrl(response.data.bentoMenuUrl);
               bImg.style.display = 'block';
             }
             if(response.data.drinkMenuUrl) {
               const dImg = document.getElementById('drinkMenuImg');
-              dImg.src = response.data.drinkMenuUrl;
+              dImg.src = formatDriveImageUrl(response.data.drinkMenuUrl);
               dImg.style.display = 'block';
             }
 
@@ -164,18 +176,22 @@
             clinicContainer.innerHTML = '';
             response.data.clinics.forEach((c, idx) => {
               clinicContainer.innerHTML += `
-                <input type="radio" class="btn-check clinic-radio" name="clinic" id="c_${idx}" value="${c}" onchange="toggleRankName()">
-                <label class="btn btn-outline-theme" for="c_${idx}">${c}</label>
+                <div>
+                  <input type="radio" class="btn-check clinic-radio" name="clinic" id="c_${idx}" value="${c}" onchange="toggleRankName()">
+                  <label class="btn btn-outline-theme px-3" for="c_${idx}">${c}</label>
+                </div>
               `;
             });
 
-            // 3. 動態生成職級單選鈕
+            // 3. 動態生成職級單選鈕 (網格系統：col-4 代表一行 3 個)
             const rankContainer = document.getElementById('rankGroup');
             rankContainer.innerHTML = '';
             response.data.ranks.forEach((r, idx) => {
               rankContainer.innerHTML += `
-                <input type="radio" class="btn-check rank-radio" name="rank" id="r_${idx}" value="${r}">
-                <label class="btn btn-outline-theme" for="r_${idx}">${r}</label>
+                <div class="col-4">
+                  <input type="radio" class="btn-check rank-radio" name="rank" id="r_${idx}" value="${r}">
+                  <label class="btn btn-outline-theme w-100 p-2 text-center" style="margin: 0; font-size: 0.95rem;" for="r_${idx}">${r}</label>
+                </div>
               `;
             });
 
@@ -239,6 +255,7 @@
             document.getElementById('orderForm').reset();
             document.querySelectorAll('.btn-check').forEach(radio => radio.checked = false);
             toggleRankName();
+            window.scrollTo({ top: 0, behavior: 'smooth' }); // 送出成功後自動捲回最上方
           } else {
             alert("❌ 發生錯誤：" + data.message);
           }
