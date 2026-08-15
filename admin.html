@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>訂餐系統維護</title>
   
-  <!-- ================= App 圖示設定 ================= -->
   <link rel="icon" href="logoa.jpg" type="image/jpeg">
   <link rel="apple-touch-icon" href="logoa.jpg">
   <link rel="apple-touch-icon" sizes="152x152" href="logoa.jpg">
@@ -17,11 +16,8 @@
   
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <style>
-    /* 移除 body 上方 padding，讓橫幅貼齊螢幕頂端 */
-    body { background-color: #f2f5f8; padding-bottom: 20px; font-family: "微軟正黑體", sans-serif; }
+    body { background-color: #f2f5f8; padding: 0; padding-bottom: 20px; font-family: "微軟正黑體", sans-serif; }
     .card { border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); border: none; overflow: hidden; }
-    
-    /* --- 乾燥玫瑰粉主題色 (#9b727a) --- */
     .text-theme { color: #9b727a !important; }
     .btn-theme { background-color: #9b727a; color: white; border-color: #9b727a; }
     .btn-theme:hover { background-color: #846068; color: white; border-color: #846068; }
@@ -32,28 +28,24 @@
     .tag-close { cursor: pointer; margin-left: 6px; font-weight: bold; color: #dc3545; }
     #adminPanel { display: none; }
     
-    /* 載入中的全螢幕遮罩 */
     #overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 9999; justify-content: center; align-items: center; color: white; flex-direction: column; }
     .file-list-item { display: flex; justify-content: space-between; align-items: center; padding: 8px; border-bottom: 1px solid #eee; }
     
-    /* 全寬無圓角橫幅樣式 */
-    .banner-header { background-color: #9b727a; color: white; padding: 15px 20px; margin-bottom: 25px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); width: 100%; }
+    /* 橫幅樣式：與螢幕同寬、滿版高度、無圓角 */
+    .banner-header { background-color: #9b727a; color: white; height: 65px; margin-bottom: 25px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); width: 100%; display: flex; justify-content: center; align-items: center; padding: 0; }
   </style>
 </head>
 <body>
   
-  <!-- 全螢幕載入動畫 -->
   <div id="overlay">
     <div class="spinner-border text-light mb-3" style="width: 3rem; height: 3rem;" role="status"></div>
     <h4 id="overlayText">處理中，請稍候...</h4>
   </div>
 
-  <!-- 獨立的全寬橫幅 -->
-  <div class="banner-header text-center">
-    <h3 class="mb-0 fw-bold" style="font-size: 1.4rem;">
-      <img src="logo.jpg" alt="Logo" style="height: 40px; vertical-align: middle; margin-right: 12px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.2);">
-      OPH Eats 眼科訂餐系統維護
-    </h3>
+  <!-- 滿版橫幅 -->
+  <div class="banner-header">
+    <img src="logo.jpg" alt="Logo" style="height: 100%; margin-right: 12px; object-fit: contain;">
+    <h3 class="mb-0 fw-bold" style="font-size: 1.4rem;">OPH Eats 眼科訂餐系統維護</h3>
   </div>
 
   <div class="container">
@@ -68,7 +60,6 @@
 
           <div id="adminPanel">
             
-            <!-- 系統開關 -->
             <div class="card mb-4 border-primary">
               <div class="card-body text-center">
                 <h5 class="card-title mb-3">今日點餐系統狀態</h5>
@@ -77,7 +68,6 @@
               </div>
             </div>
 
-            <!-- 每日菜單設定區 -->
             <div class="card mb-4 border-secondary">
               <div class="card-body">
                 <h5 class="card-title mb-3 text-secondary">📅 設定今日菜單</h5>
@@ -88,10 +78,9 @@
                 </ul>
                 
                 <div class="tab-content">
-                  <!-- 挑選舊菜單 -->
                   <div class="tab-pane fade show active" id="tab-select">
                     <button class="btn btn-sm btn-outline-secondary mb-3 w-100" onclick="loadDriveFiles()">🔄 重新整理圖庫清單</button>
-                    <label class="form-label fw-bold">🍱 便當</label>
+                    <label class="form-label fw-bold">🍱 餐點</label>
                     <div class="input-group mb-3">
                       <select class="form-select" id="bentoSelect"><option value="">載入中...</option></select>
                       <button class="btn btn-outline-primary" onclick="setMenu('bento')">套用</button>
@@ -103,9 +92,8 @@
                     </div>
                   </div>
 
-                  <!-- 拍照新菜單 -->
                   <div class="tab-pane fade" id="tab-upload">
-                    <label class="form-label fw-bold">🍱 拍攝便當菜單</label>
+                    <label class="form-label fw-bold">🍱 拍攝餐點菜單</label>
                     <div class="input-group mb-3">
                       <input type="text" class="form-control" id="bentoFileName" placeholder="店家(如:老紀)">
                       <input type="file" class="form-control" id="bentoFile" accept="image/*">
@@ -122,7 +110,6 @@
               </div>
             </div>
 
-            <!-- 獨立圖庫管理區 -->
             <div class="card mb-4 border-info">
               <div class="card-body">
                 <h5 class="card-title mb-3 text-info">📁 菜單圖庫管理</h5>
@@ -145,7 +132,6 @@
               </div>
             </div>
 
-            <!-- 動態選單管理區 (已收合) -->
             <button class="btn btn-outline-secondary w-100 mb-2 fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#optionsCollapse">
               ⚙️ 展開/收合 診次與職級設定
             </button>
@@ -174,90 +160,54 @@
     </div>
   </div>
 
-  <!-- 引入 Bootstrap JS -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
   <script>
-    // ⚠️ 記得確保此網址為您的最新網址
+    // ⚠️ 確保這裡是您的最新網址
     const GAS_API_URL = "https://script.google.com/macros/s/AKfycbxCYuW1EjxLHqBvppXBlEKs2jXMdUJ7k7qIclgarxQpjlpk5N1j4UDcvCVHpkts2jKJ/exec"; 
-    let currentPwd = "";
-    let clinicsList = [];
-    let ranksList = [];
-    let currentDriveFiles = [];
+    let currentPwd = ""; let clinicsList = []; let ranksList = []; let currentDriveFiles = [];
 
-    function showLoading(text) {
-      document.getElementById('overlayText').innerText = text;
-      document.getElementById('overlay').style.display = 'flex';
-    }
+    function showLoading(text) { document.getElementById('overlayText').innerText = text; document.getElementById('overlay').style.display = 'flex'; }
     function hideLoading() { document.getElementById('overlay').style.display = 'none'; }
 
     function apiCall(payload, successMsg, callback) {
       fetch(GAS_API_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(payload) })
-      .then(res => res.json())
-      .then(data => {
-        hideLoading();
-        if(data.success) {
-          if(successMsg) alert(successMsg);
-          if(callback) callback(data);
-        } else alert("❌ 錯誤：" + data.message);
-      }).catch(err => { hideLoading(); alert("網路錯誤：" + err); });
+      .then(res => res.json()).then(data => { hideLoading(); if(data.success) { if(successMsg) alert(successMsg); if(callback) callback(data); } else alert("❌ 錯誤：" + data.message); })
+      .catch(err => { hideLoading(); alert("網路錯誤：" + err); });
     }
 
     function login() {
-      currentPwd = document.getElementById('adminPwd').value;
-      showLoading("登入驗證中...");
+      currentPwd = document.getElementById('adminPwd').value; showLoading("登入驗證中...");
       apiCall({ action: "adminLogin", password: currentPwd }, null, () => {
-        document.getElementById('loginSection').style.display = 'none';
-        document.getElementById('adminPanel').style.display = 'block';
-        loadCurrentOptions();
-        loadDriveFiles(); 
+        document.getElementById('loginSection').style.display = 'none'; document.getElementById('adminPanel').style.display = 'block';
+        loadCurrentOptions(); loadDriveFiles(); 
       });
     }
 
-    // 載入雲端硬碟檔案
     function loadDriveFiles() {
       showLoading("讀取圖庫中...");
       apiCall({ action: "getDriveFiles", password: currentPwd }, null, (res) => {
         currentDriveFiles = res.files;
-        let bentoHtml = '<option value="">-- 請選擇便當菜單 --</option>';
-        let drinkHtml = '<option value="">-- 請選擇飲料菜單 --</option>';
-        let listHtml = '';
-        
+        let bentoHtml = '<option value="">-- 請選擇餐點菜單 --</option>'; let drinkHtml = '<option value="">-- 請選擇飲料菜單 --</option>'; let listHtml = '';
         currentDriveFiles.forEach(f => {
           const opt = `<option value="${f.url}">${f.name}</option>`;
-          if (f.name.startsWith('[餐點]')) bentoHtml += opt;
-          else if (f.name.startsWith('[飲料]')) drinkHtml += opt;
-          else { bentoHtml += opt; drinkHtml += opt; }
-          
-          listHtml += `
-            <div class="file-list-item">
-              <span class="text-truncate" style="max-width: 70%;">${f.name}</span>
-              <button class="btn btn-sm btn-outline-danger" onclick="deleteMenuFile('${f.id}', '${f.name}')">刪除</button>
-            </div>`;
+          if (f.name.startsWith('[餐點]')) bentoHtml += opt; else if (f.name.startsWith('[飲料]')) drinkHtml += opt; else { bentoHtml += opt; drinkHtml += opt; }
+          listHtml += `<div class="file-list-item"><span class="text-truncate" style="max-width: 70%;">${f.name}</span><button class="btn btn-sm btn-outline-danger" onclick="deleteMenuFile('${f.id}', '${f.name}')">刪除</button></div>`;
         });
-        
-        document.getElementById('bentoSelect').innerHTML = bentoHtml;
-        document.getElementById('drinkSelect').innerHTML = drinkHtml;
+        document.getElementById('bentoSelect').innerHTML = bentoHtml; document.getElementById('drinkSelect').innerHTML = drinkHtml;
         document.getElementById('fileListContainer').innerHTML = listHtml || '<div class="p-2 text-muted">目前沒有檔案</div>';
       });
     }
 
     function setMenu(type) {
-      const url = document.getElementById(type + 'Select').value;
-      if(!url) return alert("請選擇圖片！");
-      showLoading("套用設定中...");
-      apiCall({ action: "setMenuUrl", menuType: type, url: url, password: currentPwd }, "✅ 菜單已套用！");
+      const url = document.getElementById(type + 'Select').value; if(!url) return alert("請選擇圖片！");
+      showLoading("套用設定中..."); apiCall({ action: "setMenuUrl", menuType: type, url: url, password: currentPwd }, "✅ 菜單已套用！");
     }
 
-    // 核心處理圖片壓縮與上傳
     function processAndUpload(type, isSetToToday) {
-      const fileInput = document.getElementById(type + 'File');
-      const nameInput = document.getElementById(type + 'FileName');
-      if (!nameInput.value.trim()) return alert("⚠️ 請輸入店家名稱！");
-      if (!fileInput.files[0]) return alert("⚠️ 請選擇圖片！");
-      
-      const file = fileInput.files[0];
-      const prefix = type === 'bento' ? '[餐點]' : '[飲料]';
+      const fileInput = document.getElementById(type + 'File'); const nameInput = document.getElementById(type + 'FileName');
+      if (!nameInput.value.trim()) return alert("⚠️ 請輸入店家名稱！"); if (!fileInput.files[0]) return alert("⚠️ 請選擇圖片！");
+      const file = fileInput.files[0]; const prefix = type === 'bento' ? '[餐點]' : '[飲料]';
       const finalFilename = `${prefix}${nameInput.value.trim()}_${new Date().getTime()}.jpg`;
       
       showLoading("照片壓縮與上傳中...");
@@ -265,92 +215,37 @@
       reader.onload = function(e) {
         const img = new Image();
         img.onload = function() {
-          const canvas = document.createElement('canvas');
-          let width = img.width, height = img.height;
-          const MAX_SIZE = 1200;
-          if (width > height && width > MAX_SIZE) { height *= MAX_SIZE / width; width = MAX_SIZE; }
-          else if (height > MAX_SIZE) { width *= MAX_SIZE / height; height = MAX_SIZE; }
-          
-          canvas.width = width; canvas.height = height;
-          canvas.getContext('2d').drawImage(img, 0, 0, width, height);
-          
-          apiCall({
-            action: isSetToToday ? "uploadMenu" : "uploadOnly",
-            menuType: type, filename: finalFilename, image: canvas.toDataURL('image/jpeg', 0.8), password: currentPwd
-          }, isSetToToday ? "✅ 照片上傳並套用成功！" : "✅ 檔案已上傳至圖庫！", () => {
-            fileInput.value = ""; nameInput.value = ""; loadDriveFiles();
-          });
-        };
-        img.src = e.target.result;
-      };
-      reader.readAsDataURL(file);
+          const canvas = document.createElement('canvas'); let width = img.width, height = img.height; const MAX_SIZE = 1200;
+          if (width > height && width > MAX_SIZE) { height *= MAX_SIZE / width; width = MAX_SIZE; } else if (height > MAX_SIZE) { width *= MAX_SIZE / height; height = MAX_SIZE; }
+          canvas.width = width; canvas.height = height; canvas.getContext('2d').drawImage(img, 0, 0, width, height);
+          apiCall({ action: isSetToToday ? "uploadMenu" : "uploadOnly", menuType: type, filename: finalFilename, image: canvas.toDataURL('image/jpeg', 0.8), password: currentPwd }, isSetToToday ? "✅ 照片上傳並套用成功！" : "✅ 檔案已上傳至圖庫！", () => { fileInput.value = ""; nameInput.value = ""; loadDriveFiles(); });
+        }; img.src = e.target.result;
+      }; reader.readAsDataURL(file);
     }
 
-    // 獨立上傳至圖庫
     function uploadToLibrary() {
-      const prefix = document.getElementById('libPrefix').value;
-      const type = prefix === '[餐點]' ? 'bento' : 'drink';
-      
+      const prefix = document.getElementById('libPrefix').value; const type = prefix === '[餐點]' ? 'bento' : 'drink';
       document.getElementById(type + 'FileName').value = document.getElementById('libFileName').value;
       document.getElementById(type + 'File').files = document.getElementById('libFile').files;
-      
       processAndUpload(type, false);
-      
-      document.getElementById('libFileName').value = "";
-      document.getElementById('libFile').value = "";
+      document.getElementById('libFileName').value = ""; document.getElementById('libFile').value = "";
     }
 
     function deleteMenuFile(fileId, fileName) {
-      if(!confirm(`確定要刪除「${fileName}」嗎？這將會把檔案移至垃圾桶。`)) return;
-      showLoading("刪除中...");
+      if(!confirm(`確定要刪除「${fileName}」嗎？`)) return; showLoading("刪除中...");
       apiCall({ action: "deleteFile", fileId: fileId, password: currentPwd }, null, () => loadDriveFiles());
     }
 
-    // --- 選單排序與編輯 ---
-    function loadCurrentOptions() {
-      apiCall({ action: "getSystemData" }, null, (res) => {
-        clinicsList = res.data.clinics || []; ranksList = res.data.ranks || []; renderTags();
-      });
-    }
-
+    function loadCurrentOptions() { apiCall({ action: "getSystemData" }, null, (res) => { clinicsList = res.data.clinics || []; ranksList = res.data.ranks || []; renderTags(); }); }
     function renderTags() {
-      const buildTags = (arr, type) => arr.map((item, i) => `
-        <span class="tag-item">
-          <span class="tag-action" onclick="moveOption('${type}', ${i}, -1)">◀</span>${item}<span class="tag-action" onclick="moveOption('${type}', ${i}, 1)">▶</span>
-          <span class="tag-close" onclick="removeOption('${type}', ${i})">&times;</span>
-        </span>`).join('');
-      document.getElementById('clinicTags').innerHTML = buildTags(clinicsList, 'clinic');
-      document.getElementById('rankTags').innerHTML = buildTags(ranksList, 'rank');
+      const buildTags = (arr, type) => arr.map((item, i) => `<span class="tag-item"><span class="tag-action" onclick="moveOption('${type}', ${i}, -1)">◀</span>${item}<span class="tag-action" onclick="moveOption('${type}', ${i}, 1)">▶</span><span class="tag-close" onclick="removeOption('${type}', ${i})">&times;</span></span>`).join('');
+      document.getElementById('clinicTags').innerHTML = buildTags(clinicsList, 'clinic'); document.getElementById('rankTags').innerHTML = buildTags(ranksList, 'rank');
     }
-
-    function moveOption(type, idx, dir) {
-      const arr = type === 'clinic' ? clinicsList : ranksList;
-      if (dir === -1 && idx > 0) [arr[idx-1], arr[idx]] = [arr[idx], arr[idx-1]];
-      else if (dir === 1 && idx < arr.length - 1) [arr[idx], arr[idx+1]] = [arr[idx+1], arr[idx]];
-      renderTags();
-    }
-
-    function addOption(type) {
-      const input = document.getElementById(type === 'clinic' ? 'newClinicInput' : 'newRankInput');
-      if (!input.value.trim()) return;
-      (type === 'clinic' ? clinicsList : ranksList).push(input.value.trim());
-      input.value = ''; renderTags();
-    }
-
-    function removeOption(type, index) {
-      (type === 'clinic' ? clinicsList : ranksList).splice(index, 1); renderTags();
-    }
-
-    function saveOptions() {
-      showLoading("儲存設定中...");
-      apiCall({ action: "updateOptions", clinics: clinicsList, ranks: ranksList, password: currentPwd }, "✅ 選單設定已儲存！");
-    }
-
-    function toggleSys(isOpen) {
-      if(!confirm(`確定要${isOpen ? '開放' : '關閉'}系統嗎？`)) return;
-      showLoading("設定中...");
-      apiCall({ action: "toggleSystem", status: isOpen, password: currentPwd }, null, (data) => alert(data.message));
-    }
+    function moveOption(type, idx, dir) { const arr = type === 'clinic' ? clinicsList : ranksList; if (dir === -1 && idx > 0) [arr[idx-1], arr[idx]] = [arr[idx], arr[idx-1]]; else if (dir === 1 && idx < arr.length - 1) [arr[idx], arr[idx+1]] = [arr[idx+1], arr[idx]]; renderTags(); }
+    function addOption(type) { const input = document.getElementById(type === 'clinic' ? 'newClinicInput' : 'newRankInput'); if (!input.value.trim()) return; (type === 'clinic' ? clinicsList : ranksList).push(input.value.trim()); input.value = ''; renderTags(); }
+    function removeOption(type, index) { (type === 'clinic' ? clinicsList : ranksList).splice(index, 1); renderTags(); }
+    function saveOptions() { showLoading("儲存設定中..."); apiCall({ action: "updateOptions", clinics: clinicsList, ranks: ranksList, password: currentPwd }, "✅ 選單設定已儲存！"); }
+    function toggleSys(isOpen) { if(!confirm(`確定要${isOpen ? '開放' : '關閉'}系統嗎？`)) return; showLoading("設定中..."); apiCall({ action: "toggleSystem", status: isOpen, password: currentPwd }, null, (data) => alert(data.message)); }
   </script>
 </body>
 </html>
