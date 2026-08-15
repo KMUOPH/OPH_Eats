@@ -2,7 +2,6 @@
 <html lang="zh-TW">
   <head>
     <meta charset="UTF-8">
-    <!-- ⚠️ 加上 id="viewport"，讓程式可以動態控制縮放 -->
     <meta id="viewport" name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>眼科訂餐</title>
     
@@ -35,9 +34,7 @@
       #loadingScreen, #closedScreen { text-align: center; padding: 40px 20px; }
       .menu-img { width: 100%; border-radius: 8px; margin-bottom: 15px; display: none; box-shadow: 0 2px 5px rgba(0,0,0,0.15); border: 1px solid #e2e8f0; cursor: pointer; }
       
-      /* 橫幅樣式 */
       .banner-header { background-color: #536e86; color: white; height: 65px; margin-bottom: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); width: 100%; display: flex; justify-content: space-between; align-items: center; padding-right: 15px; }
-      
       .section-box { background-color: #ffffff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 15px; margin-bottom: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
       
       .clinic-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; }
@@ -47,19 +44,19 @@
       .btn-clear { border-color: #ced4da; color: #6c757d; }
       .btn-clear:hover { background-color: #e9ecef; color: #495057; }
       
-      /* 高對比關閉按鈕 */
       .high-contrast-close { background-color: rgba(255, 255, 255, 0.95) !important; opacity: 1 !important; border-radius: 50% !important; box-shadow: 0 3px 8px rgba(0, 0, 0, 0.4) !important; padding: 0.6rem !important; z-index: 1050; }
     </style>
   </head>
   <body>
     
-    <!-- 滿版橫幅 -->
     <div class="banner-header">
-      <div class="d-flex align-items-center h-100 overflow-hidden">
-        <img src="logo.jpg" alt="Logo" style="height: 100%; object-fit: cover; margin-right: 10px;">
-        <h3 class="mb-0 fw-bold text-truncate" style="font-size: 1.25rem;">OPH Eats 眼科訂餐</h3>
+      <div class="d-flex align-items-center h-100 overflow-hidden ms-3">
+        <!-- 調整 Logo：加入白底、縮小內距、導圓角 -->
+        <img src="logo.jpg" alt="Logo" style="height: 42px; width: 42px; object-fit: contain; background-color: white; padding: 4px; border-radius: 8px; margin-right: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.2);">
+        <h3 class="mb-0 fw-bold text-truncate" style="font-size: 1.5rem;">OPH Eats 眼科訂餐</h3>
       </div>
-      <button class="btn btn-sm text-white flex-shrink-0 ms-2" style="background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.5); border-radius: 15px; padding: 4px 10px; font-size: 0.85rem; font-weight: bold;" onclick="location.reload()">重新整理</button>
+      <!-- 改為呼叫 loadData() 進行背景同步，不再觸發 location.reload() -->
+      <button class="btn btn-sm text-white flex-shrink-0 ms-2" style="background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.5); border-radius: 15px; padding: 4px 10px; font-size: 0.85rem; font-weight: bold;" onclick="loadData(false)">重新整理</button>
     </div>
 
     <!-- 圖片放大視窗 -->
@@ -77,6 +74,8 @@
     <div class="container">
       <div class="row justify-content-center">
         <div class="col-md-8 col-lg-6">
+
+          <div id="dateAlertBox" class="mb-3 text-center d-none"></div>
 
           <div class="card p-3 p-md-4">
             
@@ -153,17 +152,13 @@
       </div>
     </div>
 
-    <!-- 引入 Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
       const GAS_API_URL = "https://script.google.com/macros/s/AKfycbxCYuW1EjxLHqBvppXBlEKs2jXMdUJ7k7qIclgarxQpjlpk5N1j4UDcvCVHpkts2jKJ/exec";
 
-      // --- 動態縮放控制 (Dynamic Zoom) ---
-      // 當放大圖片開啟時，允許雙指縮放
       document.getElementById('imageModal').addEventListener('show.bs.modal', function () {
         document.getElementById('viewport').setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes');
       });
-      // 當按下 X 關閉圖片時，瞬間鎖死縮放，迫使手機畫面彈回 100% 原始大小
       document.getElementById('imageModal').addEventListener('hidden.bs.modal', function () {
         document.getElementById('viewport').setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no');
       });
@@ -184,13 +179,24 @@
 
       function addNote(text) { const n = document.getElementById('notes'); n.value = n.value ? n.value + "。" + text : text; }
 
-      window.onload = function() {
+      // 核心：背景同步重整資料，不清除使用者已輸入的內容
+      function loadData(isInitial = true) {
+        if (!isInitial) {
+          const overlay = document.createElement('div'); overlay.id = 'syncOverlay';
+          overlay.style = 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 1060; display: flex; justify-content: center; align-items: center; color: white; flex-direction: column;';
+          overlay.innerHTML = '<div class="spinner-border text-light mb-3" style="width: 3rem; height: 3rem;" role="status"></div><h4 class="fw-bold">更新中...</h4>';
+          document.body.appendChild(overlay);
+        }
+
         fetch(GAS_API_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action: "getSystemData" }) })
         .then(res => res.json())
         .then(response => {
-          document.getElementById('loadingScreen').classList.add('d-none');
+          if (isInitial) document.getElementById('loadingScreen').classList.add('d-none');
+          else { const overlay = document.getElementById('syncOverlay'); if (overlay) overlay.remove(); }
+
           if(response.success && response.data.isOpen) {
             document.getElementById('mainContent').classList.remove('d-none');
+            document.getElementById('closedScreen').classList.add('d-none');
             
             let isToday = false; let m = "", d = "", w = "";
             const today = new Date();
@@ -202,6 +208,13 @@
               m = parts[1].replace(/^0+/, ''); d = parts[2].replace(/^0+/, '');
               w = ['日', '一', '二', '三', '四', '五', '六'][dObj.getDay()];
               isToday = (response.data.menuDate === todayStr);
+            }
+
+            const alertBox = document.getElementById('dateAlertBox'); alertBox.classList.remove('d-none');
+            if (response.data.menuDate === todayStr) {
+              alertBox.innerHTML = `<span class="badge bg-success py-2 px-3 fs-6 rounded-pill shadow-sm">✅ 菜單為今日 (${todayStr} 週${dayOfWeek}) 最新版</span>`;
+            } else {
+              alertBox.innerHTML = `<div class="alert alert-danger fw-bold shadow-sm p-2">⚠️ 警告：目前菜單更新於 ${response.data.menuDate || '未知日期'}，非今日菜單！<br><span class="small fw-normal">今日為 ${todayStr} (週${dayOfWeek})</span></div>`;
             }
 
             const bTitle = document.getElementById('bentoSectionTitle');
@@ -219,6 +232,10 @@
             if(response.data.bentoMenuUrl) { const bImg = document.getElementById('bentoMenuImg'); bImg.src = formatDriveImageUrl(response.data.bentoMenuUrl); bImg.style.display = 'block'; }
             if(response.data.drinkMenuUrl) { const dImg = document.getElementById('drinkMenuImg'); dImg.src = formatDriveImageUrl(response.data.drinkMenuUrl); dImg.style.display = 'block'; }
 
+            // 紀錄使用者原本選中的診次與職級，避免被清除
+            const currentClinic = document.querySelector('input[name="clinic"]:checked')?.value;
+            const currentRank = document.querySelector('input[name="rank"]:checked')?.value;
+
             const clinicContainer = document.getElementById('clinicGroup'); clinicContainer.innerHTML = '';
             response.data.clinics.forEach((c, idx) => {
               const spanClass = (c === '非診間') ? 'style="grid-column: span 2;"' : '';
@@ -230,9 +247,23 @@
               rankContainer.innerHTML += `<div class="col-4"><input type="radio" class="btn-check rank-radio" name="rank" id="r_${idx}" value="${r}"><label class="btn btn-outline-theme w-100 p-2 text-center" style="margin:0; font-size:0.95rem;" for="r_${idx}">${r}</label></div>`;
             });
 
-          } else { document.getElementById('closedScreen').classList.remove('d-none'); }
-        }).catch(err => alert("網路連線錯誤，無法取得系統狀態。"));
+            // 復原使用者的選擇
+            if (currentClinic) { const rb = document.querySelector(`input[name="clinic"][value="${currentClinic}"]`); if (rb) rb.checked = true; }
+            if (currentRank) { const rb = document.querySelector(`input[name="rank"][value="${currentRank}"]`); if (rb) rb.checked = true; }
+            toggleRankName();
+
+          } else { 
+            document.getElementById('mainContent').classList.add('d-none');
+            document.getElementById('closedScreen').classList.remove('d-none'); 
+          }
+        }).catch(err => {
+          if (!isInitial) { const overlay = document.getElementById('syncOverlay'); if (overlay) overlay.remove(); }
+          alert("網路連線錯誤，無法取得系統狀態。");
+        });
       };
+
+      // 初次載入
+      window.onload = () => loadData(true);
 
       function toggleRankName() {
         const c = document.querySelector('input[name="clinic"]:checked');
