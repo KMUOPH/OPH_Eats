@@ -23,14 +23,235 @@
     .btn-theme { background-color: #9b727a !important; color: white !important; border: none; }
     .btn-theme:hover { background-color: #846068 !important; }
     
-    .btn-outline-dark-theme { color: #495057; border-color: #adb5bd; }
-    .btn-outline-dark-theme:hover { background-color: #e9ecef; color: #212529; }
+    .section-block { margin-bottom: 28px; }
     
-    /* 無粉色的乾淨標籤樣式 */
-    .tag-item { display: inline-block; background: #ffffff; color: #343a40; padding: 5px 10px; border-radius: 8px; margin: 4px; font-weight: bold; border: 1px solid #ced4da;}
-    .tag-action { cursor: pointer; color: #6c757d; padding: 0 4px; font-size: 0.9em;}
-    .tag-action:hover { color: #212529; }
-    .tag-close { cursor: pointer; margin-left: 6px; font-weight: bold; color: #dc3545; }
+    /* 淺灰底黑字的標題列 */
+    .section-header { 
+      background-color: #e9ecef; 
+      color: #212529; 
+      border-radius: 8px; 
+      padding: 10px 15px; 
+      font-size: 1rem; 
+      font-weight: bold; 
+      margin-bottom: 12px; 
+    }
+    
+    #adminPanel { display: none; }
+    #overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 9999; justify-content: center; align-items: center; color: white; flex-direction: column; }
+    
+    /* 頂部橫幅 */
+    .banner-header { background-color: #9b727a; color: white; height: 60px; margin-bottom: 25px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); width: 100%; display: flex; align-items: center; padding: 0 15px; }
+
+    /* 垂直清單的微調 */
+    .list-item-custom { border-bottom: 1px solid #dee2e6; padding: 8px 4px; display: flex; justify-content: space-between; align-items: center; }
+    .list-item-custom:last-child { border-bottom: none; }
+    .arrow-btn { cursor: pointer; color: #adb5bd; font-size: 12px; padding: 2px; line-height: 1; }
+    .arrow-btn:hover { color: #495057; }
+    .trash-btn { cursor: pointer; color: #dc3545; }
+    .trash-btn:hover { color: #a52834; }
+    
+    /* 垃圾桶 SVG 樣式 */
+    .svg-icon { width: 16px; height: 16px; fill: currentColor; }
+  </style>
+</head>
+<body>
+  
+  <div id="overlay">
+    <div class="spinner-border text-light mb-3" style="width: 3rem; height: 3rem;" role="status"></div>
+    <h4 id="overlayText">處理中，請稍候...</h4>
+  </div>
+
+  <div class="banner-header">
+    <div class="d-flex align-items-center h-100 overflow-hidden">
+      <img src="logo.jpg" alt="Logo" style="height: 46px; width: 46px; border-radius: 50%; object-fit: cover; box-shadow: 0 2px 4px rgba(0,0,0,0.2); margin-right: 12px;">
+      <h3 class="mb-0 fw-bold text-truncate" style="font-size: 1.25rem;">OPH Eats 眼科訂餐系統後台管理</h3>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-md-8 col-lg-6 px-3">
+        
+        <!-- 登入區塊 -->
+        <div id="loginSection" class="mt-5">
+          <h4 class="fw-bold text-theme mb-4 text-center">後台管理登入</h4>
+          <input type="password" id="adminPwd" class="form-control mb-3 fw-bold" placeholder="請輸入管理員密碼">
+          <button class="btn btn-theme w-100 fw-bold" onclick="login()">登入系統</button>
+        </div>
+
+        <!-- 後台管理區塊 -->
+        <div id="adminPanel">
+          
+          <!-- 目前點餐系統狀態 -->
+          <div class="section-block">
+            <div class="section-header">目前點餐系統狀態</div>
+            <div class="d-flex flex-column align-items-center px-2 mt-3">
+              <!-- 狀態標籤 (動態切換 bg-success / bg-danger) -->
+              <div id="systemStatusBadge" class="badge fs-5 px-4 py-2 mb-3 shadow-sm">讀取中...</div>
+              
+              <div class="d-flex w-100 gap-2 mt-1">
+                <button class="btn btn-outline-success btn-lg fw-bold flex-fill" onclick="toggleSystemState(true)">開放</button>
+                <button class="btn btn-outline-danger btn-lg fw-bold flex-fill" onclick="toggleSystemState(false)">關閉</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- 設定今日菜單 (純圖庫挑選) -->
+          <div class="section-block">
+            <div class="section-header">設定今日菜單</div>
+            <div class="px-2">
+              <button class="btn btn-theme btn-sm w-100 fw-bold mb-3" onclick="loadDriveFiles()">重新整理圖庫清單</button>
+              
+              <div class="input-group mb-3 shadow-sm">
+                <select class="form-select fw-bold" id="bentoSelect"><option value="">載入中...</option></select>
+                <button class="btn btn-theme fw-bold px-3" onclick="setMenu('bento')">套用</button>
+              </div>
+              
+              <div class="input-group shadow-sm">
+                <select class="form-select fw-bold" id="drinkSelect"><option value="">載入中...</option></select>
+                <button class="btn btn-theme fw-bold px-3" onclick="setMenu('drink')">套用</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- 菜單圖庫管理 (左右雙欄) -->
+          <div class="section-block">
+            <div class="section-header">菜單圖庫管理</div>
+            
+            <!-- 上傳區：左右兩側 -->
+            <div class="row g-2 px-2 mb-3 mt-2">
+              <!-- 左側：餐點 -->
+              <div class="col-6">
+                <div class="p-2 border rounded" style="background-color: #f8f9fa;">
+                  <div class="fw-bold text-secondary small mb-2 text-center">🍱 餐點區</div>
+                  <input type="text" class="form-control form-control-sm fw-bold mb-2" id="libBentoName" placeholder="輸入餐點店家">
+                  <input type="file" class="form-control form-control-sm mb-2" id="libBentoFile" accept="image/*">
+                  <button class="btn btn-theme btn-sm fw-bold w-100" onclick="uploadToLibrary('bento')">上傳</button>
+                </div>
+              </div>
+              <!-- 右側：飲料 -->
+              <div class="col-6">
+                <div class="p-2 border rounded" style="background-color: #f8f9fa;">
+                  <div class="fw-bold text-secondary small mb-2 text-center">🥤 飲料區</div>
+                  <input type="text" class="form-control form-control-sm fw-bold mb-2" id="libDrinkName" placeholder="輸入飲料店家">
+                  <input type="file" class="form-control form-control-sm mb-2" id="libDrinkFile" accept="image/*">
+                  <button class="btn btn-theme btn-sm fw-bold w-100" onclick="uploadToLibrary('drink')">上傳</button>
+                </div>
+              </div>
+            </div>
+            
+            <!-- 現有檔案區：左右兩側 -->
+            <div class="row g-3 px-2 mt-2">
+              <div class="col-6">
+                <div class="fw-bold text-secondary small border-bottom mb-2 pb-1 text-center">現有餐點檔案</div>
+                <div id="bentoFileListContainer" style="max-height: 200px; overflow-y: auto; overflow-x: hidden;">
+                  <div class="text-muted small text-center">讀取中...</div>
+                </div>
+              </div>
+              <div class="col-6">
+                <div class="fw-bold text-secondary small border-bottom mb-2 pb-1 text-center">現有飲料檔案</div>
+                <div id="drinkFileListContainer" style="max-height: 200px; overflow-y: auto; overflow-x: hidden;">
+                  <div class="text-muted small text-center">讀取中...</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 診次與職級設定 -->
+          <div class="section-block">
+            <!-- 深灰底白字按鈕 -->
+            <button class="btn w-100 fw-bold shadow-sm" style="background-color: #5c636a; color: white; border: none;" type="button" data-bs-toggle="collapse" data-bs-target="#optionsCollapse">
+              展開/收合 診次與職級清單設定
+            </button>
+            
+            <div class="collapse" id="optionsCollapse">
+              <div class="p-3 mt-2" style="background-color: #f8f9fa; border-radius: 8px; border: 1px solid #dee2e6;">
+                
+                <!-- 垂直雙欄排列 -->
+                <div class="row g-3 mb-3">
+                  <!-- 左側：診次 -->
+                  <div class="col-6">
+                    <div class="fw-bold text-secondary small mb-2 text-center">🏥 診次清單</div>
+                    <div class="input-group input-group-sm mb-2">
+                      <input type="text" class="form-control fw-bold" id="newClinicInput" placeholder="輸入">
+                      <button class="btn btn-theme fw-bold" onclick="addOption('clinic')">新增</button>
+                    </div>
+                    <div id="clinicList" class="bg-white border rounded p-1" style="min-height: 150px; max-height: 250px; overflow-y: auto;"></div>
+                  </div>
+                  
+                  <!-- 右側：職級 -->
+                  <div class="col-6">
+                    <div class="fw-bold text-secondary small mb-2 text-center">🧑‍⚕️ 職級清單</div>
+                    <div class="input-group input-group-sm mb-2">
+                      <input type="text" class="form-control fw-bold" id="newRankInput" placeholder="輸入">
+                      <button class="btn btn-theme fw-bold" onclick="addOption('rank')">新增</button>
+                    </div>
+                    <div id="rankList" class="bg-white border rounded p-1" style="min-height: 150px; max-height: 250px; overflow-y: auto;"></div>
+                  </div>
+                </div>
+
+                <button class="btn btn-theme w-100 fw-bold py-2 shadow-sm" onclick="saveOptions()">儲存選單設定</button>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    // 共用的垃圾桶 SVG 圖示
+    const trashIcon = `<svg xmlns="http://www.w3.org/2000/svg" class="svg-icon" viewBox="0 0 16 16"><path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/><path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 這些修改方向非常精準！完全切中了手機版後台管理的「痛點」，特別是將圖庫與選單改為「左右兩欄」與「垂直排列」，這能大幅提升畫面的空間利用率與閱讀性。
+
+先為您解答關於圖庫載入的疑問：
+
+### 💡 關於您的疑問：
+**2. 開啟 admin.html 時，不會自動去抓圖庫嗎？檔案很多會不會很慢？那什麼時候需要按重新整理？**
+* **自動抓取：** 其實在上一版，只要您輸入密碼按下「登入」成功的瞬間，系統**就已經會自動去抓取圖庫了**！
+* **會不會很慢或當機？** Google Drive 的 API 效能非常好，即使有 50~100 張菜單，讀取通常也只需要 **1 到 3 秒**。除非檔案超過好幾百個，否則不會有無法讀取的問題。
+* **何時需要按「重新整理」？** 只有在一個情況下會用到：如果您（或其他管理員）**直接打開手機的 Google Drive APP 刪除或新增了照片**，因為網頁不會自動知道，這時候才需要按一下「重新整理」讓網頁同步最新狀態。
+
+---
+
+### 🛠️ 本次介面大升級重點：
+1. **目前點餐系統狀態**：標題更新，拔除「目前狀態：」，直接用大大的**「綠底開放訂餐 / 紅底關閉訂餐」**標籤呈現，且切換時不再跳出煩人的提示框！
+2. **上傳區與圖庫區（左右雙欄）**：完美分割為左半邊「餐點」、右半邊「飲料」。在手機螢幕上左右並排，直覺且省下大量滑動空間。
+3. **紅色垃圾桶 SVG 圖示**：遵照您的指示，徹底捨棄 Emoji，我為您植入了原生的**紅色垃圾桶圖示**，專業度大幅提升。
+4. **診次與職級設定（垂直排列 + 自動定位）**：
+   * 改為左側診次、右側職級的**垂直清單**。
+   * 順序調整改為清晰的「🔼 / 🔽」按鈕。
+   * 按鈕底色改為深灰 (`#6c757d`)，加上「展開/收合」。
+   * **超貼心功能**：當您點擊展開時，畫面會**自動往上滑動**，把清單完整呈現在您眼前！
+
+請直接複製以下程式碼，覆蓋您的 GitHub **`admin.html` (後台管理)**：
+
+```html
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>訂餐系統維護</title>
+  
+  <link rel="icon" href="logoi.jpg" type="image/jpeg">
+  <link rel="apple-touch-icon" href="logoi.jpg">
+  <link rel="apple-touch-icon" sizes="152x152" href="logoi.jpg">
+  <link rel="apple-touch-icon" sizes="180x180" href="logoi.jpg">
+  <link rel="apple-touch-icon" sizes="167x167" href="logoi.jpg">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="mobile-web-app-capable" content="yes">
+  
+  <link href="[https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css](https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css)" rel="stylesheet">
+  <style>
+    body { background-color: #ffffff; padding: 0; padding-bottom: 30px; font-family: "微軟正黑體", sans-serif; }
+    
+    /* 乾燥玫瑰粉色系 (按鈕全域套用) */
+    .text-theme { color: #9b727a !important; }
+    .btn-theme { background-color: #9b727a !important; color: white !important; border: none; }
+    .btn-theme:hover { background-color: #846068 !important; }
     
     .section-block { margin-bottom: 28px; }
     
@@ -46,12 +267,19 @@
     }
     
     #adminPanel { display: none; }
-    
     #overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 9999; justify-content: center; align-items: center; color: white; flex-direction: column; }
-    .file-list-item { display: flex; justify-content: space-between; align-items: center; padding: 8px; border-bottom: 1px solid #eee; }
     
     /* 頂部橫幅 */
     .banner-header { background-color: #9b727a; color: white; height: 60px; margin-bottom: 25px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); width: 100%; display: flex; align-items: center; padding: 0 15px; }
+    
+    /* 垃圾桶與操作按鈕 */
+    .action-icon { cursor: pointer; padding: 4px; color: #6c757d; }
+    .action-icon:hover { color: #343a40; }
+    .trash-icon { cursor: pointer; padding: 4px; color: #dc3545; }
+    
+    /* 圖庫列表微調 */
+    .file-item { border-bottom: 1px solid #f8f9fa; padding: 8px 0; }
+    .file-item:last-child { border-bottom: none; }
   </style>
 </head>
 <body>
@@ -84,14 +312,14 @@
           
           <!-- 系統狀態 -->
           <div class="section-block">
-            <div class="section-header">今日點餐系統狀態</div>
+            <div class="section-header">目前點餐系統狀態</div>
             <div class="d-flex justify-content-between align-items-center px-2">
-              <span id="systemStatusText" class="fw-bold fs-5">狀態讀取中...</span>
-              <button class="btn btn-outline-dark-theme fw-bold" onclick="toggleSystemState()">切換狀態</button>
+              <span id="systemStatusBadge" class="badge bg-secondary fs-5">讀取中...</span>
+              <button class="btn btn-outline-secondary fw-bold btn-sm" onclick="toggleSystemState()">切換狀態</button>
             </div>
           </div>
 
-          <!-- 設定今日菜單 (純圖庫挑選) -->
+          <!-- 設定今日菜單 -->
           <div class="section-block">
             <div class="section-header">設定今日菜單</div>
             <div class="px-2">
@@ -109,57 +337,72 @@
             </div>
           </div>
 
-          <!-- 菜單圖庫管理 -->
+          <!-- 菜單圖庫管理 (左右雙欄) -->
           <div class="section-block">
             <div class="section-header">菜單圖庫管理</div>
             
-            <div class="px-2 mb-3 mt-2">
-              <div class="input-group mb-3">
-                <input type="text" class="form-control fw-bold" id="libBentoName" placeholder="輸入餐點店家名稱">
-                <input type="file" class="form-control" id="libBentoFile" accept="image/*">
-                <button class="btn btn-theme fw-bold" onclick="uploadToLibrary('bento')">上傳</button>
+            <div class="row px-2 g-3">
+              <!-- 左欄：餐點 -->
+              <div class="col-6 border-end">
+                <div class="text-secondary fw-bold small mb-2 text-center">新增餐點</div>
+                <input type="text" class="form-control form-control-sm fw-bold mb-2" id="libBentoName" placeholder="輸入餐點店家名稱">
+                <input type="file" class="form-control form-control-sm mb-2" id="libBentoFile" accept="image/*">
+                <button class="btn btn-theme btn-sm fw-bold w-100 mb-3" onclick="uploadToLibrary('bento')">上傳</button>
+                
+                <div class="fw-bold mb-1 text-secondary" style="font-size: 0.85rem;">餐點圖庫列表</div>
+                <div id="bentoFileList" style="max-height: 250px; overflow-y: auto; background: #fff; border: 1px solid #dee2e6; border-radius: 6px; padding: 5px;">
+                  <div class="text-muted small text-center py-2">載入中...</div>
+                </div>
               </div>
               
-              <div class="input-group mb-3">
-                <input type="text" class="form-control fw-bold" id="libDrinkName" placeholder="輸入飲料店家名稱">
-                <input type="file" class="form-control" id="libDrinkFile" accept="image/*">
-                <button class="btn btn-theme fw-bold" onclick="uploadToLibrary('drink')">上傳</button>
-              </div>
-            </div>
-            
-            <div class="px-2 mt-4">
-              <div class="fw-bold mb-2 text-secondary small">現有檔案列表</div>
-              <div id="fileListContainer" style="max-height: 250px; overflow-y: auto; background: #fff; border: 1px solid #dee2e6; border-radius: 8px;">
-                <div class="p-2 text-muted small text-center">請先點擊上方「重新整理圖庫清單」</div>
+              <!-- 右欄：飲料 -->
+              <div class="col-6">
+                <div class="text-secondary fw-bold small mb-2 text-center">新增飲料</div>
+                <input type="text" class="form-control form-control-sm fw-bold mb-2" id="libDrinkName" placeholder="輸入飲料店家名稱">
+                <input type="file" class="form-control form-control-sm mb-2" id="libDrinkFile" accept="image/*">
+                <button class="btn btn-theme btn-sm fw-bold w-100 mb-3" onclick="uploadToLibrary('drink')">上傳</button>
+                
+                <div class="fw-bold mb-1 text-secondary" style="font-size: 0.85rem;">飲料圖庫列表</div>
+                <div id="drinkFileList" style="max-height: 250px; overflow-y: auto; background: #fff; border: 1px solid #dee2e6; border-radius: 6px; padding: 5px;">
+                  <div class="text-muted small text-center py-2">載入中...</div>
+                </div>
               </div>
             </div>
           </div>
 
           <!-- 診次與職級設定 -->
           <div class="section-block">
-            <button class="btn btn-dark w-100 fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#optionsCollapse">
-              診次與職級清單設定
+            <!-- 改為深灰底 (#6c757d) 白字按鈕 -->
+            <button class="btn btn-secondary w-100 fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#optionsCollapse" id="optionsToggleBtn">
+              展開/收合 診次與職級清單設定
             </button>
             
             <div class="collapse" id="optionsCollapse">
               <div class="p-3 mt-2" style="background-color: #f8f9fa; border-radius: 8px; border: 1px solid #dee2e6;">
-                <p class="text-muted small mb-3 fw-bold">💡 點擊 ◀ ▶ 調整順序，點擊 ✖ 刪除項目</p>
-
-                <label class="form-label text-secondary fw-bold small">診次清單</label>
-                <div id="clinicTags" class="mb-2"></div>
-                <div class="input-group mb-4">
-                  <input type="text" class="form-control fw-bold" id="newClinicInput" placeholder="輸入">
-                  <button class="btn btn-theme fw-bold px-4" onclick="addOption('clinic')">新增</button>
-                </div>
-
-                <label class="form-label text-secondary fw-bold small">職級清單</label>
-                <div id="rankTags" class="mb-2"></div>
-                <div class="input-group mb-3">
-                  <input type="text" class="form-control fw-bold" id="newRankInput" placeholder="輸入">
-                  <button class="btn btn-theme fw-bold px-4" onclick="addOption('rank')">新增</button>
-                </div>
                 
-                <button class="btn btn-theme w-100 fw-bold mt-2 py-2" onclick="saveOptions()">儲存選單設定</button>
+                <div class="row g-3">
+                  <!-- 左欄：診次 -->
+                  <div class="col-6 border-end">
+                    <label class="form-label text-secondary fw-bold">診次清單</label>
+                    <div id="clinicVerticalList" class="mb-3" style="min-height: 150px;"></div>
+                    <div class="input-group input-group-sm">
+                      <input type="text" class="form-control fw-bold" id="newClinicInput" placeholder="輸入">
+                      <button class="btn btn-theme fw-bold" onclick="addOption('clinic')">新增</button>
+                    </div>
+                  </div>
+                  
+                  <!-- 右欄：職級 -->
+                  <div class="col-6">
+                    <label class="form-label text-secondary fw-bold">職級清單</label>
+                    <div id="rankVerticalList" class="mb-3" style="min-height: 150px;"></div>
+                    <div class="input-group input-group-sm">
+                      <input type="text" class="form-control fw-bold" id="newRankInput" placeholder="輸入">
+                      <button class="btn btn-theme fw-bold" onclick="addOption('rank')">新增</button>
+                    </div>
+                  </div>
+                </div>
+
+                <button class="btn btn-theme w-100 fw-bold mt-4 py-2" onclick="saveOptions()">儲存選單設定</button>
               </div>
             </div>
           </div>
@@ -169,16 +412,19 @@
     </div>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="[https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js](https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js)"></script>
   <script>
     // ⚠️ 請確保這是您最新的 API 網址
-    const GAS_API_URL = "https://script.google.com/macros/s/AKfycbwGOrIyoQ-XUBcn_nExeZuKkuQIvWx6aZhdYhB10qq6HW6uDxCa9tGUA_pwByVC7cSw/exec"; 
+    const GAS_API_URL = "[https://script.google.com/macros/s/AKfycbwGOrIyoQ-XUBcn_nExeZuKkuQIvWx6aZhdYhB10qq6HW6uDxCa9tGUA_pwByVC7cSw/exec](https://script.google.com/macros/s/AKfycbwGOrIyoQ-XUBcn_nExeZuKkuQIvWx6aZhdYhB10qq6HW6uDxCa9tGUA_pwByVC7cSw/exec)"; 
     
     let currentPwd = ""; 
     let clinicsList = []; 
     let ranksList = []; 
     let currentDriveFiles = [];
     let isSystemOpen = false;
+
+    // SVG 垃圾桶圖標
+    const trashSvg = `<svg xmlns="[http://www.w3.org/2000/svg](http://www.w3.org/2000/svg)" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5M11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.058l-.5-8.5a.5.5 0 0 1 .47-.528M8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5m3.5-.5a.5.5 0 0 0-.528.47l-.5 8.5a.5.5 0 0 0 .998.058l.5-8.5a.5.5 0 0 0-.47-.528"/></svg>`;
 
     function showLoading(text) { document.getElementById('overlayText').innerText = text; document.getElementById('overlay').style.display = 'flex'; }
     function hideLoading() { document.getElementById('overlay').style.display = 'none'; }
@@ -207,18 +453,18 @@
         document.getElementById('loginSection').style.display = 'none'; 
         document.getElementById('adminPanel').style.display = 'block';
         loadCurrentOptions(); 
-        loadDriveFiles(); 
+        loadDriveFiles(); // 登入後自動抓取圖庫
       });
     }
 
     function updateStatusUI() {
-      const statusText = document.getElementById('systemStatusText');
+      const badge = document.getElementById('systemStatusBadge');
       if (isSystemOpen) {
-        statusText.innerText = "目前狀態：已開放";
-        statusText.style.color = "#198754"; // 綠色
+        badge.innerText = "開放訂餐";
+        badge.className = "badge bg-success fs-5";
       } else {
-        statusText.innerText = "目前狀態：已關閉";
-        statusText.style.color = "#dc3545"; // 紅色
+        badge.innerText = "關閉訂餐";
+        badge.className = "badge bg-danger fs-5";
       }
     }
 
@@ -228,18 +474,17 @@
         ranksList = res.data.ranks || []; 
         isSystemOpen = res.data.isOpen;
         updateStatusUI();
-        renderTags(); 
+        renderVerticalLists(); 
       }); 
     }
 
     function toggleSystemState() { 
       const newState = !isSystemOpen;
-      if(!confirm(`確定要${newState ? '開放' : '關閉'}系統嗎？`)) return; 
       showLoading("設定狀態中..."); 
-      apiCall({ action: "toggleSystem", status: newState, password: currentPwd }, null, (data) => {
+      apiCall({ action: "toggleSystem", status: newState, password: currentPwd }, null, () => {
         isSystemOpen = newState;
         updateStatusUI();
-        alert("系統狀態已更新！");
+        // 移除成功提示框，實現靜默切換
       }); 
     }
 
@@ -247,22 +492,37 @@
       showLoading("讀取圖庫中...");
       apiCall({ action: "getDriveFiles", password: currentPwd }, null, (res) => {
         currentDriveFiles = res.files;
-        let bentoHtml = '<option value="">-- 請選擇餐點菜單 --</option>'; 
-        let drinkHtml = '<option value="">-- 請選擇飲料菜單 --</option>'; 
-        let listHtml = '';
+        
+        let bentoOptions = '<option value="">-- 選擇餐點 --</option>'; 
+        let drinkOptions = '<option value="">-- 選擇飲料 --</option>'; 
+        let bentoListHtml = '';
+        let drinkListHtml = '';
         
         currentDriveFiles.forEach(f => {
           const opt = `<option value="${f.url}">${f.name}</option>`;
-          if (f.name.startsWith('[餐點]')) bentoHtml += opt; 
-          else if (f.name.startsWith('[飲料]')) drinkHtml += opt; 
-          else { bentoHtml += opt; drinkHtml += opt; }
-          
-          listHtml += `<div class="file-list-item"><span class="text-truncate fw-bold" style="max-width: 75%; font-size: 0.9rem;">${f.name}</span><button class="btn btn-sm btn-outline-danger fw-bold" onclick="deleteMenuFile('${f.id}', '${f.name}')">刪除</button></div>`;
+          const fileDiv = `
+            <div class="file-item d-flex justify-content-between align-items-center">
+              <span class="text-truncate fw-bold text-secondary" style="font-size: 0.8rem; max-width: 75%;" title="${f.name}">${f.name}</span>
+              <span class="trash-icon" onclick="deleteMenuFile('${f.id}', '${f.name}')">${trashSvg}</span>
+            </div>`;
+
+          if (f.name.startsWith('[餐點]')) {
+            bentoOptions += opt;
+            bentoListHtml += fileDiv;
+          } else if (f.name.startsWith('[飲料]')) {
+            drinkOptions += opt;
+            drinkListHtml += fileDiv;
+          } else { 
+            // 舊格式未分類檔案，兩邊都放
+            bentoOptions += opt; drinkOptions += opt; 
+            bentoListHtml += fileDiv; drinkListHtml += fileDiv;
+          }
         });
         
-        document.getElementById('bentoSelect').innerHTML = bentoHtml; 
-        document.getElementById('drinkSelect').innerHTML = drinkHtml;
-        document.getElementById('fileListContainer').innerHTML = listHtml || '<div class="p-3 text-muted text-center small fw-bold">目前沒有檔案</div>';
+        document.getElementById('bentoSelect').innerHTML = bentoOptions; 
+        document.getElementById('drinkSelect').innerHTML = drinkOptions;
+        document.getElementById('bentoFileList').innerHTML = bentoListHtml || '<div class="text-muted small text-center py-2">無資料</div>';
+        document.getElementById('drinkFileList').innerHTML = drinkListHtml || '<div class="text-muted small text-center py-2">無資料</div>';
       });
     }
 
@@ -272,6 +532,7 @@
       if(!url) return alert("請先選擇菜單！");
       
       const text = select.options[select.selectedIndex].text;
+      // 移除前綴與時間戳記後綴，抓出純店名
       const shopName = text.replace(/^\[.*?\]/, '').replace(/_\d{8}_\d{4}\.jpg$/, '').replace(/_\d+\.jpg$/, '');
       
       showLoading("套用設定中..."); 
@@ -289,7 +550,7 @@
       const prefix = type === 'bento' ? '[餐點]' : '[飲料]';
       const shopName = nameInput.value.trim();
       
-      // 產生可讀性高的時間戳記 (YYYYMMDD_HHmm)
+      // 產生易讀的時間戳記 (YYYYMMDD_HHmm)
       const now = new Date();
       const timeStr = `${now.getFullYear()}${String(now.getMonth()+1).padStart(2,'0')}${String(now.getDate()).padStart(2,'0')}_${String(now.getHours()).padStart(2,'0')}${String(now.getMinutes()).padStart(2,'0')}`;
       const finalFilename = `${prefix}${shopName}_${timeStr}.jpg`;
@@ -334,18 +595,21 @@
       apiCall({ action: "deleteFile", fileId: fileId, password: currentPwd }, null, () => loadDriveFiles());
     }
 
-    function renderTags() {
-      const buildTags = (arr, type) => arr.map((item, i) => `
-        <span class="tag-item">
-          <span class="tag-action" onclick="moveOption('${type}', ${i}, -1)">◀</span>
-          ${item}
-          <span class="tag-action" onclick="moveOption('${type}', ${i}, 1)">▶</span>
-          <span class="tag-close" onclick="removeOption('${type}', ${i})">&times;</span>
-        </span>
+    // 垂直列表渲染
+    function renderVerticalLists() {
+      const buildList = (arr, type) => arr.map((item, i) => `
+        <div class="d-flex justify-content-between align-items-center py-1 border-bottom">
+          <span class="fw-bold" style="font-size: 0.9rem;">${item}</span>
+          <div class="d-flex align-items-center">
+            <span class="action-icon" onclick="moveOption('${type}', ${i}, -1)">🔼</span>
+            <span class="action-icon" onclick="moveOption('${type}', ${i}, 1)">🔽</span>
+            <span class="trash-icon ms-1" onclick="removeOption('${type}', ${i})">${trashSvg}</span>
+          </div>
+        </div>
       `).join('');
       
-      document.getElementById('clinicTags').innerHTML = buildTags(clinicsList, 'clinic'); 
-      document.getElementById('rankTags').innerHTML = buildTags(ranksList, 'rank');
+      document.getElementById('clinicVerticalList').innerHTML = buildList(clinicsList, 'clinic'); 
+      document.getElementById('rankVerticalList').innerHTML = buildList(ranksList, 'rank');
     }
 
     function moveOption(type, idx, dir) { 
@@ -355,7 +619,7 @@
       } else if (dir === 1 && idx < arr.length - 1) {
         [arr[idx], arr[idx+1]] = [arr[idx+1], arr[idx]]; 
       }
-      renderTags(); 
+      renderVerticalLists(); 
     }
 
     function addOption(type) { 
@@ -363,12 +627,12 @@
       if (!input.value.trim()) return; 
       (type === 'clinic' ? clinicsList : ranksList).push(input.value.trim()); 
       input.value = ''; 
-      renderTags(); 
+      renderVerticalLists(); 
     }
 
     function removeOption(type, index) { 
       (type === 'clinic' ? clinicsList : ranksList).splice(index, 1); 
-      renderTags(); 
+      renderVerticalLists(); 
     }
 
     function saveOptions() { 
@@ -379,6 +643,11 @@
         if(bsCollapse) bsCollapse.hide();
       }); 
     }
+
+    // 貼心功能：當設定選單展開時，自動將畫面平滑往上捲動，避免被鍵盤或螢幕底部擋住
+    document.getElementById('optionsCollapse').addEventListener('shown.bs.collapse', function () {
+      document.getElementById('optionsToggleBtn').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
   </script>
 </body>
 </html>
