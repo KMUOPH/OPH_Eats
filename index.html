@@ -2,6 +2,7 @@
 <html lang="zh-TW">
   <head>
     <meta charset="UTF-8">
+    <!-- 永遠鎖定視角，徹底杜絕畫面跑版 -->
     <meta id="viewport" name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>眼科訂餐</title>
     
@@ -13,8 +14,8 @@
     
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
-      body { background-color: #ffffff; padding: 0; padding-bottom: 30px; font-family: "微軟正黑體", sans-serif; }
-      body.modal-open { padding-right: 0 !important; overflow: auto !important; }
+      body { background-color: #ffffff; padding: 0; padding-bottom: 30px; font-family: "微軟正黑體", sans-serif; overflow-x: hidden; }
+      body.modal-open { padding-right: 0 !important; overflow: hidden !important; }
       
       .form-label { font-weight: bold; color: #495057; margin-bottom: 8px; }
       
@@ -29,11 +30,10 @@
       #loadingScreen, #closedScreen { text-align: center; padding: 40px 20px; }
       .menu-img { width: 100%; border-radius: 8px; margin-bottom: 12px; display: none; box-shadow: 0 2px 5px rgba(0,0,0,0.15); border: 1px solid #e2e8f0; cursor: pointer; }
       
-      .banner-header { background-color: #536e86; color: white; height: 60px; margin-bottom: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); width: 100%; display: flex; justify-content: space-between; align-items: center; padding-right: 15px; }
+      .banner-header { background-color: #536e86; color: white; height: 60px; margin-bottom: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); width: 100%; display: flex; justify-content: space-between; align-items: center; padding-right: 15px; position: sticky; top: 0; z-index: 1020; }
       
       .section-block { margin-bottom: 24px; }
       
-      /* --- 標題列：灰底黑字 --- */
       .section-header { 
         background-color: #e9ecef; 
         color: #212529; 
@@ -42,22 +42,26 @@
         font-size: 1rem; 
         font-weight: bold; 
         margin-bottom: 12px; 
-        transition: background-color 0.3s, color 0.3s; 
       }
       
-      /* --- 非今日警告樣式：沉穩的暗紅色 --- */
-      .not-today-header { 
-        background-color: #8c2b32 !important; 
-        color: #ffffff !important; 
-      }
+      .not-today-header { background-color: #8c2b32 !important; color: #ffffff !important; }
+      .section-header .text-danger { color: #ff8787 !important; }
       
       .clinic-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; }
-      .clinic-grid label { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; padding: 8px 0; font-size: 0.9rem; margin: 0; }
+      
+      /* --- 調整字體加大，並縮小 Padding 確保高度不變 --- */
+      .clinic-grid label { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; padding: 4px 0; font-size: 1.1rem; margin: 0; }
+      .rank-label-custom { padding: 6px 0 !important; font-size: 1.1rem !important; margin: 0; }
       
       .quick-notes::-webkit-scrollbar { display: none; }
       .btn-clear { border-color: #ced4da; color: #6c757d; }
       .btn-clear:hover { background-color: #e9ecef; color: #495057; }
+      
       .high-contrast-close { background-color: rgba(255, 255, 255, 0.95) !important; opacity: 1 !important; border-radius: 50% !important; box-shadow: 0 3px 8px rgba(0, 0, 0, 0.4) !important; padding: 0.6rem !important; z-index: 1050; }
+      
+      /* 模態框內部滾動設定 */
+      #modalBody { overflow: auto; max-height: 85vh; padding: 0; background-color: #000; }
+      #modalImage { width: 100%; transition: width 0.2s ease-out; cursor: zoom-in; }
     </style>
   </head>
   <body>
@@ -72,11 +76,14 @@
 
     <!-- 圖片放大視窗 -->
     <div class="modal fade" id="imageModal" tabindex="-1" aria-hidden="true" style="z-index: 10000;">
-      <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-dialog modal-dialog-centered modal-lg modal-fullscreen-sm-down">
         <div class="modal-content bg-transparent border-0">
-          <div class="modal-body text-center position-relative p-0">
-            <button type="button" class="btn-close high-contrast-close position-absolute top-0 end-0 m-3" data-bs-dismiss="modal" aria-label="Close"></button>
-            <img id="modalImage" src="" class="img-fluid rounded" alt="放大菜單">
+          <div class="modal-body text-center position-relative" id="modalBody">
+            <button type="button" class="btn-close high-contrast-close position-fixed top-0 end-0 m-3" data-bs-dismiss="modal" aria-label="Close" style="z-index: 1060;"></button>
+            <div class="position-fixed top-0 start-50 translate-middle-x mt-3 fw-bold text-white shadow-sm" style="background: rgba(0,0,0,0.6); padding: 5px 15px; border-radius: 20px; z-index: 1050; font-size: 0.9rem; pointer-events: none;">
+              💡 在圖片上點兩下可放大
+            </div>
+            <img id="modalImage" src="" class="img-fluid" alt="放大菜單">
           </div>
         </div>
       </div>
@@ -116,7 +123,7 @@
 
               <div class="section-block">
                 <div class="section-header" id="bentoSectionTitle">餐點</div>
-                <div class="text-secondary small mb-2 fw-bold">💡 點擊圖片可雙指放大查看</div>
+                <div class="text-secondary small mb-2 fw-bold">💡 點擊圖片開啟，並可「點兩下」放大查看</div>
                 <img id="bentoMenuImg" class="menu-img" alt="餐點菜單" onclick="openModal(this.src)">
                 <div class="row g-2">
                   <div class="col-8"><input type="text" class="form-control fw-bold" id="bentoName" placeholder="餐點名稱" onfocus="this.select()"></div>
@@ -126,7 +133,7 @@
 
               <div class="section-block">
                 <div class="section-header" id="drinkSectionTitle">飲料</div>
-                <div class="text-secondary small mb-2 fw-bold">💡 點擊圖片可雙指放大查看</div>
+                <div class="text-secondary small mb-2 fw-bold">💡 點擊圖片開啟，並可「點兩下」放大查看</div>
                 <img id="drinkMenuImg" class="menu-img" alt="飲料菜單" onclick="openModal(this.src)">
                 <div class="row g-2">
                   <div class="col-8"><input type="text" class="form-control fw-bold" id="drinkName" placeholder="飲料名稱" onfocus="this.select()"></div>
@@ -160,7 +167,6 @@
     <script>
       const GAS_API_URL = "https://script.google.com/macros/s/AKfycbwGOrIyoQ-XUBcn_nExeZuKkuQIvWx6aZhdYhB10qq6HW6uDxCa9tGUA_pwByVC7cSw/exec";
 
-      // Fetch Auto-Retry 自動重試機制
       async function fetchWithRetry(url, options, retries = 2) {
         for (let i = 0; i <= retries; i++) {
           try {
@@ -173,17 +179,41 @@
         }
       }
 
-      // --- 圖片放大與縮回控制 ---
-      document.getElementById('imageModal').addEventListener('show.bs.modal', function () { 
-        document.getElementById('viewport').setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes'); 
+      // --- 點兩下放大機制的 Javascript (取代原生雙指縮放) ---
+      let isZoomed = false;
+      let lastTap = 0;
+      const modalImg = document.getElementById('modalImage');
+      const modalBody = document.getElementById('modalBody');
+
+      modalImg.addEventListener('touchstart', function(e) {
+        const currentTime = new Date().getTime();
+        const tapLength = currentTime - lastTap;
+        if (tapLength < 300 && tapLength > 0) {
+          // 偵測到雙擊 (Double Tap)
+          e.preventDefault();
+          if (!isZoomed) {
+            modalImg.style.width = '250%';
+            modalImg.style.maxWidth = 'none';
+            modalImg.style.cursor = 'zoom-out';
+            isZoomed = true;
+          } else {
+            modalImg.style.width = '100%';
+            modalImg.style.maxWidth = '100%';
+            modalImg.style.cursor = 'zoom-in';
+            isZoomed = false;
+            modalBody.scrollTo(0,0);
+          }
+        }
+        lastTap = currentTime;
       });
+
+      // 關閉圖片視窗時重置圖片大小
       document.getElementById('imageModal').addEventListener('hidden.bs.modal', function () { 
-        const vp = document.getElementById('viewport');
-        vp.setAttribute('content', 'width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no'); 
-        window.scrollTo({ left: 0, top: window.scrollY, behavior: 'instant' });
-        setTimeout(() => {
-          vp.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no');
-        }, 100);
+        isZoomed = false;
+        modalImg.style.width = '100%';
+        modalImg.style.maxWidth = '100%';
+        modalImg.style.cursor = 'zoom-in';
+        modalBody.scrollTo(0,0);
       });
 
       function formatDriveImageUrl(url) {
@@ -194,7 +224,12 @@
       }
 
       let imageModalInstance = null;
-      function openModal(src) { document.getElementById('modalImage').src = src; if (!imageModalInstance) { imageModalInstance = new bootstrap.Modal(document.getElementById('imageModal')); } imageModalInstance.show(); }
+      function openModal(src) { 
+        document.getElementById('modalImage').src = src; 
+        if (!imageModalInstance) { imageModalInstance = new bootstrap.Modal(document.getElementById('imageModal')); } 
+        imageModalInstance.show(); 
+      }
+      
       function addNote(text) { const n = document.getElementById('notes'); n.value = n.value ? n.value + "。" + text : text; }
 
       function loadData(isInitial = true) {
@@ -247,7 +282,6 @@
             if(response.data.bentoMenuUrl) { const bImg = document.getElementById('bentoMenuImg'); bImg.src = formatDriveImageUrl(response.data.bentoMenuUrl); bImg.style.display = 'block'; }
             if(response.data.drinkMenuUrl) { const dImg = document.getElementById('drinkMenuImg'); dImg.src = formatDriveImageUrl(response.data.drinkMenuUrl); dImg.style.display = 'block'; }
 
-            // --- 這裡為生成的選項標籤加入 fw-bold 樣式 ---
             const clinicContainer = document.getElementById('clinicGroup'); clinicContainer.innerHTML = '';
             response.data.clinics.forEach((c, idx) => {
               const spanClass = (c === '非診間') ? 'style="grid-column: span 2;"' : '';
@@ -256,7 +290,7 @@
 
             const rankContainer = document.getElementById('rankGroup'); rankContainer.innerHTML = '';
             response.data.ranks.forEach((r, idx) => {
-              rankContainer.innerHTML += `<div class="col-4"><input type="radio" class="btn-check rank-radio" name="rank" id="r_${idx}" value="${r}"><label class="btn btn-outline-theme w-100 p-2 text-center fw-bold" style="margin:0; font-size:0.95rem;" for="r_${idx}">${r}</label></div>`;
+              rankContainer.innerHTML += `<div class="col-4"><input type="radio" class="btn-check rank-radio" name="rank" id="r_${idx}" value="${r}"><label class="btn btn-outline-theme w-100 fw-bold rank-label-custom" for="r_${idx}">${r}</label></div>`;
             });
 
           } else { 
@@ -270,11 +304,13 @@
 
       window.onload = () => loadData(true);
 
-      // --- 修復 iOS 鍵盤「上下跳格」時畫面不跟隨的問題 ---
+      // --- 絕對定位追蹤機制：確保輸入框不被鍵盤擋住 ---
       document.addEventListener('focusin', function(e) {
         if (e.target && e.target.tagName === 'INPUT') {
           setTimeout(() => {
-            e.target.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            const rect = e.target.getBoundingClientRect();
+            // 強制將輸入框捲動到「距離畫面頂部 100px」的位置，保證永遠在畫面上半部，遠離鍵盤！
+            window.scrollBy({ top: rect.top - 100, behavior: 'smooth' });
           }, 300);
         }
       });
