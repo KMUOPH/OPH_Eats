@@ -64,7 +64,6 @@
     
     <div class="banner-header">
       <div class="d-flex align-items-center h-100 overflow-hidden ms-2">
-        <!-- 調整 Logo：圓形剪裁、略小於橫幅、微立體陰影 -->
         <img src="logo.jpg" alt="Logo" style="height: 46px; width: 46px; border-radius: 50%; object-fit: cover; box-shadow: 0 2px 4px rgba(0,0,0,0.2); margin-right: 12px;">
         <h3 class="mb-0 fw-bold text-truncate" style="font-size: 1.25rem;">OPH Eats 眼科訂餐</h3>
       </div>
@@ -257,6 +256,16 @@
       };
 
       window.onload = () => loadData(true);
+
+      // --- 修復 iOS 鍵盤「上下跳格」時畫面不跟隨的問題 ---
+      document.addEventListener('focusin', function(e) {
+        if (e.target && e.target.tagName === 'INPUT') {
+          setTimeout(() => {
+            // 將取得焦點的輸入框捲動到螢幕正中央
+            e.target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }, 300); // 延遲 0.3 秒等待鍵盤完全彈出
+        }
+      });
 
       function toggleRankName() {
         const c = document.querySelector('input[name="clinic"]:checked');
