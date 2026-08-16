@@ -2,6 +2,7 @@
 <html lang="zh-TW">
   <head>
     <meta charset="UTF-8">
+    <!-- 恢復最原始單純的縮放設定 -->
     <meta id="viewport" name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
     <meta name="theme-color" content="#ffffff">
     <title>眼科訂餐</title>
@@ -32,7 +33,6 @@
       
       .banner-header { background-color: #536e86; color: white; height: 60px; margin-bottom: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); width: 100%; display: flex; justify-content: space-between; align-items: center; padding-right: 15px; }
       
-      /* 移除 overflow: hidden，解決輸入框選取時藍邊被切斷成 L 型的問題 */
       .section-block { margin-bottom: 24px; }
       
       .section-header { 
@@ -55,31 +55,10 @@
       .quick-notes::-webkit-scrollbar { display: none; }
       .btn-clear { border-color: #ced4da; color: #6c757d; }
       .btn-clear:hover { background-color: #e9ecef; color: #495057; }
-
-      /* --- 新增：智慧還原頁寬按鈕樣式 --- */
-      #resetZoomBtn {
-        display: none;
-        position: fixed;
-        bottom: 25px;
-        right: 20px;
-        z-index: 9999;
-        background-color: #343a40;
-        color: white;
-        border: none;
-        padding: 12px 20px;
-        border-radius: 30px;
-        font-weight: bold;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.4);
-        opacity: 0.95;
-        font-size: 0.95rem;
-      }
     </style>
   </head>
   <body>
     
-    <!-- 智慧還原頁寬浮動按鈕 (預設隱藏) -->
-    <button id="resetZoomBtn">🔍 恢復頁寬</button>
-
     <div class="banner-header">
       <div class="d-flex align-items-center h-100 overflow-hidden ms-2">
         <img src="logo.jpg" alt="Logo" style="height: 46px; width: 46px; border-radius: 50%; object-fit: cover; box-shadow: 0 2px 4px rgba(0,0,0,0.2); margin-right: 12px;">
@@ -122,7 +101,7 @@
 
               <div class="section-block">
                 <div class="section-header" id="bentoSectionTitle">餐點</div>
-                <div class="text-secondary small mb-2 fw-bold">💡 雙指直接拉大圖片，點擊右下角「恢復頁寬」即可還原</div>
+                <div class="text-secondary small mb-2 fw-bold">💡 雙指可放大圖片查看</div>
                 <img id="bentoMenuImg" class="menu-img" alt="餐點菜單">
                 <div class="row g-2">
                   <div class="col-8">
@@ -136,7 +115,7 @@
 
               <div class="section-block">
                 <div class="section-header" id="drinkSectionTitle">飲料</div>
-                <div class="text-secondary small mb-2 fw-bold">💡 雙指直接拉大圖片，點擊右下角「恢復頁寬」即可還原</div>
+                <div class="text-secondary small mb-2 fw-bold">💡 雙指可放大圖片查看</div>
                 <img id="drinkMenuImg" class="menu-img" alt="飲料菜單">
                 <div class="row g-2">
                   <div class="col-8">
@@ -185,31 +164,6 @@
           }
         }
       }
-
-      // --- 全新智慧縮放還原機制 (浮動按鈕) ---
-      const resetZoomBtn = document.getElementById('resetZoomBtn');
-      if (window.visualViewport) {
-        // 監聽視角縮放：只要一放大，右下角就浮現「恢復頁寬」按鈕
-        window.visualViewport.addEventListener('resize', () => {
-          if (window.visualViewport.scale > 1.05) {
-            resetZoomBtn.style.display = 'block';
-          } else {
-            resetZoomBtn.style.display = 'none';
-          }
-        });
-      }
-
-      // 點擊「恢復頁寬」按鈕，完美強制彈回原狀
-      resetZoomBtn.addEventListener('click', (e) => {
-        e.preventDefault();
-        const vp = document.getElementById('viewport');
-        vp.setAttribute('content', 'width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no');
-        window.scrollTo({ left: 0, top: window.scrollY, behavior: 'instant' });
-        
-        setTimeout(() => {
-          vp.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes');
-        }, 100);
-      });
 
       function formatDriveImageUrl(url) {
         if (!url) return ''; let id = '';
@@ -300,21 +254,23 @@
 
       window.onload = () => loadData(true);
 
-      // --- 完美的 iOS 鍵盤貼齊公式 (絕對不再跑到畫面上方) ---
+      // --- 絕對精準的鍵盤吸附公式 ---
       document.addEventListener('focusin', function(e) {
         if (e.target && e.target.tagName === 'INPUT') {
-          // 等待 400ms，讓蘋果原生的畫面亂跳與鍵盤彈出徹底結束
+          // 等待 400ms，讓蘋果原生那套「自作聰明把畫面亂推到中間」的動畫結束
           setTimeout(() => {
             if (window.visualViewport) {
               const rect = e.target.getBoundingClientRect();
               const vpHeight = window.visualViewport.height;
               
-              // 公式計算：我們要讓輸入框的「底部」，完美落在「視窗底部(鍵盤上方) 減去 10px」的位置
-              // offset 若大於 0 代表被鍵盤遮住；若小於 0 代表跑太上面
-              const offset = rect.bottom - (vpHeight - 10);
+              // 我們的目標：輸入框的底部 (rect.height)，要穩穩坐在視窗的最底部 (vpHeight)
+              // 給它 10px 的安全距離，確保完全露出。
+              // 計算方式：現在的捲動位置 + 輸入框相對於視窗的頂部座標 - 視窗總高度 + 輸入框高度 + 10px
+              const absoluteTop = window.scrollY + rect.top;
+              const targetScrollY = absoluteTop - vpHeight + rect.height + 10;
               
-              // 強制執行捲動，讓輸入框永遠貼齊鍵盤上方的安全區！
-              window.scrollBy({ top: offset, behavior: 'smooth' });
+              // 強制執行捲動！把亂跑的畫面拉回來
+              window.scrollTo({ top: Math.max(0, targetScrollY), behavior: 'smooth' });
             }
           }, 400); 
         }
