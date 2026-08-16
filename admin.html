@@ -51,6 +51,8 @@
     .slider:before { position: absolute; content: ""; height: 22px; width: 22px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
     input:checked + .slider { background-color: #198754; }
     input:checked + .slider:before { transform: translateX(24px); }
+    /* 讀取中狀態顯示灰色且無法點擊 */
+    input.status-loading + .slider { background-color: #6c757d; cursor: not-allowed; }
 
     /* --- 列表底部淡出效果 --- */
     .fade-bottom-wrapper { position: relative; display: flex; flex-direction: column; }
@@ -60,7 +62,7 @@
       pointer-events: none; border-bottom-left-radius: 0.25rem; border-bottom-right-radius: 0.25rem;
     }
 
-    /* 垂直清單微調 (列高縮小：將原本的 padding: 8px 4px 改為 4px 4px) */
+    /* 垂直清單微調 (列高縮小) */
     .list-item-custom { border-bottom: 1px solid #dee2e6; padding: 4px 4px; display: flex; justify-content: space-between; align-items: center; }
     .list-item-custom:last-child { border-bottom: none; }
     .arrow-btn { cursor: pointer; color: #6c757d; padding: 0 4px; font-size: 14px; line-height: 1; }
@@ -105,12 +107,12 @@
         <!-- 後台管理區塊 -->
         <div id="adminPanel">
           
-          <!-- 第一區：精簡版系統狀態 (取消標題與文字) -->
-          <div class="section-block mt-2">
-            <div class="d-flex align-items-center justify-content-between px-3 py-3 border rounded shadow-sm" style="background-color: #f8f9fa;">
-              <span id="systemStatusText" class="badge bg-danger px-3 py-2 fs-6 shadow-sm">讀取中...</span>
+          <!-- 第一區：精簡版系統狀態 (取消框架，灰色過渡) -->
+          <div class="section-block mt-3 mb-4">
+            <div class="d-flex align-items-center justify-content-between px-1">
+              <span id="systemStatusText" class="badge bg-secondary px-3 py-2 fs-6 shadow-sm">讀取中...</span>
               <label class="switch">
-                <input type="checkbox" id="systemStatusToggle" onchange="toggleSystemState(this.checked)">
+                <input type="checkbox" id="systemStatusToggle" class="status-loading" onchange="toggleSystemState(this.checked)" disabled>
                 <span class="slider"></span>
               </label>
             </div>
@@ -126,7 +128,7 @@
                 <div class="p-2 border rounded h-100 d-flex flex-column" style="background-color: #f8f9fa;">
                   <div class="fw-bold text-secondary small mb-2 text-center">🍱 餐點區</div>
                   
-                  <!-- 1. 選擇套用菜單 (精簡標題) -->
+                  <!-- 1. 選擇套用菜單 -->
                   <select class="form-select form-select-sm fw-bold mb-1" id="bentoSelect"><option value="">--選擇今日餐點--</option></select>
                   <button class="btn btn-theme btn-sm fw-bold w-100 mb-2" onclick="setMenu('bento')">套用</button>
                   <hr class="my-2">
@@ -134,9 +136,10 @@
                   <!-- 2. 上傳新圖庫 -->
                   <div class="fw-bold text-secondary mb-1" style="font-size: 0.75rem;">新增至圖庫</div>
                   <input type="text" class="form-control form-control-sm fw-bold mb-1" id="libBentoName" placeholder="輸入店家名稱">
-                  <label for="libBentoFile" class="btn btn-dark btn-sm w-100 mb-1 fw-bold text-truncate" id="bentoFileLabel" style="font-size: 0.8rem;">選擇圖片檔案</label>
+                  <label for="libBentoFile" class="btn btn-secondary btn-sm w-100 mb-1 fw-bold text-truncate" id="bentoFileLabel" style="font-size: 0.8rem;">選擇圖片</label>
                   <input type="file" id="libBentoFile" accept="image/*" style="display: none;" onchange="updateFileLabel('bento')">
-                  <button class="btn btn-secondary btn-sm fw-bold w-100" onclick="uploadToLibrary('bento')">上傳圖庫</button>
+                  <!-- 上傳按鈕改為主題色 -->
+                  <button class="btn btn-theme btn-sm fw-bold w-100" onclick="uploadToLibrary('bento')">上傳</button>
                   <hr class="my-2">
 
                   <!-- 3. 圖庫列表 -->
@@ -154,7 +157,7 @@
                 <div class="p-2 border rounded h-100 d-flex flex-column" style="background-color: #f8f9fa;">
                   <div class="fw-bold text-secondary small mb-2 text-center">🥤 飲料區</div>
                   
-                  <!-- 1. 選擇套用菜單 (精簡標題) -->
+                  <!-- 1. 選擇套用菜單 -->
                   <select class="form-select form-select-sm fw-bold mb-1" id="drinkSelect"><option value="">--選擇今日飲料--</option></select>
                   <button class="btn btn-theme btn-sm fw-bold w-100 mb-2" onclick="setMenu('drink')">套用</button>
                   <hr class="my-2">
@@ -162,9 +165,10 @@
                   <!-- 2. 上傳新圖庫 -->
                   <div class="fw-bold text-secondary mb-1" style="font-size: 0.75rem;">新增至圖庫</div>
                   <input type="text" class="form-control form-control-sm fw-bold mb-1" id="libDrinkName" placeholder="輸入店家名稱">
-                  <label for="libDrinkFile" class="btn btn-dark btn-sm w-100 mb-1 fw-bold text-truncate" id="drinkFileLabel" style="font-size: 0.8rem;">選擇圖片檔案</label>
+                  <label for="libDrinkFile" class="btn btn-secondary btn-sm w-100 mb-1 fw-bold text-truncate" id="drinkFileLabel" style="font-size: 0.8rem;">選擇圖片</label>
                   <input type="file" id="libDrinkFile" accept="image/*" style="display: none;" onchange="updateFileLabel('drink')">
-                  <button class="btn btn-secondary btn-sm fw-bold w-100" onclick="uploadToLibrary('drink')">上傳圖庫</button>
+                  <!-- 上傳按鈕改為主題色 -->
+                  <button class="btn btn-theme btn-sm fw-bold w-100" onclick="uploadToLibrary('drink')">上傳</button>
                   <hr class="my-2">
 
                   <!-- 3. 圖庫列表 -->
@@ -179,10 +183,11 @@
             </div>
           </div>
 
-          <!-- 第三區：診次與職級設定 -->
+          <!-- 第三區：診次與職級設定 (調整按鈕文字與樣式) -->
           <div class="section-block">
-            <button class="btn btn-secondary w-100 fw-bold shadow-sm" type="button" data-bs-toggle="collapse" data-bs-target="#optionsCollapse" id="optionsToggleBtn">
-              展開/收合 診次與職級清單設定
+            <button class="btn btn-light border w-100 fw-bold shadow-sm text-secondary d-flex justify-content-between align-items-center px-3" type="button" data-bs-toggle="collapse" data-bs-target="#optionsCollapse" id="optionsToggleBtn">
+              <span>⚙️ 診次與職級管理</span>
+              <span style="font-size: 0.8em;">▼</span>
             </button>
             
             <div class="collapse" id="optionsCollapse">
@@ -191,7 +196,8 @@
                 <div class="row g-3 mb-3">
                   <!-- 左欄：診次 -->
                   <div class="col-6 border-end">
-                    <div class="fw-bold text-secondary small mb-2 text-center">🏥 診次</div>
+                    <!-- 移除emoji -->
+                    <div class="fw-bold text-secondary small mb-2 text-center">診次</div>
                     <div class="fade-bottom-wrapper">
                       <div id="clinicList" class="bg-white border rounded p-1 mb-2" style="min-height: 150px; max-height: 250px; overflow-y: auto; padding-bottom: 30px !important;"></div>
                     </div>
@@ -203,7 +209,8 @@
                   
                   <!-- 右欄：職級 -->
                   <div class="col-6">
-                    <div class="fw-bold text-secondary small mb-2 text-center">🧑‍⚕️ 職級</div>
+                    <!-- 移除emoji -->
+                    <div class="fw-bold text-secondary small mb-2 text-center">職級</div>
                     <div class="fade-bottom-wrapper">
                       <div id="rankList" class="bg-white border rounded p-1 mb-2" style="min-height: 150px; max-height: 250px; overflow-y: auto; padding-bottom: 30px !important;"></div>
                     </div>
@@ -269,11 +276,13 @@
       });
     }
 
-    // 更新系統狀態顯示介面
+    // 更新系統狀態顯示介面 (含讀取完成後的顏色切換)
     function updateStatusUI() {
       const textEl = document.getElementById('systemStatusText');
       const toggleEl = document.getElementById('systemStatusToggle');
       
+      toggleEl.disabled = false; // 解除鎖定
+      toggleEl.classList.remove('status-loading'); // 移除灰色樣式
       toggleEl.checked = isSystemOpen; // 設定開關狀態
       
       if (isSystemOpen) {
@@ -317,7 +326,7 @@
         currentDriveFiles.forEach(f => {
           const opt = `<option value="${f.url}">${f.name}</option>`;
           
-          // 【優化點3】運用正規表達式，將檔名中的 "_數字" 日期時間戳記換到下一行並調淡
+          // 運用正規表達式，將檔名中的 "_數字" 日期時間戳記換到下一行並調淡
           let formattedName = f.name.replace(/(_\d{4,}(_\d{4})?\.[a-zA-Z0-9]+)$/, '<br><span class="text-secondary fw-normal" style="font-size:0.75rem;">$1</span>');
           
           const fileDiv = `
@@ -358,17 +367,17 @@
       apiCall({ action: "setMenuUrl", menuType: type, url: url, shopName: shopName, password: currentPwd }, "✅ 今日菜單已成功套用！");
     }
 
-    // 監聽並更新自訂檔案按鈕的文字
+    // 監聽並更新自訂檔案按鈕的文字 (修改成btn-secondary互換)
     function updateFileLabel(type) {
       const fileInput = document.getElementById(type === 'bento' ? 'libBentoFile' : 'libDrinkFile');
       const label = document.getElementById(type === 'bento' ? 'bentoFileLabel' : 'drinkFileLabel');
       
       if (fileInput.files.length > 0) {
         label.innerText = fileInput.files[0].name;
-        label.classList.replace('btn-dark', 'btn-success'); // 選取後變成綠色
+        label.classList.replace('btn-secondary', 'btn-success'); // 選取後變成綠色
       } else {
-        label.innerText = "選擇圖片檔案";
-        label.classList.replace('btn-success', 'btn-dark'); // 復原為深灰色
+        label.innerText = "選擇圖片";
+        label.classList.replace('btn-success', 'btn-secondary'); // 復原為灰底色
       }
     }
 
