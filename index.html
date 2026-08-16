@@ -111,35 +111,37 @@
 
               <div class="section-block d-none" id="nameDiv">
                 <div class="section-header">姓名 <span class="text-danger">*</span></div>
-                <input type="text" class="form-control" id="name" placeholder="請輸入姓名" onfocus="this.select()">
+                <input type="text" class="form-control fw-bold" id="name" placeholder="請輸入姓名" onfocus="this.select()">
               </div>
 
               <div class="section-block">
                 <div class="section-header" id="bentoSectionTitle">餐點</div>
+                <div class="text-secondary small mb-2 fw-bold">💡 點擊圖片可雙指放大查看</div>
                 <img id="bentoMenuImg" class="menu-img" alt="餐點菜單" onclick="openModal(this.src)">
                 <div class="row g-2">
-                  <div class="col-8"><input type="text" class="form-control" id="bentoName" placeholder="餐點" onfocus="this.select()"></div>
-                  <div class="col-4"><input type="number" inputmode="numeric" pattern="[0-9]*" class="form-control" id="bentoAmount" placeholder="金額" onfocus="this.select()"></div>
+                  <div class="col-8"><input type="text" class="form-control fw-bold" id="bentoName" placeholder="餐點名稱" onfocus="this.select()"></div>
+                  <div class="col-4"><input type="number" inputmode="numeric" pattern="[0-9]*" class="form-control fw-bold" id="bentoAmount" placeholder="金額" onfocus="this.select()"></div>
                 </div>
               </div>
 
               <div class="section-block">
                 <div class="section-header" id="drinkSectionTitle">飲料</div>
+                <div class="text-secondary small mb-2 fw-bold">💡 點擊圖片可雙指放大查看</div>
                 <img id="drinkMenuImg" class="menu-img" alt="飲料菜單" onclick="openModal(this.src)">
                 <div class="row g-2">
-                  <div class="col-8"><input type="text" class="form-control" id="drinkName" placeholder="飲料" onfocus="this.select()"></div>
-                  <div class="col-4"><input type="number" inputmode="numeric" pattern="[0-9]*" class="form-control" id="drinkAmount" placeholder="金額" onfocus="this.select()"></div>
+                  <div class="col-8"><input type="text" class="form-control fw-bold" id="drinkName" placeholder="飲料名稱" onfocus="this.select()"></div>
+                  <div class="col-4"><input type="number" inputmode="numeric" pattern="[0-9]*" class="form-control fw-bold" id="drinkAmount" placeholder="金額" onfocus="this.select()"></div>
                 </div>
               </div>
               
               <div class="section-block">
                 <div class="section-header">備註</div>
                 <div class="d-flex gap-2 mb-2 quick-notes" style="overflow-x: auto; white-space: nowrap;">
-                  <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill" onclick="addNote('改單，以這筆為主')">改單，以這筆為主</button>
-                  <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill" onclick="addNote('兩筆都要')">兩筆都要</button>
+                  <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill fw-bold" onclick="addNote('改單，以這筆為主')">改單，以這筆為主</button>
+                  <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill fw-bold" onclick="addNote('兩筆都要')">兩筆都要</button>
                 </div>
                 <div class="input-group">
-                  <input type="text" class="form-control" id="notes" placeholder="其他需求..." onfocus="this.select()">
+                  <input type="text" class="form-control fw-bold" id="notes" placeholder="其他需求..." onfocus="this.select()">
                   <button class="btn btn-clear" type="button" onclick="document.getElementById('notes').value='';" title="清除內容">✖</button>
                 </div>
               </div>
@@ -171,8 +173,18 @@
         }
       }
 
-      document.getElementById('imageModal').addEventListener('show.bs.modal', function () { document.getElementById('viewport').setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes'); });
-      document.getElementById('imageModal').addEventListener('hidden.bs.modal', function () { document.getElementById('viewport').setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no'); });
+      // --- 圖片放大與縮回控制 ---
+      document.getElementById('imageModal').addEventListener('show.bs.modal', function () { 
+        document.getElementById('viewport').setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes'); 
+      });
+      document.getElementById('imageModal').addEventListener('hidden.bs.modal', function () { 
+        const vp = document.getElementById('viewport');
+        vp.setAttribute('content', 'width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no'); 
+        window.scrollTo({ left: 0, top: window.scrollY, behavior: 'instant' });
+        setTimeout(() => {
+          vp.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no');
+        }, 100);
+      });
 
       function formatDriveImageUrl(url) {
         if (!url) return ''; let id = '';
@@ -235,15 +247,16 @@
             if(response.data.bentoMenuUrl) { const bImg = document.getElementById('bentoMenuImg'); bImg.src = formatDriveImageUrl(response.data.bentoMenuUrl); bImg.style.display = 'block'; }
             if(response.data.drinkMenuUrl) { const dImg = document.getElementById('drinkMenuImg'); dImg.src = formatDriveImageUrl(response.data.drinkMenuUrl); dImg.style.display = 'block'; }
 
+            // --- 這裡為生成的選項標籤加入 fw-bold 樣式 ---
             const clinicContainer = document.getElementById('clinicGroup'); clinicContainer.innerHTML = '';
             response.data.clinics.forEach((c, idx) => {
               const spanClass = (c === '非診間') ? 'style="grid-column: span 2;"' : '';
-              clinicContainer.innerHTML += `<div ${spanClass}><input type="radio" class="btn-check clinic-radio" name="clinic" id="c_${idx}" value="${c}" onchange="toggleRankName()"><label class="btn btn-outline-theme" for="c_${idx}">${c}</label></div>`;
+              clinicContainer.innerHTML += `<div ${spanClass}><input type="radio" class="btn-check clinic-radio" name="clinic" id="c_${idx}" value="${c}" onchange="toggleRankName()"><label class="btn btn-outline-theme fw-bold" for="c_${idx}">${c}</label></div>`;
             });
 
             const rankContainer = document.getElementById('rankGroup'); rankContainer.innerHTML = '';
             response.data.ranks.forEach((r, idx) => {
-              rankContainer.innerHTML += `<div class="col-4"><input type="radio" class="btn-check rank-radio" name="rank" id="r_${idx}" value="${r}"><label class="btn btn-outline-theme w-100 p-2 text-center" style="margin:0; font-size:0.95rem;" for="r_${idx}">${r}</label></div>`;
+              rankContainer.innerHTML += `<div class="col-4"><input type="radio" class="btn-check rank-radio" name="rank" id="r_${idx}" value="${r}"><label class="btn btn-outline-theme w-100 p-2 text-center fw-bold" style="margin:0; font-size:0.95rem;" for="r_${idx}">${r}</label></div>`;
             });
 
           } else { 
@@ -261,9 +274,8 @@
       document.addEventListener('focusin', function(e) {
         if (e.target && e.target.tagName === 'INPUT') {
           setTimeout(() => {
-            // 將取得焦點的輸入框捲動到螢幕正中央
-            e.target.scrollIntoView({ behavior: 'smooth', block: 'center' });
-          }, 300); // 延遲 0.3 秒等待鍵盤完全彈出
+            e.target.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+          }, 300);
         }
       });
 
