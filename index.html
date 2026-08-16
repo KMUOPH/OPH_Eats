@@ -26,7 +26,6 @@
       .btn-outline-dark-theme:hover { background-color: #e9ecef; color: #212529; }
       .btn-check:checked + .btn-outline-dark-theme { background-color: #343a40; color: white; border-color: #343a40; }
       
-      /* --- 保持完美的藍色發光邊框 --- */
       .form-control:focus {
         border-color: #86b7fe !important;
         box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25) !important;
@@ -49,7 +48,6 @@
         margin-bottom: 12px; 
       }
       
-      .not-today-header { background-color: #8c2b32 !important; color: #ffffff !important; }
       .section-header .text-danger { color: #ff6b6b !important; }
       
       .clinic-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; }
@@ -68,6 +66,8 @@
         <img src="logo.jpg" alt="Logo" style="height: 46px; width: 46px; border-radius: 50%; object-fit: cover; box-shadow: 0 2px 4px rgba(0,0,0,0.2); margin-right: 12px;">
         <h3 class="mb-0 fw-bold text-truncate" style="font-size: 1.25rem;">OPH Eats 眼科訂餐</h3>
       </div>
+      <!-- 用於顯示全域非今日警告的標籤容器 -->
+      <div id="dateStatusBadge"></div>
     </div>
 
     <div class="container">
@@ -107,11 +107,9 @@
                 <img id="bentoMenuImg" class="menu-img" alt="餐點菜單">
                 <div class="row g-2">
                   <div class="col-8">
-                    <!-- 按 Enter(或手機鍵盤的 next) 會自動聚焦到金額格 -->
                     <input type="text" class="form-control fw-bold" id="bentoName" placeholder="餐點" enterkeyhint="next" onkeydown="if(event.key==='Enter' || event.keyCode===13){event.preventDefault(); document.getElementById('bentoAmount').focus();}" onfocus="this.select()">
                   </div>
                   <div class="col-4">
-                    <!-- 金額格按 Enter 會自動聚焦到飲料名稱格 -->
                     <input type="text" inputmode="numeric" class="form-control fw-bold" id="bentoAmount" placeholder="金額" enterkeyhint="next" onkeydown="if(event.key==='Enter' || event.keyCode===13){event.preventDefault(); document.getElementById('drinkName').focus();}" onfocus="this.select()">
                   </div>
                 </div>
@@ -183,6 +181,7 @@
         document.getElementById('closedScreen').classList.add('d-none');
         document.getElementById('closedTitle').innerText = "今日點餐已關閉";
         document.getElementById('closedDesc').innerText = "目前不在開放點餐時間，請稍後再試或洽詢管理員。";
+        document.getElementById('dateStatusBadge').innerHTML = ""; // 每次載入先清空標籤
 
         fetchWithRetry(GAS_API_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action: "getSystemData" }) })
         .then(response => {
@@ -202,17 +201,22 @@
               w = ['日', '一', '二', '三', '四', '五', '六'][dObj.getDay()];
               isToday = (response.data.menuDate === todayStr);
             }
+            
+            // --- 右上角全域狀態標籤處理 ---
+            if (!isToday && response.data.menuDate) {
+              document.getElementById('dateStatusBadge').innerHTML = `<span class="badge" style="background-color: #8c2b32; font-size: 0.85rem; padding: 5px 10px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.4); box-shadow: 0 2px 4px rgba(0,0,0,0.2);">⚠️ 非今日菜單</span>`;
+            }
 
             const bTitle = document.getElementById('bentoSectionTitle');
             if (response.data.bentoMenuUrl && response.data.menuDate) {
-              bTitle.innerText = `${m}/${d} 週${w} ${response.data.bentoShopName}` + (isToday ? "" : " (非今日)");
-              bTitle.className = `section-header ${isToday ? '' : 'not-today-header'}`;
+              // 標題恢復乾淨，不再附加 (非今日) 也不改變背景色
+              bTitle.innerText = `${m}/${d} 週${w} ${response.data.bentoShopName}`;
             }
             
             const dTitle = document.getElementById('drinkSectionTitle');
             if (response.data.drinkMenuUrl && response.data.menuDate) {
-              dTitle.innerText = `${m}/${d} 週${w} ${response.data.drinkShopName}` + (isToday ? "" : " (非今日)");
-              dTitle.className = `section-header ${isToday ? '' : 'not-today-header'}`;
+              // 標題恢復乾淨
+              dTitle.innerText = `${m}/${d} 週${w} ${response.data.drinkShopName}`;
             }
             
             if(response.data.bentoMenuUrl) { const bImg = document.getElementById('bentoMenuImg'); bImg.src = formatDriveImageUrl(response.data.bentoMenuUrl); bImg.style.display = 'block'; }
@@ -226,7 +230,6 @@
 
             const rankContainer = document.getElementById('rankGroup'); rankContainer.innerHTML = '';
             response.data.ranks.forEach((r, idx) => {
-              // 保留選取職級後自動跳轉餐點名稱
               rankContainer.innerHTML += `<div class="col-4"><input type="radio" class="btn-check rank-radio" name="rank" id="r_${idx}" value="${r}" onchange="setTimeout(() => document.getElementById('bentoName').focus(), 100);"><label class="btn btn-outline-dark-theme w-100 fw-bold rank-label-custom" for="r_${idx}">${r}</label></div>`;
             });
 
