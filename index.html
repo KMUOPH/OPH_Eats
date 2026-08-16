@@ -5,15 +5,11 @@
     <meta id="viewport" name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>眼科訂餐</title>
     
-    <!-- ================= App 圖示設定 ================= -->
     <link rel="icon" href="logoi.jpg" type="image/jpeg">
     <link rel="apple-touch-icon" href="logoi.jpg">
-    <link rel="apple-touch-icon" sizes="152x152" href="logoi.jpg">
     <link rel="apple-touch-icon" sizes="180x180" href="logoi.jpg">
-    <link rel="apple-touch-icon" sizes="167x167" href="logoi.jpg">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <meta name="mobile-web-app-capable" content="yes">
     
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
@@ -21,7 +17,6 @@
       body.modal-open { padding-right: 0 !important; overflow: auto !important; }
       
       .card { border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); border: none; overflow: hidden; }
-      .form-label { font-weight: bold; color: #495057; margin-bottom: 8px; }
       
       .text-theme { color: #536e86 !important; }
       .btn-theme { background-color: #536e86; border-color: #536e86; color: white; }
@@ -32,10 +27,14 @@
       .btn-check:checked + .btn-outline-theme { background-color: #536e86; color: white; border-color: #536e86; }
       
       #loadingScreen, #closedScreen { text-align: center; padding: 40px 20px; }
-      .menu-img { width: 100%; border-radius: 8px; margin-bottom: 15px; display: none; box-shadow: 0 2px 5px rgba(0,0,0,0.15); border: 1px solid #e2e8f0; cursor: pointer; }
+      .menu-img { width: 100%; border-radius: 8px; margin-bottom: 12px; display: none; box-shadow: 0 2px 5px rgba(0,0,0,0.15); border: 1px solid #e2e8f0; cursor: pointer; }
       
-      .banner-header { background-color: #536e86; color: white; height: 65px; margin-bottom: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); width: 100%; display: flex; justify-content: space-between; align-items: center; padding-right: 15px; }
-      .section-box { background-color: #ffffff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 15px; margin-bottom: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+      .banner-header { background-color: #536e86; color: white; height: 60px; margin-bottom: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); width: 100%; display: flex; justify-content: space-between; align-items: center; padding-right: 15px; }
+      
+      /* 極簡化區塊與標題樣式 */
+      .section-block { margin-bottom: 24px; }
+      .section-header { background-color: #e9ecef; border-radius: 8px; padding: 10px 15px; font-size: 1rem; font-weight: bold; color: #495057; margin-bottom: 12px; }
+      .section-header.text-danger { color: #dc3545 !important; }
       
       .clinic-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; }
       .clinic-grid label { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; padding: 8px 0; font-size: 0.9rem; margin: 0; }
@@ -43,7 +42,6 @@
       .quick-notes::-webkit-scrollbar { display: none; }
       .btn-clear { border-color: #ced4da; color: #6c757d; }
       .btn-clear:hover { background-color: #e9ecef; color: #495057; }
-      
       .high-contrast-close { background-color: rgba(255, 255, 255, 0.95) !important; opacity: 1 !important; border-radius: 50% !important; box-shadow: 0 3px 8px rgba(0, 0, 0, 0.4) !important; padding: 0.6rem !important; z-index: 1050; }
     </style>
   </head>
@@ -51,11 +49,10 @@
     
     <div class="banner-header">
       <div class="d-flex align-items-center h-100 overflow-hidden">
-        <!-- 調整 Logo：白底滿版高度 -->
-        <img src="logo.jpg" alt="Logo" style="height: 100%; aspect-ratio: 1/1; object-fit: contain; background-color: white; padding: 6px; margin-right: 12px; box-shadow: 2px 0 5px rgba(0,0,0,0.15);">
-        <h3 class="mb-0 fw-bold text-truncate" style="font-size: 1.5rem;">OPH Eats 眼科訂餐</h3>
+        <!-- 調整 Logo：無白邊、貼齊高度 -->
+        <img src="logo.jpg" alt="Logo" style="height: 100%; object-fit: contain; margin-right: 10px;">
+        <h3 class="mb-0 fw-bold text-truncate" style="font-size: 1.25rem;">OPH Eats 眼科訂餐</h3>
       </div>
-      <!-- 重新命名為「更新菜單」 -->
       <button class="btn btn-sm text-white flex-shrink-0 ms-2" style="background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.5); border-radius: 15px; padding: 4px 10px; font-size: 0.85rem; font-weight: bold;" onclick="loadData(false)">更新菜單</button>
     </div>
 
@@ -83,52 +80,50 @@
             </div>
 
             <div id="closedScreen" class="d-none">
-              <h2 class="text-danger fw-bold mb-3 text-center">⛔ 今日點餐已關閉</h2>
+              <h2 class="text-danger fw-bold mb-3 text-center">今日點餐已關閉</h2>
               <p class="text-secondary text-center">目前不在開放點餐時間，請稍後再試或洽詢管理員。</p>
             </div>
             
             <div id="mainContent" class="d-none">
               <form id="orderForm">
                 
-                <div class="mb-4">
-                  <label class="form-label d-block fs-6">🏥 診次 <span class="text-danger">*</span></label>
+                <div class="section-block">
+                  <div class="section-header">診次 <span class="text-danger">*</span></div>
                   <div class="clinic-grid" id="clinicGroup"></div>
                 </div>
 
-                <div class="mb-4" id="rankDiv">
-                  <label class="form-label d-block fs-6">🧑‍⚕️ 職級 <span class="text-danger">*</span></label>
+                <div class="section-block" id="rankDiv">
+                  <div class="section-header">職級 <span class="text-danger">*</span></div>
                   <div class="row g-2" id="rankGroup"></div>
                 </div>
 
-                <div class="mb-4 d-none" id="nameDiv">
-                  <label class="form-label">👤 姓名 <span class="text-danger">*</span></label>
+                <div class="section-block d-none" id="nameDiv">
+                  <div class="section-header">姓名 <span class="text-danger">*</span></div>
                   <input type="text" class="form-control" id="name" placeholder="請輸入姓名" onfocus="this.select()">
                 </div>
 
-                <div class="section-box">
-                  <label class="form-label fw-bold fs-5 border-bottom pb-2 mb-3 d-block text-theme" id="bentoSectionTitle">🍱 餐點</label>
-                  <div class="text-muted small mb-2">💡 點擊圖片可雙指放大查看</div>
+                <div class="section-block">
+                  <div class="section-header" id="bentoSectionTitle">餐點</div>
                   <img id="bentoMenuImg" class="menu-img" alt="餐點菜單" onclick="openModal(this.src)">
                   <div class="row g-2">
-                    <div class="col-5"><input type="text" class="form-control" id="bentoName" placeholder="名稱" onfocus="this.select()"></div>
-                    <div class="col-4"><input type="text" class="form-control" id="bentoCustom" placeholder="客製項目" onfocus="this.select()"></div>
-                    <div class="col-3"><input type="number" inputmode="numeric" pattern="[0-9]*" class="form-control" id="bentoAmount" placeholder="金額" onfocus="this.select()"></div>
+                    <!-- 移除客製，擴大名稱欄位 -->
+                    <div class="col-8"><input type="text" class="form-control" id="bentoName" placeholder="餐點" onfocus="this.select()"></div>
+                    <div class="col-4"><input type="number" inputmode="numeric" pattern="[0-9]*" class="form-control" id="bentoAmount" placeholder="金額" onfocus="this.select()"></div>
                   </div>
                 </div>
 
-                <div class="section-box">
-                  <label class="form-label fw-bold fs-5 border-bottom pb-2 mb-3 d-block text-theme" id="drinkSectionTitle">🥤 飲料</label>
-                  <div class="text-muted small mb-2">💡 點擊圖片可雙指放大查看</div>
+                <div class="section-block">
+                  <div class="section-header" id="drinkSectionTitle">飲料</div>
                   <img id="drinkMenuImg" class="menu-img" alt="飲料菜單" onclick="openModal(this.src)">
                   <div class="row g-2">
-                    <div class="col-5"><input type="text" class="form-control" id="drinkName" placeholder="名稱" onfocus="this.select()"></div>
-                    <div class="col-4"><input type="text" class="form-control" id="drinkCustom" placeholder="客製項目" onfocus="this.select()"></div>
-                    <div class="col-3"><input type="number" inputmode="numeric" pattern="[0-9]*" class="form-control" id="drinkAmount" placeholder="金額" onfocus="this.select()"></div>
+                    <!-- 移除客製，擴大名稱欄位 -->
+                    <div class="col-8"><input type="text" class="form-control" id="drinkName" placeholder="飲料" onfocus="this.select()"></div>
+                    <div class="col-4"><input type="number" inputmode="numeric" pattern="[0-9]*" class="form-control" id="drinkAmount" placeholder="金額" onfocus="this.select()"></div>
                   </div>
                 </div>
                 
-                <div class="mb-4">
-                  <label class="form-label fs-6">📝 備註</label>
+                <div class="section-block">
+                  <div class="section-header">備註</div>
                   <div class="d-flex gap-2 mb-2 quick-notes" style="overflow-x: auto; white-space: nowrap;">
                     <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill" onclick="addNote('改單，以這筆為主')">改單，以這筆為主</button>
                     <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill" onclick="addNote('兩筆都要')">兩筆都要</button>
@@ -154,12 +149,21 @@
     <script>
       const GAS_API_URL = "https://script.google.com/macros/s/AKfycbwGOrIyoQ-XUBcn_nExeZuKkuQIvWx6aZhdYhB10qq6HW6uDxCa9tGUA_pwByVC7cSw/exec";
 
-      document.getElementById('imageModal').addEventListener('show.bs.modal', function () {
-        document.getElementById('viewport').setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes');
-      });
-      document.getElementById('imageModal').addEventListener('hidden.bs.modal', function () {
-        document.getElementById('viewport').setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no');
-      });
+      // --- 加入 Fetch Auto-Retry 自動重試機制 ---
+      async function fetchWithRetry(url, options, retries = 2) {
+        for (let i = 0; i <= retries; i++) {
+          try {
+            const res = await fetch(url, options);
+            return await res.json();
+          } catch (err) {
+            if (i === retries) throw err;
+            await new Promise(resolve => setTimeout(resolve, 1000)); // 失敗等待 1 秒再試
+          }
+        }
+      }
+
+      document.getElementById('imageModal').addEventListener('show.bs.modal', function () { document.getElementById('viewport').setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes'); });
+      document.getElementById('imageModal').addEventListener('hidden.bs.modal', function () { document.getElementById('viewport').setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no'); });
 
       function formatDriveImageUrl(url) {
         if (!url) return ''; let id = '';
@@ -169,15 +173,9 @@
       }
 
       let imageModalInstance = null;
-      function openModal(src) { 
-        document.getElementById('modalImage').src = src; 
-        if (!imageModalInstance) { imageModalInstance = new bootstrap.Modal(document.getElementById('imageModal')); }
-        imageModalInstance.show(); 
-      }
-
+      function openModal(src) { document.getElementById('modalImage').src = src; if (!imageModalInstance) { imageModalInstance = new bootstrap.Modal(document.getElementById('imageModal')); } imageModalInstance.show(); }
       function addNote(text) { const n = document.getElementById('notes'); n.value = n.value ? n.value + "。" + text : text; }
 
-      // 核心：背景同步重整資料，不清除使用者已輸入的內容
       function loadData(isInitial = true) {
         if (!isInitial) {
           const overlay = document.createElement('div'); overlay.id = 'syncOverlay';
@@ -186,11 +184,18 @@
           document.body.appendChild(overlay);
         }
 
-        fetch(GAS_API_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action: "getSystemData" }) })
-        .then(res => res.json())
+        // 使用加入 Retry 機制的 fetch
+        fetchWithRetry(GAS_API_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action: "getSystemData" }) })
         .then(response => {
           if (isInitial) document.getElementById('loadingScreen').classList.add('d-none');
-          else { const overlay = document.getElementById('syncOverlay'); if (overlay) overlay.remove(); }
+          else { 
+            const overlay = document.getElementById('syncOverlay'); if (overlay) overlay.remove(); 
+            // 更新菜單時，清空所有填寫項目
+            document.getElementById('orderForm').reset();
+            document.querySelectorAll('.btn-check').forEach(radio => radio.checked = false);
+            toggleRankName();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }
 
           if(response.success && response.data.isOpen) {
             document.getElementById('mainContent').classList.remove('d-none');
@@ -210,22 +215,18 @@
 
             const bTitle = document.getElementById('bentoSectionTitle');
             if (response.data.bentoMenuUrl && response.data.menuDate) {
-              bTitle.innerText = `🍱 ${m}/${d} 週${w} 餐點 ${response.data.bentoShopName}` + (isToday ? "" : " (非今日)");
-              bTitle.className = `form-label fw-bold fs-5 border-bottom pb-2 mb-3 d-block ${isToday ? 'text-theme' : 'text-danger'}`;
+              bTitle.innerText = `[餐點] ${m}/${d} 週${w} ${response.data.bentoShopName}` + (isToday ? "" : " (非今日)");
+              bTitle.className = `section-header ${isToday ? '' : 'text-danger'}`;
             }
             
             const dTitle = document.getElementById('drinkSectionTitle');
             if (response.data.drinkMenuUrl && response.data.menuDate) {
-              dTitle.innerText = `🥤 ${m}/${d} 週${w} 飲料 ${response.data.drinkShopName}` + (isToday ? "" : " (非今日)");
-              dTitle.className = `form-label fw-bold fs-5 border-bottom pb-2 mb-3 d-block ${isToday ? 'text-theme' : 'text-danger'}`;
+              dTitle.innerText = `[飲料] ${m}/${d} 週${w} ${response.data.drinkShopName}` + (isToday ? "" : " (非今日)");
+              dTitle.className = `section-header ${isToday ? '' : 'text-danger'}`;
             }
             
             if(response.data.bentoMenuUrl) { const bImg = document.getElementById('bentoMenuImg'); bImg.src = formatDriveImageUrl(response.data.bentoMenuUrl); bImg.style.display = 'block'; }
             if(response.data.drinkMenuUrl) { const dImg = document.getElementById('drinkMenuImg'); dImg.src = formatDriveImageUrl(response.data.drinkMenuUrl); dImg.style.display = 'block'; }
-
-            // 紀錄使用者原本選中的診次與職級，避免被清除
-            const currentClinic = document.querySelector('input[name="clinic"]:checked')?.value;
-            const currentRank = document.querySelector('input[name="rank"]:checked')?.value;
 
             const clinicContainer = document.getElementById('clinicGroup'); clinicContainer.innerHTML = '';
             response.data.clinics.forEach((c, idx) => {
@@ -238,22 +239,15 @@
               rankContainer.innerHTML += `<div class="col-4"><input type="radio" class="btn-check rank-radio" name="rank" id="r_${idx}" value="${r}"><label class="btn btn-outline-theme w-100 p-2 text-center" style="margin:0; font-size:0.95rem;" for="r_${idx}">${r}</label></div>`;
             });
 
-            // 復原使用者的選擇
-            if (currentClinic) { const rb = document.querySelector(`input[name="clinic"][value="${currentClinic}"]`); if (rb) rb.checked = true; }
-            if (currentRank) { const rb = document.querySelector(`input[name="rank"][value="${currentRank}"]`); if (rb) rb.checked = true; }
-            toggleRankName();
-
           } else { 
-            document.getElementById('mainContent').classList.add('d-none');
-            document.getElementById('closedScreen').classList.remove('d-none'); 
+            document.getElementById('mainContent').classList.add('d-none'); document.getElementById('closedScreen').classList.remove('d-none'); 
           }
         }).catch(err => {
           if (!isInitial) { const overlay = document.getElementById('syncOverlay'); if (overlay) overlay.remove(); }
-          alert("讀取系統狀態時發生網路錯誤：" + err.message + "\n\n(💡 若顯示 Unexpected token < 代表 Google 權限未開放為「所有人」，或新網址未貼上)");
+          alert("讀取系統發生錯誤：" + err.message);
         });
       };
 
-      // 初次載入
       window.onload = () => loadData(true);
 
       function toggleRankName() {
@@ -267,31 +261,29 @@
         const rank = document.querySelector('input[name="rank"]:checked') ? document.querySelector('input[name="rank"]:checked').value : "";
         const name = document.getElementById('name').value.trim();
         
-        if(!clinic) return alert("⚠️ 請選擇診次！"); if(clinic === "非診間" && !name) return alert("⚠️ 請填寫姓名！"); if(clinic !== "非診間" && !rank) return alert("⚠️ 請選擇職級！");
+        if(!clinic) return alert("請選擇診次！"); if(clinic === "非診間" && !name) return alert("請填寫姓名！"); if(clinic !== "非診間" && !rank) return alert("請選擇職級！");
 
-        const bName = document.getElementById('bentoName').value.trim(); const bCustom = document.getElementById('bentoCustom').value.trim(); const bAmt = document.getElementById('bentoAmount').value.trim();
-        const dName = document.getElementById('drinkName').value.trim(); const dCustom = document.getElementById('drinkCustom').value.trim(); const dAmt = document.getElementById('drinkAmount').value.trim();
+        const bName = document.getElementById('bentoName').value.trim(); const bAmt = document.getElementById('bentoAmount').value.trim();
+        const dName = document.getElementById('drinkName').value.trim(); const dAmt = document.getElementById('drinkAmount').value.trim();
         
-        if ((bName || bCustom) && !bAmt) return alert("⚠️ 請輸入【餐點】的金額！"); if ((dName || dCustom) && !dAmt) return alert("⚠️ 請輸入【飲料】的金額！");
+        if (bName && !bAmt) return alert("請輸入餐點的金額！"); if (dName && !dAmt) return alert("請輸入飲料的金額！");
         const notes = document.getElementById('notes').value.trim();
         
-        let finalMealItem = bName; if (bCustom) finalMealItem = finalMealItem ? `${finalMealItem} (${bCustom})` : `(${bCustom})`;
-        let finalDrinkItem = dName; if (dCustom) finalDrinkItem = finalDrinkItem ? `${finalDrinkItem} (${dCustom})` : `(${dCustom})`;
-        
-        const confirmMsg = `請確認您的訂餐內容：\n\n🏥 ${clinic}\n🧑‍⚕️ ${clinic === '非診間' ? name : rank}\n🍱 ${finalMealItem || '無'} $${bAmt || 0}\n🥤 ${finalDrinkItem || '無'} $${dAmt || 0}\n📝 ${notes || '無'}\n\n👉 確定要送出嗎？`;
+        // 極簡化明細內容
+        const confirmMsg = `請確認您的訂餐內容：\n\n${clinic}\n${clinic === '非診間' ? name : rank}\n${bName ? bName + " $" + bAmt : '無'}\n${dName ? dName + " $" + dAmt : '無'}\n${notes || '無'}\n\n👉 確定要送出嗎？`;
 
         if (!confirm(confirmMsg)) return;
 
         const btn = document.getElementById('submitBtn'); btn.disabled = true; btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> 處理中...';
 
-        fetch(GAS_API_URL, {
+        fetchWithRetry(GAS_API_URL, {
           method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-          body: JSON.stringify({ action: "submitOrder", data: { clinic: clinic, rank: rank, name: name, notes: notes, bentoItem: finalMealItem, bentoAmount: bAmt, drinkItem: finalDrinkItem, drinkAmount: dAmt }})
-        }).then(res => res.json()).then(data => {
+          body: JSON.stringify({ action: "submitOrder", data: { clinic: clinic, rank: rank, name: name, notes: notes, bentoItem: bName, bentoAmount: bAmt, drinkItem: dName, drinkAmount: dAmt }})
+        }).then(data => {
           if(data.success) { alert(data.message); document.getElementById('orderForm').reset(); document.querySelectorAll('.btn-check').forEach(radio => radio.checked = false); toggleRankName(); window.scrollTo({ top: 0, behavior: 'smooth' });
-          } else alert("❌ 發生錯誤：" + data.message);
+          } else alert("錯誤：" + data.message);
         }).catch(error => {
-          alert("❌ 送出訂單時發生網路錯誤：" + error.message + "\n\n(💡 若顯示 Unexpected token < 代表 Google 權限未開放為「所有人」，或新網址未貼上)");
+          alert("送出訂單發生錯誤：" + error.message);
         }).finally(() => { 
           btn.disabled = false; btn.innerText = '送出訂單'; 
         });
