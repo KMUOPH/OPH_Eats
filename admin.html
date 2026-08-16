@@ -2,174 +2,251 @@
 <html lang="zh-TW">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>訂餐系統維護</title>
-  <link rel="icon" href="logoa.jpg" type="image/jpeg">
-  <link rel="apple-touch-icon" href="logoa.jpg">
-  <link rel="apple-touch-icon" sizes="180x180" href="logoa.jpg">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>後台管理系統</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <style>
-    body { background-color: #f2f5f8; padding: 0; padding-bottom: 20px; font-family: "微軟正黑體", sans-serif; }
-    .card { border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); border: none; overflow: hidden; }
-    .text-theme { color: #9b727a !important; }
-    .btn-theme { background-color: #9b727a; color: white; border-color: #9b727a; }
-    .btn-theme:hover { background-color: #846068; color: white; border-color: #846068; }
-    .tag-item { display: inline-block; background: #f3ebec; color: #9b727a; padding: 5px 10px; border-radius: 8px; margin: 4px; font-weight: 500; border: 1px solid #d8c5c8;}
-    .tag-action { cursor: pointer; color: #846068; padding: 0 4px; font-size: 0.9em;}
-    .tag-action:hover { color: #9b727a; font-weight: bold;}
-    .tag-close { cursor: pointer; margin-left: 6px; font-weight: bold; color: #dc3545; }
-    #adminPanel { display: none; }
-    #overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 9999; justify-content: center; align-items: center; color: white; flex-direction: column; }
-    .file-list-item { display: flex; justify-content: space-between; align-items: center; padding: 8px; border-bottom: 1px solid #eee; }
+    body { background-color: #ffffff; font-family: "微軟正黑體", sans-serif; padding-bottom: 30px; }
     
-    .banner-header { background-color: #9b727a; color: white; height: 60px; margin-bottom: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); width: 100%; display: flex; justify-content: space-between; align-items: center; padding-right: 15px; }
+    .banner-header { background-color: #536e86; color: white; height: 60px; margin-bottom: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); width: 100%; display: flex; align-items: center; padding: 0 15px; }
+    
+    .section-block { margin-bottom: 24px; }
+    .section-header { background-color: #e9ecef; color: #212529; border-radius: 8px; padding: 10px 15px; font-size: 1rem; font-weight: bold; margin-bottom: 12px; }
+    
+    .btn-theme { background-color: #536e86; color: white; border: none; }
+    .btn-theme:hover { background-color: #40586e; color: white; }
+    
+    .btn-outline-dark-theme { color: #495057; border-color: #adb5bd; }
+    .btn-outline-dark-theme:hover { background-color: #e9ecef; color: #212529; }
+    
+    .img-preview { width: 100%; height: 120px; object-fit: cover; border-radius: 8px; cursor: pointer; border: 1px solid #dee2e6; }
+    .gallery-item { position: relative; margin-bottom: 15px; }
+    .delete-btn { position: absolute; top: 5px; right: 5px; background: rgba(220, 53, 69, 0.9); color: white; border: none; border-radius: 50%; width: 24px; height: 24px; font-size: 12px; line-height: 1; display: flex; align-items: center; justify-content: center; }
+    
+    #loginSection { max-width: 400px; margin: 50px auto; padding: 20px; }
   </style>
 </head>
 <body>
-  
-  <div id="overlay">
-    <div class="spinner-border text-light mb-3" style="width: 3rem; height: 3rem;" role="status"></div>
-    <h4 id="overlayText">處理中...</h4>
-  </div>
 
-  <div class="banner-header">
-    <div class="d-flex align-items-center h-100 overflow-hidden">
-      <!-- 調整 Logo：無白邊、貼齊高度 -->
-      <img src="logo.jpg" alt="Logo" style="height: 100%; object-fit: contain; margin-right: 10px;">
-      <h3 class="mb-0 fw-bold text-truncate" style="font-size: 1.25rem;">OPH Eats 眼科訂餐維護</h3>
+  <!-- 登入畫面 -->
+  <div id="loginSection">
+    <div class="d-flex align-items-center mb-4 justify-content-center">
+      <img src="logo.jpg" alt="Logo" style="height: 46px; width: 46px; border-radius: 50%; object-fit: cover; box-shadow: 0 2px 4px rgba(0,0,0,0.2); margin-right: 12px;">
+      <h3 class="mb-0 fw-bold text-truncate" style="color: #536e86;">系統登入</h3>
     </div>
-    <button class="btn btn-sm text-white flex-shrink-0 ms-2" style="background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.5); border-radius: 15px; padding: 4px 10px; font-size: 0.85rem; font-weight: bold;" onclick="location.reload()">重新整理</button>
+    <input type="password" id="adminPwd" class="form-control mb-3" placeholder="請輸入管理員密碼">
+    <button class="btn btn-theme w-100 fw-bold" onclick="login()">登入後台</button>
   </div>
 
-  <div class="container">
-    <div class="row justify-content-center">
-      <div class="col-md-8 col-lg-6">
-        <div class="card p-4">
-          <div id="loginSection">
-            <input type="password" id="adminPwd" class="form-control mb-3" placeholder="請輸入管理員密碼">
-            <button class="btn btn-theme w-100 fw-bold" onclick="login()">登入</button>
+  <!-- 管理後台畫面 -->
+  <div id="dashboardSection" class="d-none">
+    <div class="banner-header">
+      <img src="logo.jpg" alt="Logo" style="height: 46px; width: 46px; border-radius: 50%; object-fit: cover; box-shadow: 0 2px 4px rgba(0,0,0,0.2); margin-right: 12px;">
+      <h3 class="mb-0 fw-bold" style="font-size: 1.25rem;">後台管理系統</h3>
+    </div>
+
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6 px-3">
+
+          <!-- 系統狀態控制 -->
+          <div class="section-block">
+            <div class="section-header">系統狀態</div>
+            <div class="d-flex justify-content-between align-items-center px-2">
+              <span id="systemStatusText" class="fw-bold fs-5 text-secondary">狀態讀取中...</span>
+              <button id="toggleSystemBtn" class="btn btn-outline-dark-theme fw-bold" onclick="toggleSystem()">切換狀態</button>
+            </div>
           </div>
-          <div id="adminPanel">
-            <div class="card mb-4 border-primary">
-              <div class="card-body text-center">
-                <h5 class="card-title mb-3">今日點餐系統狀態</h5>
-                <button class="btn btn-success me-2" onclick="toggleSys(true)">✅ 開放點餐</button>
-                <button class="btn btn-danger" onclick="toggleSys(false)">⛔ 關閉點餐</button>
+
+          <!-- 上傳今日菜單 -->
+          <div class="section-block">
+            <div class="section-header">套用今日菜單</div>
+            <div class="row g-2 mb-3">
+              <div class="col-6">
+                <label class="form-label small text-secondary fw-bold">餐點店名</label>
+                <input type="text" id="bentoShopName" class="form-control" placeholder="輸入店名">
+              </div>
+              <div class="col-6">
+                <label class="form-label small text-secondary fw-bold">上傳餐點</label>
+                <input type="file" id="bentoFile" class="form-control" accept="image/*">
+              </div>
+              <div class="col-12 mt-2">
+                <button class="btn btn-theme w-100 fw-bold" onclick="uploadAndSetMenu('bento')">套用為今日餐點</button>
               </div>
             </div>
-            <div class="card mb-4 border-secondary">
-              <div class="card-body">
-                <h5 class="card-title mb-3 text-secondary">📅 設定今日菜單</h5>
-                <ul class="nav nav-tabs mb-3" id="menuTabs" role="tablist">
-                  <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#tab-select">從圖庫挑選</button></li>
-                  <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-upload">拍照並套用</button></li>
-                </ul>
-                <div class="tab-content">
-                  <div class="tab-pane fade show active" id="tab-select">
-                    <button class="btn btn-sm btn-outline-secondary mb-3 w-100" onclick="loadDriveFiles()">🔄 重新整理圖庫清單</button>
-                    <label class="form-label fw-bold">🍱 餐點</label>
-                    <div class="input-group mb-3">
-                      <select class="form-select" id="bentoSelect"><option value="">載入中...</option></select>
-                      <button class="btn btn-outline-primary" onclick="setMenu('bento')">套用</button>
-                    </div>
-                    <label class="form-label fw-bold">🥤 飲料</label>
-                    <div class="input-group">
-                      <select class="form-select" id="drinkSelect"><option value="">載入中...</option></select>
-                      <button class="btn btn-outline-primary" onclick="setMenu('drink')">套用</button>
-                    </div>
-                  </div>
-                  <div class="tab-pane fade" id="tab-upload">
-                    <label class="form-label fw-bold">🍱 拍攝餐點菜單</label>
-                    <div class="input-group mb-3">
-                      <input type="text" class="form-control" id="bentoFileName" placeholder="店家(如:老紀)">
-                      <input type="file" class="form-control" id="bentoFile" accept="image/*">
-                      <button class="btn btn-success" onclick="processAndUpload('bento', true)">套用</button>
-                    </div>
-                    <label class="form-label fw-bold">🥤 拍攝飲料菜單</label>
-                    <div class="input-group">
-                      <input type="text" class="form-control" id="drinkFileName" placeholder="店家(如:五十嵐)">
-                      <input type="file" class="form-control" id="drinkFile" accept="image/*">
-                      <button class="btn btn-success" onclick="processAndUpload('drink', true)">套用</button>
-                    </div>
-                  </div>
-                </div>
+            <hr>
+            <div class="row g-2">
+              <div class="col-6">
+                <label class="form-label small text-secondary fw-bold">飲料店名</label>
+                <input type="text" id="drinkShopName" class="form-control" placeholder="輸入店名">
               </div>
-            </div>
-            <div class="card mb-4 border-info">
-              <div class="card-body">
-                <h5 class="card-title mb-3 text-info">📁 菜單圖庫管理</h5>
-                <p class="text-muted small mb-3">僅維護檔案，不影響今日點餐畫面。</p>
-                <div class="input-group mb-3">
-                  <select class="form-select" style="max-width: 100px;" id="libPrefix"><option value="[餐點]">[餐點]</option><option value="[飲料]">[飲料]</option></select>
-                  <input type="text" class="form-control" id="libFileName" placeholder="輸入店家名稱">
-                  <input type="file" class="form-control" id="libFile" accept="image/*">
-                  <button class="btn btn-info text-white" onclick="uploadToLibrary()">上傳</button>
-                </div>
-                <hr>
-                <div class="fw-bold mb-2">現有檔案列表：</div>
-                <div id="fileListContainer" style="max-height: 200px; overflow-y: auto; background: #fff; border: 1px solid #ddd; border-radius: 5px;"></div>
+              <div class="col-6">
+                <label class="form-label small text-secondary fw-bold">上傳飲料</label>
+                <input type="file" id="drinkFile" class="form-control" accept="image/*">
               </div>
-            </div>
-            <button class="btn btn-outline-secondary w-100 mb-2 fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#optionsCollapse">⚙️ 展開/收合 診次與職級設定</button>
-            <div class="collapse" id="optionsCollapse">
-              <div class="card card-body mb-4 bg-light">
-                <label class="form-label fw-bold">🏥 診次清單</label>
-                <div id="clinicTags" class="mb-2"></div>
-                <div class="input-group mb-3"><input type="text" class="form-control" id="newClinicInput" placeholder="新增診次"><button class="btn btn-outline-primary" onclick="addOption('clinic')">新增</button></div>
-                <label class="form-label fw-bold">🧑‍⚕️ 職級清單</label>
-                <div id="rankTags" class="mb-2"></div>
-                <div class="input-group mb-3"><input type="text" class="form-control" id="newRankInput" placeholder="新增職級"><button class="btn btn-outline-primary" onclick="addOption('rank')">新增</button></div>
-                <button class="btn btn-secondary w-100" onclick="saveOptions()">💾 儲存選單設定</button>
+              <div class="col-12 mt-2">
+                <button class="btn btn-theme w-100 fw-bold" onclick="uploadAndSetMenu('drink')">套用為今日飲料</button>
               </div>
             </div>
           </div>
+
+          <!-- 雲端圖庫 -->
+          <div class="section-block">
+            <div class="section-header">雲端圖庫與歷史菜單</div>
+            <div class="input-group mb-3">
+              <input type="file" id="galleryFile" class="form-control" accept="image/*">
+              <button class="btn btn-outline-dark-theme fw-bold" onclick="uploadToGallery()">純上傳不套用</button>
+            </div>
+            <div class="row" id="galleryContainer">
+              <div class="text-center text-secondary small">載入中...</div>
+            </div>
+          </div>
+
+          <!-- 選項設定 -->
+          <div class="section-block">
+            <div class="section-header">診次與職級設定</div>
+            <div class="mb-3">
+              <label class="form-label small text-secondary fw-bold">診次清單 (請用逗號分隔)</label>
+              <textarea id="clinicsInput" class="form-control" rows="2"></textarea>
+            </div>
+            <div class="mb-3">
+              <label class="form-label small text-secondary fw-bold">職級清單 (請用逗號分隔)</label>
+              <textarea id="ranksInput" class="form-control" rows="2"></textarea>
+            </div>
+            <button class="btn btn-theme w-100 fw-bold" onclick="updateOptions()">儲存選項設定</button>
+          </div>
+
         </div>
       </div>
     </div>
   </div>
+
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <script>
+    // ⚠️ 記得替換為您的正確 API 網址
     const GAS_API_URL = "https://script.google.com/macros/s/AKfycbwGOrIyoQ-XUBcn_nExeZuKkuQIvWx6aZhdYhB10qq6HW6uDxCa9tGUA_pwByVC7cSw/exec"; 
-    let currentPwd = ""; let clinicsList = []; let ranksList = []; let currentDriveFiles = [];
+    let currentPwd = "";
+    let isSystemOpen = false;
 
-    // --- 加入 Fetch Auto-Retry 自動重試機制 ---
-    async function fetchWithRetry(url, options, retries = 2) {
-      for (let i = 0; i <= retries; i++) {
-        try {
-          const res = await fetch(url, options);
-          return await res.json();
-        } catch (err) {
-          if (i === retries) throw err;
-          await new Promise(resolve => setTimeout(resolve, 1000)); // 失敗等待 1 秒再試
-        }
+    async function fetchAPI(payload) {
+      try {
+        const res = await fetch(GAS_API_URL, { method: 'POST', body: JSON.stringify(payload) });
+        return await res.json();
+      } catch (err) {
+        alert("連線失敗：" + err.message);
+        return { success: false };
       }
     }
 
-    function showLoading(text) { document.getElementById('overlayText').innerText = text; document.getElementById('overlay').style.display = 'flex'; }
-    function hideLoading() { document.getElementById('overlay').style.display = 'none'; }
-
-    function apiCall(payload, successMsg, callback) {
-      fetchWithRetry(GAS_API_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(payload) })
-      .then(data => { hideLoading(); if(data.success) { if(successMsg) alert(successMsg); if(callback) callback(data); } else alert("❌ 錯誤：" + data.message); })
-      .catch(err => { hideLoading(); alert("網路連線錯誤：" + err.message); });
+    async function login() {
+      const pwd = document.getElementById('adminPwd').value;
+      if (!pwd) return alert('請輸入密碼');
+      const res = await fetchAPI({ action: 'adminLogin', password: pwd });
+      if (res.success) {
+        currentPwd = pwd;
+        document.getElementById('loginSection').classList.add('d-none');
+        document.getElementById('dashboardSection').classList.remove('d-none');
+        loadDashboardData();
+      } else { alert('密碼錯誤'); }
     }
 
-    function login() { currentPwd = document.getElementById('adminPwd').value; showLoading("登入中..."); apiCall({ action: "adminLogin", password: currentPwd }, null, () => { document.getElementById('loginSection').style.display = 'none'; document.getElementById('adminPanel').style.display = 'block'; loadCurrentOptions(); loadDriveFiles(); }); }
-    function loadDriveFiles() { showLoading("讀取中..."); apiCall({ action: "getDriveFiles", password: currentPwd }, null, (res) => { currentDriveFiles = res.files; let bentoHtml = '<option value="">-- 請選擇餐點 --</option>'; let drinkHtml = '<option value="">-- 請選擇飲料 --</option>'; let listHtml = ''; currentDriveFiles.forEach(f => { const opt = `<option value="${f.url}">${f.name}</option>`; if (f.name.startsWith('[餐點]')) bentoHtml += opt; else if (f.name.startsWith('[飲料]')) drinkHtml += opt; else { bentoHtml += opt; drinkHtml += opt; } listHtml += `<div class="file-list-item"><span class="text-truncate" style="max-width: 70%;">${f.name}</span><button class="btn btn-sm btn-outline-danger" onclick="deleteMenuFile('${f.id}', '${f.name}')">刪除</button></div>`; }); document.getElementById('bentoSelect').innerHTML = bentoHtml; document.getElementById('drinkSelect').innerHTML = drinkHtml; document.getElementById('fileListContainer').innerHTML = listHtml || '<div class="p-2 text-muted">目前沒有檔案</div>'; }); }
-    function setMenu(type) { const select = document.getElementById(type + 'Select'); const url = select.value; if(!url) return alert("請選擇圖片！"); const text = select.options[select.selectedIndex].text; const shopName = text.replace(/^\[.*?\]/, '').replace(/_\d+\.jpg$/, ''); showLoading("套用中..."); apiCall({ action: "setMenuUrl", menuType: type, url: url, shopName: shopName, password: currentPwd }, "✅ 已套用！"); }
-    function processAndUpload(type, isSetToToday) { const fileInput = document.getElementById(type + 'File'); const nameInput = document.getElementById(type + 'FileName'); if (!nameInput.value.trim()) return alert("請輸入店家名稱！"); if (!fileInput.files[0]) return alert("請選擇圖片！"); const file = fileInput.files[0]; const prefix = type === 'bento' ? '[餐點]' : '[飲料]'; const shopName = nameInput.value.trim(); const finalFilename = `${prefix}${shopName}_${new Date().getTime()}.jpg`; showLoading("上傳中..."); const reader = new FileReader(); reader.onload = function(e) { const img = new Image(); img.onload = function() { const canvas = document.createElement('canvas'); let width = img.width, height = img.height; const MAX_SIZE = 1200; if (width > height && width > MAX_SIZE) { height *= MAX_SIZE / width; width = MAX_SIZE; } else if (height > MAX_SIZE) { width *= MAX_SIZE / height; height = MAX_SIZE; } canvas.width = width; canvas.height = height; canvas.getContext('2d').drawImage(img, 0, 0, width, height); apiCall({ action: isSetToToday ? "uploadMenu" : "uploadOnly", menuType: type, filename: finalFilename, image: canvas.toDataURL('image/jpeg', 0.8), shopName: shopName, password: currentPwd }, isSetToToday ? "✅ 成功！" : "✅ 上傳成功！", () => { fileInput.value = ""; nameInput.value = ""; loadDriveFiles(); }); }; img.src = e.target.result; }; reader.readAsDataURL(file); }
-    function uploadToLibrary() { const prefix = document.getElementById('libPrefix').value; const type = prefix === '[餐點]' ? 'bento' : 'drink'; document.getElementById(type + 'FileName').value = document.getElementById('libFileName').value; document.getElementById(type + 'File').files = document.getElementById('libFile').files; processAndUpload(type, false); document.getElementById('libFileName').value = ""; document.getElementById('libFile').value = ""; }
-    function deleteMenuFile(fileId, fileName) { if(!confirm(`確定要刪除「${fileName}」嗎？`)) return; showLoading("刪除中..."); apiCall({ action: "deleteFile", fileId: fileId, password: currentPwd }, null, () => loadDriveFiles()); }
-    function loadCurrentOptions() { apiCall({ action: "getSystemData" }, null, (res) => { clinicsList = res.data.clinics || []; ranksList = res.data.ranks || []; renderTags(); }); }
-    function renderTags() { const buildTags = (arr, type) => arr.map((item, i) => `<span class="tag-item"><span class="tag-action" onclick="moveOption('${type}', ${i}, -1)">◀</span>${item}<span class="tag-action" onclick="moveOption('${type}', ${i}, 1)">▶</span><span class="tag-close" onclick="removeOption('${type}', ${i})">&times;</span></span>`).join(''); document.getElementById('clinicTags').innerHTML = buildTags(clinicsList, 'clinic'); document.getElementById('rankTags').innerHTML = buildTags(ranksList, 'rank'); }
-    function moveOption(type, idx, dir) { const arr = type === 'clinic' ? clinicsList : ranksList; if (dir === -1 && idx > 0) [arr[idx-1], arr[idx]] = [arr[idx], arr[idx-1]]; else if (dir === 1 && idx < arr.length - 1) [arr[idx], arr[idx+1]] = [arr[idx+1], arr[idx]]; renderTags(); }
-    function addOption(type) { const input = document.getElementById(type === 'clinic' ? 'newClinicInput' : 'newRankInput'); if (!input.value.trim()) return; (type === 'clinic' ? clinicsList : ranksList).push(input.value.trim()); input.value = ''; renderTags(); }
-    function removeOption(type, index) { (type === 'clinic' ? clinicsList : ranksList).splice(index, 1); renderTags(); }
-    function saveOptions() { showLoading("儲存中..."); apiCall({ action: "updateOptions", clinics: clinicsList, ranks: ranksList, password: currentPwd }, "✅ 儲存成功！"); }
-    function toggleSys(isOpen) { if(!confirm(`確定要${isOpen ? '開放' : '關閉'}系統嗎？`)) return; showLoading("設定中..."); apiCall({ action: "toggleSystem", status: isOpen, password: currentPwd }, null, (data) => alert(data.message)); }
+    async function loadDashboardData() {
+      // 讀取系統狀態與選項
+      const sysRes = await fetchAPI({ action: 'getSystemData' });
+      if (sysRes.success) {
+        isSystemOpen = sysRes.data.isOpen;
+        updateStatusUI();
+        document.getElementById('clinicsInput').value = sysRes.data.clinics.join(',');
+        document.getElementById('ranksInput').value = sysRes.data.ranks.join(',');
+      }
+      loadGallery();
+    }
+
+    function updateStatusUI() {
+      const statusText = document.getElementById('systemStatusText');
+      if (isSystemOpen) {
+        statusText.innerText = "目前狀態：開放中";
+        statusText.style.color = "#198754"; // 綠色
+      } else {
+        statusText.innerText = "目前狀態：已關閉";
+        statusText.style.color = "#dc3545"; // 紅色
+      }
+    }
+
+    async function toggleSystem() {
+      const newStatus = !isSystemOpen;
+      const res = await fetchAPI({ action: 'toggleSystem', status: newStatus, password: currentPwd });
+      if (res.success) {
+        isSystemOpen = newStatus;
+        updateStatusUI();
+        alert(res.message);
+      }
+    }
+
+    async function loadGallery() {
+      const res = await fetchAPI({ action: 'getDriveFiles', password: currentPwd });
+      const container = document.getElementById('galleryContainer');
+      if (res.success && res.files) {
+        container.innerHTML = res.files.map(f => `
+          <div class="col-4 gallery-item">
+            <img src="${f.url}" class="img-preview" onclick="alert('檔案名稱：${f.name}')">
+            <button class="delete-btn" onclick="deleteFile('${f.id}')">✖</button>
+            <div class="mt-1 d-flex flex-column gap-1">
+              <button class="btn btn-sm btn-outline-dark-theme w-100" style="font-size: 10px;" onclick="quickSetMenu('bento', '${f.url}')">設為餐點</button>
+              <button class="btn btn-sm btn-outline-dark-theme w-100" style="font-size: 10px;" onclick="quickSetMenu('drink', '${f.url}')">設為飲料</button>
+            </div>
+          </div>
+        `).join('');
+      } else { container.innerHTML = '<div class="text-center text-secondary small">無圖片</div>'; }
+    }
+
+    async function quickSetMenu(type, url) {
+      const shopName = prompt("請輸入店名：");
+      if (shopName === null) return;
+      const res = await fetchAPI({ action: 'setMenuUrl', menuType: type, url: url, shopName: shopName, password: currentPwd });
+      if (res.success) alert("套用成功！");
+    }
+
+    function readFileBase64(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = error => reject(error);
+        reader.readAsDataURL(file);
+      });
+    }
+
+    async function uploadAndSetMenu(type) {
+      const fileInput = document.getElementById(type + 'File');
+      const shopInput = document.getElementById(type + 'ShopName');
+      if (!fileInput.files.length || !shopInput.value.trim()) return alert("請填寫店名並選擇圖片");
+      const base64 = await readFileBase64(fileInput.files[0]);
+      alert("上傳中請稍候...");
+      const res = await fetchAPI({ action: 'uploadMenu', image: base64, menuType: type, filename: fileInput.files[0].name, shopName: shopInput.value.trim(), password: currentPwd });
+      if (res.success) { alert("上傳並套用成功！"); loadGallery(); fileInput.value = ''; shopInput.value = ''; }
+    }
+
+    async function uploadToGallery() {
+      const fileInput = document.getElementById('galleryFile');
+      if (!fileInput.files.length) return alert("請選擇圖片");
+      const base64 = await readFileBase64(fileInput.files[0]);
+      alert("上傳中請稍候...");
+      const res = await fetchAPI({ action: 'uploadOnly', image: base64, filename: fileInput.files[0].name, password: currentPwd });
+      if (res.success) { alert("上傳成功！"); loadGallery(); fileInput.value = ''; }
+    }
+
+    async function deleteFile(fileId) {
+      if(!confirm("確定要刪除這張圖片嗎？")) return;
+      const res = await fetchAPI({ action: 'deleteFile', fileId: fileId, password: currentPwd });
+      if (res.success) loadGallery();
+    }
+
+    async function updateOptions() {
+      const clinics = document.getElementById('clinicsInput').value.split(',').map(s => s.trim()).filter(Boolean);
+      const ranks = document.getElementById('ranksInput').value.split(',').map(s => s.trim()).filter(Boolean);
+      const res = await fetchAPI({ action: 'updateOptions', clinics: clinics, ranks: ranks, password: currentPwd });
+      if (res.success) alert("選項儲存成功！");
+    }
   </script>
 </body>
 </html>
