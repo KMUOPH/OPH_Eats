@@ -255,19 +255,13 @@
       // ==========================================================
       document.addEventListener('focusin', function(e) {
         if (e.target && e.target.tagName === 'INPUT') {
-          
-          // 判斷：鍵盤是否【已經】在畫面上？ (視窗高度被壓縮超過 15%)
           const isKeyboardAlreadyUp = window.visualViewport && (window.visualViewport.height < window.innerHeight * 0.85);
-          
-          // 如果鍵盤已經開啟(換格/上一項/下一項)，延遲 10ms 瞬間完成。
-          // 如果鍵盤還沒開啟(第一次點擊)，等待蘋果的升起動畫播完 (350ms)。
           const delayTime = isKeyboardAlreadyUp ? 10 : 350;
 
           setTimeout(() => {
             if (window.visualViewport) {
               const rect = e.target.getBoundingClientRect();
               const targetY = window.scrollY + rect.bottom - window.visualViewport.height + 10;
-              // 使用 behavior: 'auto' 進行零過場瞬間位移
               window.scrollTo({ top: Math.max(0, targetY), behavior: 'auto' });
             }
           }, delayTime);
@@ -327,7 +321,33 @@
         
         const notes = document.getElementById('notes').value.trim();
         
-        const confirmMsg = `請確認您的訂餐內容：\n\n${clinic}\n${clinic === '非診間' ? name : rank}\n${bName ? bName + " $" + bAmt : '無'}\n${dName ? dName + " $" + dAmt : '無'}\n${notes || '無'}\n\n👉 確定要送出嗎？`;
+        // --- 優化版：動態確認視窗 ---
+        let msgLines = [];
+        
+        // 1. 診次與職級/姓名 (一定會有)
+        const rankOrName = clinic === '非診間' ? name : rank;
+        msgLines.push(`${clinic}  ${rankOrName}`);
+        
+        // 2. 餐點 (有填寫才出現)
+        if (bName) {
+          msgLines.push(`${bName} $${bAmt}`);
+        }
+        
+        // 3. 飲料 (有填寫才出現)
+        if (dName) {
+          msgLines.push(`${dName} $${dAmt}`);
+        }
+        
+        // 4. 備註 (有填寫才出現)
+        if (notes) {
+          msgLines.push(`${notes}`);
+        }
+        
+        // 5. 結尾確認問句
+        msgLines.push(`\n👉 確定要送出嗎？`);
+        
+        // 組合所有行數
+        const confirmMsg = msgLines.join('\n');
 
         if (!confirm(confirmMsg)) return;
 
