@@ -256,24 +256,17 @@
         if (window.visualViewport) {
           const rect = target.getBoundingClientRect();
           const vpHeight = window.visualViewport.height;
-          
-          // 無條件計算：永遠將輸入框底部貼在視窗底部 (鍵盤上緣)，並預留 12px 空隙
           const targetY = window.scrollY + rect.bottom - vpHeight + 12;
-          
-          // behavior: 'auto'，一丁點過場動畫都不留，瞬間抵達！
           window.scrollTo({ top: Math.max(0, targetY), behavior: 'auto' });
         }
       }
 
-      // 監聽 1：當輸入框被點擊、或上一項/下一項跳格時
       document.addEventListener('focusin', function(e) {
         if (e.target && e.target.tagName === 'INPUT') {
-          // 等待 300ms 讓鍵盤的高度變化結束，然後瞬間強制歸位
           setTimeout(() => alignToKeyboard(e.target), 300);
         }
       });
 
-      // 監聽 2：當鍵盤改變高度時 (例如注音切換到數字)
       if (window.visualViewport) {
         window.visualViewport.addEventListener('resize', function() {
           const active = document.activeElement;
@@ -297,17 +290,44 @@
         }
       }
 
+      // --- 智慧防呆：漏填自動跳轉與聚焦 ---
       function submitOrder() {
         const clinic = document.querySelector('input[name="clinic"]:checked') ? document.querySelector('input[name="clinic"]:checked').value : "";
         const rank = document.querySelector('input[name="rank"]:checked') ? document.querySelector('input[name="rank"]:checked').value : "";
         const name = document.getElementById('name').value.trim();
         
-        if(!clinic) return alert("請選擇診次！"); if(clinic === "非診間" && !name) return alert("請填寫姓名！"); if(clinic !== "非診間" && !rank) return alert("請選擇職級！");
+        if(!clinic) {
+          alert("請選擇診次！");
+          document.getElementById('clinicGroup').scrollIntoView({ behavior: 'smooth', block: 'center' });
+          return;
+        }
+        if(clinic === "非診間" && !name) {
+          alert("請填寫姓名！");
+          document.getElementById('name').focus();
+          return;
+        }
+        if(clinic !== "非診間" && !rank) {
+          alert("請選擇職級！");
+          document.getElementById('rankGroup').scrollIntoView({ behavior: 'smooth', block: 'center' });
+          return;
+        }
 
-        const bName = document.getElementById('bentoName').value.trim(); const bAmt = document.getElementById('bentoAmount').value.trim();
-        const dName = document.getElementById('drinkName').value.trim(); const dAmt = document.getElementById('drinkAmount').value.trim();
+        const bName = document.getElementById('bentoName').value.trim(); 
+        const bAmt = document.getElementById('bentoAmount').value.trim();
+        const dName = document.getElementById('drinkName').value.trim(); 
+        const dAmt = document.getElementById('drinkAmount').value.trim();
         
-        if (bName && !bAmt) return alert("請輸入餐點的金額！"); if (dName && !dAmt) return alert("請輸入飲料的金額！");
+        if (bName && !bAmt) {
+          alert("請輸入餐點的金額！");
+          document.getElementById('bentoAmount').focus();
+          return;
+        }
+        if (dName && !dAmt) {
+          alert("請輸入飲料的金額！");
+          document.getElementById('drinkAmount').focus();
+          return;
+        }
+        
         const notes = document.getElementById('notes').value.trim();
         
         const confirmMsg = `請確認您的訂餐內容：\n\n${clinic}\n${clinic === '非診間' ? name : rank}\n${bName ? bName + " $" + bAmt : '無'}\n${dName ? dName + " $" + dAmt : '無'}\n${notes || '無'}\n\n👉 確定要送出嗎？`;
