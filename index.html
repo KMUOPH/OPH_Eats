@@ -57,6 +57,13 @@
       .quick-notes::-webkit-scrollbar { display: none; }
       .btn-clear { border-color: #ced4da; color: #6c757d; }
       .btn-clear:hover { background-color: #e9ecef; color: #495057; }
+      
+      /* --- 新增：膠囊狀按鈕專屬樣式 --- */
+      .capsule-btn {
+        border-radius: 50px !important; /* 絕對的半圓角 */
+        padding: 6px 18px; /* 增加左右留白，形狀更像膠囊 */
+        font-size: 0.9rem;
+      }
     </style>
   </head>
   <body>
@@ -130,8 +137,9 @@
               <div class="section-block">
                 <div class="section-header">備註</div>
                 <div class="d-flex gap-2 mb-2 quick-notes" style="overflow-x: auto; white-space: nowrap;">
-                  <button type="button" class="btn btn-sm btn-outline-dark-theme rounded-pill fw-bold" onclick="addNote('改單，以這筆為主')">改單，以這筆為主</button>
-                  <button type="button" class="btn btn-sm btn-outline-dark-theme rounded-pill fw-bold" onclick="addNote('兩筆都要')">兩筆都要</button>
+                  <!-- 套用專屬的 capsule-btn 膠囊樣式 -->
+                  <button type="button" class="btn btn-outline-dark-theme fw-bold capsule-btn" onclick="addNote('改單，以這筆為主')">改單，以這筆為主</button>
+                  <button type="button" class="btn btn-outline-dark-theme fw-bold capsule-btn" onclick="addNote('兩筆都要')">兩筆都要</button>
                 </div>
                 <div class="input-group">
                   <input type="text" class="form-control fw-bold" id="notes" placeholder="其他需求..." enterkeyhint="done" onkeydown="if(event.key==='Enter' || event.keyCode===13){event.preventDefault(); e.target.blur();}" onfocus="this.select()">
@@ -226,7 +234,6 @@
 
             const rankContainer = document.getElementById('rankGroup'); rankContainer.innerHTML = '';
             response.data.ranks.forEach((r, idx) => {
-              // 點選職級後，瞬間 focus 到餐點名稱
               rankContainer.innerHTML += `<div class="col-4"><input type="radio" class="btn-check rank-radio" name="rank" id="r_${idx}" value="${r}" onchange="document.getElementById('bentoName').focus();"><label class="btn btn-outline-dark-theme w-100 fw-bold rank-label-custom" for="r_${idx}">${r}</label></div>`;
             });
 
@@ -242,6 +249,46 @@
       };
 
       window.onload = () => loadData();
+
+      // ==========================================================
+      // 🚀 聰明的「安全緩衝區」定位公式：解決鍵盤高度變化造成的抖動
+      // ==========================================================
+      function alignToKeyboard(target) {
+        if (window.visualViewport) {
+          const rect = target.getBoundingClientRect();
+          const vpHeight = window.visualViewport.height;
+          
+          // 邏輯：只有當輸入框「被鍵盤蓋住」(bottom > vpHeight - 15) 
+          // 或是「跑得太上面被橫幅蓋住」(top < 65) 時，才強制拉動畫面。
+          // 💡 這創造了一個「安全區」，從注音切到數字鍵盤時，只要格子還露在外面，就不會亂飄！
+          if (rect.bottom > vpHeight - 15) {
+            const targetY = window.scrollY + rect.bottom - vpHeight + 15;
+            window.scrollTo({ top: Math.max(0, targetY), behavior: 'auto' });
+          } else if (rect.top < 65) {
+            const targetY = window.scrollY + rect.top - 70;
+            window.scrollTo({ top: Math.max(0, targetY), behavior: 'auto' });
+          }
+        }
+      }
+
+      // 監聽 1：點擊與換格
+      document.addEventListener('focusin', function(e) {
+        if (e.target && e.target.tagName === 'INPUT') {
+          // 延遲 300 毫秒，等待鍵盤切換完成後再做定位判斷
+          setTimeout(() => alignToKeyboard(e.target), 300);
+        }
+      });
+
+      // 監聽 2：畫面因鍵盤彈出而改變高度
+      if (window.visualViewport) {
+        window.visualViewport.addEventListener('resize', function() {
+          const active = document.activeElement;
+          if (active && active.tagName === 'INPUT') {
+            setTimeout(() => alignToKeyboard(active), 100);
+          }
+        });
+      }
+      // ==========================================================
 
       function toggleRankName() {
         const c = document.querySelector('input[name="clinic"]:checked');
