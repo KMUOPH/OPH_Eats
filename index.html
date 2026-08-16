@@ -33,10 +33,10 @@
       
       .section-block { margin-bottom: 24px; }
       
-      /* --- 標題列：與橫幅同色的深灰藍底白字 --- */
+      /* --- 標題列：灰底黑字 --- */
       .section-header { 
-        background-color: #536e86; 
-        color: #ffffff; 
+        background-color: #e9ecef; 
+        color: #212529; 
         border-radius: 8px; 
         padding: 10px 15px; 
         font-size: 1rem; 
@@ -51,9 +51,6 @@
         color: #ffffff !important; 
       }
       
-      /* 星號顏色微調 */
-      .section-header .text-danger { color: #ff8787 !important; }
-      
       .clinic-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; }
       .clinic-grid label { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; padding: 8px 0; font-size: 0.9rem; margin: 0; }
       
@@ -66,8 +63,9 @@
   <body>
     
     <div class="banner-header">
-      <div class="d-flex align-items-center h-100 overflow-hidden">
-        <img src="logo.jpg" alt="Logo" style="height: 100%; object-fit: contain; margin-right: 10px;">
+      <div class="d-flex align-items-center h-100 overflow-hidden ms-2">
+        <!-- 調整 Logo：圓形剪裁、略小於橫幅、微立體陰影 -->
+        <img src="logo.jpg" alt="Logo" style="height: 46px; width: 46px; border-radius: 50%; object-fit: cover; box-shadow: 0 2px 4px rgba(0,0,0,0.2); margin-right: 12px;">
         <h3 class="mb-0 fw-bold text-truncate" style="font-size: 1.25rem;">OPH Eats 眼科訂餐</h3>
       </div>
       <button class="btn btn-sm text-white flex-shrink-0 ms-2" style="background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.5); border-radius: 15px; padding: 4px 10px; font-size: 0.85rem; font-weight: bold;" onclick="loadData(false)">更新菜單</button>
@@ -196,7 +194,6 @@
           document.body.appendChild(overlay);
         }
 
-        // 使用加入 Retry 機制的 fetch
         fetchWithRetry(GAS_API_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action: "getSystemData" }) })
         .then(response => {
           if (isInitial) document.getElementById('loadingScreen').classList.add('d-none');
@@ -226,14 +223,12 @@
 
             const bTitle = document.getElementById('bentoSectionTitle');
             if (response.data.bentoMenuUrl && response.data.menuDate) {
-              // 移除 Emoji 與「餐點」二字
               bTitle.innerText = `${m}/${d} 週${w} ${response.data.bentoShopName}` + (isToday ? "" : " (非今日)");
               bTitle.className = `section-header ${isToday ? '' : 'not-today-header'}`;
             }
             
             const dTitle = document.getElementById('drinkSectionTitle');
             if (response.data.drinkMenuUrl && response.data.menuDate) {
-              // 移除 Emoji 與「飲料」二字
               dTitle.innerText = `${m}/${d} 週${w} ${response.data.drinkShopName}` + (isToday ? "" : " (非今日)");
               dTitle.className = `section-header ${isToday ? '' : 'not-today-header'}`;
             }
