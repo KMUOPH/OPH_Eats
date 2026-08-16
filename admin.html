@@ -27,19 +27,6 @@
     
     .section-block { margin-bottom: 28px; }
     
-    /* 區塊標題：已套用與「診次與職級管理」按鈕相同的樣式 */
-    .section-header { 
-      background-color: #f8f9fa; 
-      color: #6c757d; 
-      border: 1px solid #dee2e6;
-      border-radius: 0.375rem; 
-      padding: 8px 15px; 
-      font-size: 1rem; 
-      font-weight: bold; 
-      margin-bottom: 12px; 
-      box-shadow: 0 0.125rem 0.25rem rgba(0,0,0,0.075); /* shadow-sm 效果 */
-    }
-    
     #adminPanel { display: none; }
     #overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 9999; justify-content: center; align-items: center; color: white; flex-direction: column; }
     
@@ -91,7 +78,7 @@
   <div class="banner-header">
     <div class="d-flex align-items-center h-100 overflow-hidden">
       <img src="logo.jpg" alt="Logo" style="height: 46px; width: 46px; border-radius: 50%; object-fit: cover; box-shadow: 0 2px 4px rgba(0,0,0,0.2); margin-right: 12px;">
-      <h3 class="mb-0 fw-bold text-truncate" style="font-size: 1.25rem;">OPH Eats 眼科訂餐系統後台管理</h3>
+      <h3 class="mb-0 fw-bold text-truncate" style="font-size: 1.25rem;">眼科訂餐後台管理</h3>
     </div>
   </div>
 
@@ -112,7 +99,6 @@
           <!-- 第一區：精簡版系統狀態 -->
           <div class="section-block mt-3 mb-4">
             <div class="d-flex align-items-center justify-content-between px-1">
-              <!-- 狀態標籤已放大字體 fs-5 與內距 px-4 -->
               <span id="systemStatusText" class="badge bg-secondary px-4 py-2 fs-5 shadow-sm">讀取中...</span>
               <label class="switch">
                 <input type="checkbox" id="systemStatusToggle" class="status-loading" onchange="toggleSystemState(this.checked)" disabled>
@@ -121,12 +107,10 @@
             </div>
           </div>
 
-          <!-- 第二區：今日菜單與圖庫管理 (左右雙欄) -->
+          <!-- 第二區：今日菜單與圖庫管理 (左右雙欄，刪除標題列) -->
           <div class="section-block">
-            <!-- 標題名稱變更並統一配色樣式 -->
-            <div class="section-header">菜單與圖庫管理</div>
             
-            <div class="row g-2 px-2 mt-2 align-items-stretch">
+            <div class="row g-2 px-2 align-items-stretch">
               <!-- 左欄：餐點 -->
               <div class="col-6">
                 <div class="p-2 border rounded h-100 d-flex flex-column" style="background-color: #f8f9fa;">
@@ -138,8 +122,7 @@
                   <hr class="my-2">
                   
                   <!-- 2. 上傳新圖庫 -->
-                  <div class="fw-bold text-secondary mb-1" style="font-size: 0.75rem;">新增至圖庫</div>
-                  <input type="text" class="form-control form-control-sm fw-bold mb-1" id="libBentoName" placeholder="輸入店家名稱">
+                  <input type="text" class="form-control form-control-sm fw-bold mb-1" id="libBentoName" placeholder="新增：輸入店家名稱">
                   <label for="libBentoFile" class="btn btn-secondary btn-sm w-100 mb-1 fw-bold text-truncate" id="bentoFileLabel" style="font-size: 0.8rem;">選擇圖片</label>
                   <input type="file" id="libBentoFile" accept="image/*" style="display: none;" onchange="updateFileLabel('bento')">
                   <!-- 上傳按鈕改為主題色 -->
@@ -167,8 +150,7 @@
                   <hr class="my-2">
                   
                   <!-- 2. 上傳新圖庫 -->
-                  <div class="fw-bold text-secondary mb-1" style="font-size: 0.75rem;">新增至圖庫</div>
-                  <input type="text" class="form-control form-control-sm fw-bold mb-1" id="libDrinkName" placeholder="輸入店家名稱">
+                  <input type="text" class="form-control form-control-sm fw-bold mb-1" id="libDrinkName" placeholder="新增：輸入店家名稱">
                   <label for="libDrinkFile" class="btn btn-secondary btn-sm w-100 mb-1 fw-bold text-truncate" id="drinkFileLabel" style="font-size: 0.8rem;">選擇圖片</label>
                   <input type="file" id="libDrinkFile" accept="image/*" style="display: none;" onchange="updateFileLabel('drink')">
                   <!-- 上傳按鈕改為主題色 -->
@@ -187,9 +169,8 @@
             </div>
           </div>
 
-          <!-- 第三區：診次與職級設定 (調整按鈕文字與樣式) -->
+          <!-- 第三區：診次與職級設定 -->
           <div class="section-block">
-            <!-- 移除前方 Emoji -->
             <button class="btn btn-light border w-100 fw-bold shadow-sm text-secondary d-flex justify-content-between align-items-center px-3" type="button" data-bs-toggle="collapse" data-bs-target="#optionsCollapse" id="optionsToggleBtn">
               <span>診次與職級管理</span>
               <span style="font-size: 0.8em;">▼</span>
@@ -203,8 +184,8 @@
                   <div class="col-6 border-end">
                     <div class="fw-bold text-secondary small mb-2 text-center">診次</div>
                     <div class="fade-bottom-wrapper">
-                      <!-- 高度鎖定在 200px (恰好容納7列空間) -->
-                      <div id="clinicList" class="bg-white border rounded p-1 mb-2" style="height: 200px; overflow-y: auto; padding-bottom: 30px !important;"></div>
+                      <!-- 高度鎖定在 240px (恰好容納 7 列空間) -->
+                      <div id="clinicList" class="bg-white border rounded p-1 mb-2" style="height: 240px; overflow-y: auto; padding-bottom: 30px !important;"></div>
                     </div>
                     <div class="input-group input-group-sm">
                       <input type="text" class="form-control fw-bold" id="newClinicInput" placeholder="輸入">
@@ -216,8 +197,8 @@
                   <div class="col-6">
                     <div class="fw-bold text-secondary small mb-2 text-center">職級</div>
                     <div class="fade-bottom-wrapper">
-                      <!-- 高度鎖定在 200px (恰好容納7列空間) -->
-                      <div id="rankList" class="bg-white border rounded p-1 mb-2" style="height: 200px; overflow-y: auto; padding-bottom: 30px !important;"></div>
+                      <!-- 高度鎖定在 240px (恰好容納 7 列空間) -->
+                      <div id="rankList" class="bg-white border rounded p-1 mb-2" style="height: 240px; overflow-y: auto; padding-bottom: 30px !important;"></div>
                     </div>
                     <div class="input-group input-group-sm">
                       <input type="text" class="form-control fw-bold" id="newRankInput" placeholder="輸入">
@@ -281,7 +262,6 @@
       });
     }
 
-    // 更新系統狀態顯示介面 (含讀取完成後的顏色切換)
     function updateStatusUI() {
       const textEl = document.getElementById('systemStatusText');
       const toggleEl = document.getElementById('systemStatusToggle');
@@ -309,7 +289,6 @@
       }); 
     }
 
-    // 觸發系統狀態開關
     function toggleSystemState(newState) { 
       showLoading("設定狀態中..."); 
       apiCall({ action: "toggleSystem", status: newState, password: currentPwd }, null, () => {
@@ -372,17 +351,16 @@
       apiCall({ action: "setMenuUrl", menuType: type, url: url, shopName: shopName, password: currentPwd }, "✅ 今日菜單已成功套用！");
     }
 
-    // 監聽並更新自訂檔案按鈕的文字 (修改成btn-secondary互換)
     function updateFileLabel(type) {
       const fileInput = document.getElementById(type === 'bento' ? 'libBentoFile' : 'libDrinkFile');
       const label = document.getElementById(type === 'bento' ? 'bentoFileLabel' : 'drinkFileLabel');
       
       if (fileInput.files.length > 0) {
         label.innerText = fileInput.files[0].name;
-        label.classList.replace('btn-secondary', 'btn-success'); // 選取後變成綠色
+        label.classList.replace('btn-secondary', 'btn-success'); 
       } else {
         label.innerText = "選擇圖片";
-        label.classList.replace('btn-success', 'btn-secondary'); // 復原為灰底色
+        label.classList.replace('btn-success', 'btn-secondary'); 
       }
     }
 
@@ -427,7 +405,7 @@
             () => { 
               fileInput.value = ""; 
               nameInput.value = ""; 
-              updateFileLabel(type); // 上傳完畢還原按鈕狀態
+              updateFileLabel(type); 
               loadDriveFiles(); 
             }
           );
@@ -443,7 +421,6 @@
       apiCall({ action: "deleteFile", fileId: fileId, password: currentPwd }, null, () => loadDriveFiles());
     }
 
-    // 垂直清單渲染 (附帶紅垃圾桶 SVG)
     function renderVerticalLists() {
       const buildList = (arr, type) => arr.map((item, i) => `
         <div class="list-item-custom">
@@ -492,7 +469,6 @@
       }); 
     }
 
-    // 當展開清單時自動向上捲動
     document.getElementById('optionsCollapse').addEventListener('shown.bs.collapse', function () {
       document.getElementById('optionsToggleBtn').scrollIntoView({ behavior: 'smooth', block: 'start' });
     });
