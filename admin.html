@@ -66,6 +66,12 @@
     .file-item { border-bottom: 1px solid #dee2e6; padding: 6px 0; display: flex; justify-content: space-between; align-items: center; }
     .file-item:last-child { border-bottom: none; }
     .file-name-text { word-break: break-all; font-size: 0.85rem; line-height: 1.2; color: #343a40; padding-right: 8px; }
+
+    /* 修改輸入框的 placeholder 顏色，與選單預設值文字一致 */
+    .custom-placeholder::placeholder {
+      color: #212529 !important; /* 深黑色，同 Bootstrap 的標準字體顏色 */
+      opacity: 1 !important;
+    }
   </style>
 </head>
 <body>
@@ -78,7 +84,8 @@
   <div class="banner-header">
     <div class="d-flex align-items-center h-100 overflow-hidden">
       <img src="logo.jpg" alt="Logo" style="height: 46px; width: 46px; border-radius: 50%; object-fit: cover; box-shadow: 0 2px 4px rgba(0,0,0,0.2); margin-right: 12px;">
-      <h3 class="mb-0 fw-bold text-truncate" style="font-size: 1.25rem;">眼科訂餐後台管理</h3>
+      <!-- 更新標題：OPH Eats 眼科訂餐後台管理 -->
+      <h3 class="mb-0 fw-bold text-truncate" style="font-size: 1.25rem;">OPH Eats 眼科訂餐後台管理</h3>
     </div>
   </div>
 
@@ -89,7 +96,8 @@
         <!-- 登入區塊 -->
         <div id="loginSection" class="mt-5">
           <h4 class="fw-bold text-theme mb-4 text-center">後台管理登入</h4>
-          <input type="password" id="adminPwd" class="form-control mb-3 fw-bold" placeholder="請輸入管理員密碼">
+          <!-- 加入 inputmode="numeric" 與 pattern="[0-9]*" 以預設喚出數字鍵盤 -->
+          <input type="password" inputmode="numeric" pattern="[0-9]*" id="adminPwd" class="form-control mb-3 fw-bold" placeholder="請輸入管理員密碼">
           <button class="btn btn-theme w-100 fw-bold" onclick="login()">登入系統</button>
         </div>
 
@@ -110,7 +118,8 @@
           <!-- 第二區：今日菜單與圖庫管理 (左右雙欄，刪除標題列) -->
           <div class="section-block">
             
-            <div class="row g-2 px-2 align-items-stretch">
+            <!-- 移除原有的 px-2，讓左右兩欄可以向外擴展，完美對齊外側邊界 -->
+            <div class="row g-2 align-items-stretch">
               <!-- 左欄：餐點 -->
               <div class="col-6">
                 <div class="p-2 border rounded h-100 d-flex flex-column" style="background-color: #f8f9fa;">
@@ -121,11 +130,10 @@
                   <button class="btn btn-theme btn-sm fw-bold w-100 mb-2" onclick="setMenu('bento')">套用</button>
                   <hr class="my-2">
                   
-                  <!-- 2. 上傳新圖庫 -->
-                  <input type="text" class="form-control form-control-sm fw-bold mb-1" id="libBentoName" placeholder="新增：輸入店家名稱">
+                  <!-- 2. 上傳新圖庫 (加上 custom-placeholder class) -->
+                  <input type="text" class="form-control form-control-sm fw-bold mb-1 custom-placeholder" id="libBentoName" placeholder="新增：輸入店家名稱">
                   <label for="libBentoFile" class="btn btn-secondary btn-sm w-100 mb-1 fw-bold text-truncate" id="bentoFileLabel" style="font-size: 0.8rem;">選擇圖片</label>
                   <input type="file" id="libBentoFile" accept="image/*" style="display: none;" onchange="updateFileLabel('bento')">
-                  <!-- 上傳按鈕改為主題色 -->
                   <button class="btn btn-theme btn-sm fw-bold w-100" onclick="uploadToLibrary('bento')">上傳</button>
                   <hr class="my-2">
 
@@ -149,11 +157,10 @@
                   <button class="btn btn-theme btn-sm fw-bold w-100 mb-2" onclick="setMenu('drink')">套用</button>
                   <hr class="my-2">
                   
-                  <!-- 2. 上傳新圖庫 -->
-                  <input type="text" class="form-control form-control-sm fw-bold mb-1" id="libDrinkName" placeholder="新增：輸入店家名稱">
+                  <!-- 2. 上傳新圖庫 (加上 custom-placeholder class) -->
+                  <input type="text" class="form-control form-control-sm fw-bold mb-1 custom-placeholder" id="libDrinkName" placeholder="新增：輸入店家名稱">
                   <label for="libDrinkFile" class="btn btn-secondary btn-sm w-100 mb-1 fw-bold text-truncate" id="drinkFileLabel" style="font-size: 0.8rem;">選擇圖片</label>
                   <input type="file" id="libDrinkFile" accept="image/*" style="display: none;" onchange="updateFileLabel('drink')">
-                  <!-- 上傳按鈕改為主題色 -->
                   <button class="btn btn-theme btn-sm fw-bold w-100" onclick="uploadToLibrary('drink')">上傳</button>
                   <hr class="my-2">
 
