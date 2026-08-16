@@ -13,7 +13,6 @@
     
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
-      /* 將背景改為純白，徹底消除外框的邊界感，讓畫面更像 App */
       body { background-color: #ffffff; padding: 0; padding-bottom: 30px; font-family: "微軟正黑體", sans-serif; }
       body.modal-open { padding-right: 0 !important; overflow: auto !important; }
       
@@ -33,10 +32,27 @@
       .banner-header { background-color: #536e86; color: white; height: 60px; margin-bottom: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); width: 100%; display: flex; justify-content: space-between; align-items: center; padding-right: 15px; }
       
       .section-block { margin-bottom: 24px; }
-      .section-header { background-color: #e9ecef; border-radius: 8px; padding: 10px 15px; font-size: 1rem; font-weight: bold; color: #495057; margin-bottom: 12px; transition: background-color 0.3s; }
       
-      /* 螢光黃底 + 紅字的高對比警告樣式 */
-      .bg-neon-yellow { background-color: #eeff00 !important; color: #dc3545 !important; }
+      /* --- 標題列：深灰底白字 --- */
+      .section-header { 
+        background-color: #495057; 
+        color: #ffffff; 
+        border-radius: 8px; 
+        padding: 10px 15px; 
+        font-size: 1rem; 
+        font-weight: bold; 
+        margin-bottom: 12px; 
+        transition: background-color 0.3s, color 0.3s; 
+      }
+      
+      /* --- 非今日警告樣式：淺灰底紅字 --- */
+      .not-today-header { 
+        background-color: #e9ecef !important; 
+        color: #dc3545 !important; 
+      }
+      
+      /* 為了讓深色底的紅色必填星號更清楚，微調星號顏色 */
+      .section-header .text-danger { color: #ff6b6b !important; }
       
       .clinic-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; }
       .clinic-grid label { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; padding: 8px 0; font-size: 0.9rem; margin: 0; }
@@ -71,7 +87,6 @@
 
     <div class="container">
       <div class="row justify-content-center">
-        <!-- 移除原先的 .card 框架，改用單純的 Padding -->
         <div class="col-md-8 col-lg-6 px-3">
             
           <div id="loadingScreen">
@@ -181,6 +196,7 @@
           document.body.appendChild(overlay);
         }
 
+        // 使用加入 Retry 機制的 fetch
         fetchWithRetry(GAS_API_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action: "getSystemData" }) })
         .then(response => {
           if (isInitial) document.getElementById('loadingScreen').classList.add('d-none');
@@ -211,15 +227,13 @@
             const bTitle = document.getElementById('bentoSectionTitle');
             if (response.data.bentoMenuUrl && response.data.menuDate) {
               bTitle.innerText = `[餐點] ${m}/${d} 週${w} ${response.data.bentoShopName}` + (isToday ? "" : " (非今日)");
-              // 非今日套用螢光黃樣式 bg-neon-yellow
-              bTitle.className = `section-header ${isToday ? '' : 'bg-neon-yellow'}`;
+              bTitle.className = `section-header ${isToday ? '' : 'not-today-header'}`;
             }
             
             const dTitle = document.getElementById('drinkSectionTitle');
             if (response.data.drinkMenuUrl && response.data.menuDate) {
               dTitle.innerText = `[飲料] ${m}/${d} 週${w} ${response.data.drinkShopName}` + (isToday ? "" : " (非今日)");
-              // 非今日套用螢光黃樣式 bg-neon-yellow
-              dTitle.className = `section-header ${isToday ? '' : 'bg-neon-yellow'}`;
+              dTitle.className = `section-header ${isToday ? '' : 'not-today-header'}`;
             }
             
             if(response.data.bentoMenuUrl) { const bImg = document.getElementById('bentoMenuImg'); bImg.src = formatDriveImageUrl(response.data.bentoMenuUrl); bImg.style.display = 'block'; }
