@@ -27,6 +27,12 @@
       .btn-outline-dark-theme:hover { background-color: #e9ecef; color: #212529; }
       .btn-check:checked + .btn-outline-dark-theme { background-color: #343a40; color: white; border-color: #343a40; }
       
+      /* --- 恢復原生的完美藍色發光邊框 --- */
+      .form-control:focus {
+        border-color: #86b7fe !important;
+        box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25) !important;
+      }
+      
       #loadingScreen, #closedScreen { text-align: center; padding: 40px 20px; }
       .menu-img { width: 100%; border-radius: 8px; margin-bottom: 12px; display: none; box-shadow: 0 2px 5px rgba(0,0,0,0.15); border: 1px solid #e2e8f0; }
       
@@ -59,7 +65,6 @@
   <body>
     
     <div class="banner-header">
-      <!-- 移除右側更新按鈕後，讓 Logo 與標題自然對齊 -->
       <img src="logo.jpg" alt="Logo" style="height: 46px; width: 46px; border-radius: 50%; object-fit: cover; box-shadow: 0 2px 4px rgba(0,0,0,0.2); margin-right: 12px;">
       <h3 class="mb-0 fw-bold text-truncate" style="font-size: 1.25rem;">OPH Eats 眼科訂餐</h3>
     </div>
@@ -98,7 +103,6 @@
 
               <div class="section-block">
                 <div class="section-header" id="bentoSectionTitle">餐點</div>
-                <!-- 已移除提示詞 -->
                 <img id="bentoMenuImg" class="menu-img" alt="餐點菜單">
                 <div class="row g-2">
                   <div class="col-8">
@@ -112,7 +116,6 @@
 
               <div class="section-block">
                 <div class="section-header" id="drinkSectionTitle">飲料</div>
-                <!-- 已移除提示詞 -->
                 <img id="drinkMenuImg" class="menu-img" alt="飲料菜單">
                 <div class="row g-2">
                   <div class="col-8">
@@ -236,24 +239,38 @@
 
       window.onload = () => loadData();
 
-      // --- 終極版 iOS 鍵盤貼齊公式 ---
+      // --- 終極版：精準攔截 iOS 原生動畫，完美貼齊鍵盤公式 ---
+      function alignToKeyboard(target) {
+        // 確保鍵盤真的是彈出來的狀態 (視窗高度小於螢幕高度的 85%)
+        if (window.visualViewport && window.visualViewport.height < window.innerHeight * 0.85) {
+          const rect = target.getBoundingClientRect();
+          const vpHeight = window.visualViewport.height;
+          // 目標：計算輸入框底部到可視範圍底部(即鍵盤上緣)的距離，並預留 15px 空隙
+          const targetY = window.scrollY + rect.bottom - vpHeight + 15;
+          // 強制平滑捲動，把亂跑的置中動畫拉下來
+          window.scrollTo({ top: Math.max(0, targetY), behavior: 'smooth' });
+        }
+      }
+
+      // 監聽 1：點擊輸入框、跳格 (上一項/下一項)
       document.addEventListener('focusin', function(e) {
         if (e.target && e.target.tagName === 'INPUT') {
-          // 放寬到 500ms，確保蘋果 iOS 把畫面強制推到中間的動畫「徹底結束」後再出手
-          setTimeout(() => {
-            if (window.visualViewport) {
-              const rect = e.target.getBoundingClientRect();
-              const vpHeight = window.visualViewport.height;
-              
-              // 公式：目前捲軸位置 + 輸入框相對於畫面的底部 - 視窗可視高度(鍵盤上緣) + 15px 的留白
-              const targetY = window.scrollY + rect.bottom - vpHeight + 15;
-              
-              // 強制執行捲動，把停在畫面中間的輸入框，精準拉到鍵盤上方
-              window.scrollTo({ top: Math.max(0, targetY), behavior: 'smooth' });
-            }
-          }, 500); 
+          // 在 0.3 秒修正跳格定位
+          setTimeout(() => alignToKeyboard(e.target), 300);
+          // 在 0.7 秒做終極防線，攔截蘋果延遲發生的「強制置中」動畫
+          setTimeout(() => alignToKeyboard(e.target), 700);
         }
       });
+
+      // 監聽 2：手機鍵盤從無到有「滑上來」的瞬間
+      if (window.visualViewport) {
+        window.visualViewport.addEventListener('resize', function() {
+          const active = document.activeElement;
+          if (active && active.tagName === 'INPUT') {
+            setTimeout(() => alignToKeyboard(active), 100);
+          }
+        });
+      }
 
       function toggleRankName() {
         const c = document.querySelector('input[name="clinic"]:checked');
