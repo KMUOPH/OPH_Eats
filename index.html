@@ -27,7 +27,7 @@
       .btn-outline-dark-theme:hover { background-color: #e9ecef; color: #212529; }
       .btn-check:checked + .btn-outline-dark-theme { background-color: #343a40; color: white; border-color: #343a40; }
       
-      /* --- 確保完美的藍色發光光暈不被蓋掉 --- */
+      /* --- 保持完美的藍色發光邊框 --- */
       .form-control:focus {
         border-color: #86b7fe !important;
         box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25) !important;
@@ -38,7 +38,6 @@
       
       .banner-header { background-color: #536e86; color: white; height: 60px; margin-bottom: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); width: 100%; display: flex; justify-content: space-between; align-items: center; padding-right: 15px; }
       
-      /* ⚠️ 徹底移除 overflow: hidden，讓發光邊框能完整顯示 */
       .section-block { margin-bottom: 24px; }
       
       .section-header { 
@@ -177,19 +176,31 @@
 
       function addNote(text) { const n = document.getElementById('notes'); n.value = n.value ? n.value + "。" + text : text; }
 
-      function loadData() {
-        document.getElementById('loadingScreen').classList.remove('d-none');
-        document.getElementById('mainContent').classList.add('d-none');
-        document.getElementById('closedScreen').classList.add('d-none');
+      function loadData(isInitial = true) {
+        if (!isInitial) {
+          const overlay = document.createElement('div'); overlay.id = 'syncOverlay';
+          overlay.style = 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 1060; display: flex; justify-content: center; align-items: center; color: white; flex-direction: column;';
+          overlay.innerHTML = '<div class="spinner-border text-light mb-3" style="width: 3rem; height: 3rem;" role="status"></div><h4 class="fw-bold">更新中...</h4>';
+          document.body.appendChild(overlay);
+        }
+
         document.getElementById('closedTitle').innerText = "今日點餐已關閉";
         document.getElementById('closedDesc').innerText = "目前不在開放點餐時間，請稍後再試或洽詢管理員。";
 
         fetchWithRetry(GAS_API_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action: "getSystemData" }) })
         .then(response => {
-          document.getElementById('loadingScreen').classList.add('d-none');
+          if (isInitial) document.getElementById('loadingScreen').classList.add('d-none');
+          else { 
+            const overlay = document.getElementById('syncOverlay'); if (overlay) overlay.remove(); 
+            document.getElementById('orderForm').reset();
+            document.querySelectorAll('.btn-check').forEach(radio => radio.checked = false);
+            toggleRankName();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }
 
           if(response.success && response.data.isOpen) {
             document.getElementById('mainContent').classList.remove('d-none');
+            document.getElementById('closedScreen').classList.add('d-none');
             
             let isToday = false; let m = "", d = "", w = "";
             const today = new Date();
@@ -230,48 +241,57 @@
             });
 
           } else { 
-            document.getElementById('closedScreen').classList.remove('d-none'); 
+            document.getElementById('mainContent').classList.add('d-none'); document.getElementById('closedScreen').classList.remove('d-none'); 
           }
         }).catch(err => {
           document.getElementById('loadingScreen').classList.add('d-none');
+          if (!isInitial) { const overlay = document.getElementById('syncOverlay'); if (overlay) overlay.remove(); }
+          
+          document.getElementById('mainContent').classList.add('d-none');
           document.getElementById('closedScreen').classList.remove('d-none');
           document.getElementById('closedTitle').innerText = "⚠️ 系統連線失敗";
           document.getElementById('closedDesc').innerHTML = `無法取得最新資料。<br><b>錯誤原因：</b>${err.message}<br><br><span style="color:#8c2b32; font-weight:bold;">💡 若出現 Unexpected token 代表 Google API 驗證失敗。請維護者確保 Apps Script 已發布為新版本且權限設為「所有人」。</span>`;
         });
       };
 
-      window.onload = () => loadData();
+      window.onload = () => loadData(true);
 
-      // --- 終極極速版：瞬間貼齊鍵盤公式 ---
+      // ==========================================================
+      // 🚀 極速定位公式：不用迴圈、不用慢動作，瞬間貼齊鍵盤
+      // ==========================================================
       function alignToKeyboard(target) {
         if (window.visualViewport) {
           const rect = target.getBoundingClientRect();
           const vpHeight = window.visualViewport.height;
-          // 目標：計算輸入框底部到鍵盤上緣的距離，預留 10px 空間
+          // 目標：輸入框底部 剛好切齊 在可視區域(鍵盤上方)的底部，並留 10px 空隙
           const targetY = window.scrollY + rect.bottom - vpHeight + 10;
-          // 改為 'auto' (瞬間定位)，移除原本 'smooth' 造成的愚蠢緩慢滑動感
+          
+          // behavior: 'auto' 代表【瞬間】切換過去，不帶任何拖泥帶水的滑動動畫！
           window.scrollTo({ top: Math.max(0, targetY), behavior: 'auto' });
         }
       }
 
-      // 監聽：點擊輸入框、跳格 (上一項/下一項)
+      // 監聽 1：點擊輸入框、或用上一項/下一項跳格
       document.addEventListener('focusin', function(e) {
         if (e.target && e.target.tagName === 'INPUT') {
-          // 大幅縮短等待時間，分為 100ms 與 300ms 兩階段「瞬間」攔截定位
-          setTimeout(() => alignToKeyboard(e.target), 100);
-          setTimeout(() => alignToKeyboard(e.target), 300);
+          // 在 0ms 瞬間搶在蘋果原生動畫前做一次定位
+          alignToKeyboard(e.target);
+          
+          // 延遲 300ms 蘋果原生動畫跑完後，再做一次最終矯正
+          setTimeout(() => { alignToKeyboard(e.target); }, 300);
         }
       });
 
-      // 監聽：手機鍵盤改變高度時
+      // 監聽 2：當鍵盤正在彈出 (畫面高度被壓縮) 的時候，黏著鍵盤上去
       if (window.visualViewport) {
         window.visualViewport.addEventListener('resize', function() {
           const active = document.activeElement;
           if (active && active.tagName === 'INPUT') {
-            setTimeout(() => alignToKeyboard(active), 100);
+            alignToKeyboard(active);
           }
         });
       }
+      // ==========================================================
 
       function toggleRankName() {
         const c = document.querySelector('input[name="clinic"]:checked');
