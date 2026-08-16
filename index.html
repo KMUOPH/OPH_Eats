@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta id="viewport" name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
     
-    <!-- 強制讓手機最上方的系統狀態列與網址列維持白色底 -->
+    <!-- 強制讓手機最上方的系統狀態列與網址列維持純白底色 -->
     <meta name="theme-color" content="#ffffff">
     <title>眼科訂餐</title>
     
@@ -16,25 +16,25 @@
     
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
-      /* 加入 scroll-padding-top，告訴系統上方有橫幅，跳格時需保留 80px 空間不被遮擋 */
-      html { scroll-padding-top: 80px; }
       body { background-color: #ffffff; padding: 0; padding-bottom: 30px; font-family: "微軟正黑體", sans-serif; overflow-x: hidden; }
       
       .form-label { font-weight: bold; color: #343a40; margin-bottom: 8px; }
       
-      /* --- 橫幅與按鈕維持原來的深灰藍色 --- */
+      /* --- 深灰藍色主題 (僅用於橫幅與主按鈕) --- */
       .text-theme { color: #536e86 !important; }
       .btn-theme { background-color: #536e86; border-color: #536e86; color: white; }
       .btn-theme:hover, .btn-theme:focus { background-color: #40586e; border-color: #40586e; color: white; }
       
-      .btn-outline-theme { color: #536e86; border-color: #536e86; border-radius: 5px !important; }
-      .btn-outline-theme:hover { background-color: #e5ebf0; color: #536e86; }
-      .btn-check:checked + .btn-outline-theme { background-color: #536e86; color: white; border-color: #536e86; }
+      /* --- 黑灰色系主題 (用於診次與職級選項) --- */
+      .btn-outline-dark-theme { color: #495057; border-color: #adb5bd; border-radius: 5px !important; }
+      .btn-outline-dark-theme:hover { background-color: #e9ecef; color: #212529; }
+      .btn-check:checked + .btn-outline-dark-theme { background-color: #343a40; color: white; border-color: #343a40; }
       
       #loadingScreen, #closedScreen { text-align: center; padding: 40px 20px; }
       .menu-img { width: 100%; border-radius: 8px; margin-bottom: 12px; display: none; box-shadow: 0 2px 5px rgba(0,0,0,0.15); border: 1px solid #e2e8f0; }
       
-      .banner-header { background-color: #536e86; color: white; height: 60px; margin-bottom: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); width: 100%; display: flex; justify-content: space-between; align-items: center; padding-right: 15px; position: sticky; top: 0; z-index: 1020; }
+      /* 橫幅移除了 position: sticky，不會再霸佔螢幕上方空間 */
+      .banner-header { background-color: #536e86; color: white; height: 60px; margin-bottom: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); width: 100%; display: flex; justify-content: space-between; align-items: center; padding-right: 15px; }
       
       .section-block { margin-bottom: 24px; }
       
@@ -99,7 +99,7 @@
 
               <div class="section-block d-none" id="nameDiv">
                 <div class="section-header">姓名 <span class="text-danger">*</span></div>
-                <!-- 移除了 text-theme，文字恢復黑灰色 -->
+                <!-- 移除 text-theme，文字自然呈現深黑色 -->
                 <input type="text" class="form-control fw-bold" id="name" placeholder="請輸入姓名" onfocus="this.select()">
               </div>
 
@@ -108,7 +108,7 @@
                 <div class="text-secondary small mb-2 fw-bold">💡 雙指縮放，點兩下恢復頁寬</div>
                 <img id="bentoMenuImg" class="menu-img" alt="餐點菜單">
                 <div class="row g-2">
-                  <div class="col-8"><input type="text" class="form-control fw-bold" id="bentoName" placeholder="餐點名稱" onfocus="this.select()"></div>
+                  <div class="col-8"><input type="text" class="form-control fw-bold" id="bentoName" placeholder="餐點" onfocus="this.select()"></div>
                   <div class="col-4"><input type="number" inputmode="numeric" pattern="[0-9]*" class="form-control fw-bold" id="bentoAmount" placeholder="金額" onfocus="this.select()"></div>
                 </div>
               </div>
@@ -118,7 +118,7 @@
                 <div class="text-secondary small mb-2 fw-bold">💡 雙指縮放，點兩下恢復頁寬</div>
                 <img id="drinkMenuImg" class="menu-img" alt="飲料菜單">
                 <div class="row g-2">
-                  <div class="col-8"><input type="text" class="form-control fw-bold" id="drinkName" placeholder="飲料名稱" onfocus="this.select()"></div>
+                  <div class="col-8"><input type="text" class="form-control fw-bold" id="drinkName" placeholder="飲料" onfocus="this.select()"></div>
                   <div class="col-4"><input type="number" inputmode="numeric" pattern="[0-9]*" class="form-control fw-bold" id="drinkAmount" placeholder="金額" onfocus="this.select()"></div>
                 </div>
               </div>
@@ -161,22 +161,23 @@
         }
       }
 
-      // --- 完美修正：點兩下強制回歸【頁面原始寬度】 ---
+      // --- 完美還原雙擊畫面機制 ---
       let lastTap = 0;
       document.addEventListener('touchend', function(e) {
         const currentTime = new Date().getTime();
         const tapLength = currentTime - lastTap;
         
-        // 如果連點兩下，且畫面是放大狀態
         if (tapLength < 300 && tapLength > 0) {
           if (window.visualViewport && window.visualViewport.scale > 1) {
-            e.preventDefault(); // 攔截蘋果預設的區域縮放
+            e.preventDefault(); 
             const vp = document.getElementById('viewport');
             
-            // 強制將網頁比例鎖死在 1.0 (完美貼齊頁寬)
+            // 強制鎖定為 1.0 的預設大小
             vp.setAttribute('content', 'width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no');
             
-            // 0.3 秒後解除鎖死，讓使用者能繼續縮放
+            // 強制將 X 軸推回 0 點，徹底解決卡在圖片寬度的 Bug
+            window.scrollTo({ left: 0, top: window.scrollY, behavior: 'instant' });
+            
             setTimeout(() => {
               vp.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes');
             }, 300);
@@ -244,16 +245,17 @@
             if(response.data.bentoMenuUrl) { const bImg = document.getElementById('bentoMenuImg'); bImg.src = formatDriveImageUrl(response.data.bentoMenuUrl); bImg.style.display = 'block'; }
             if(response.data.drinkMenuUrl) { const dImg = document.getElementById('drinkMenuImg'); dImg.src = formatDriveImageUrl(response.data.drinkMenuUrl); dImg.style.display = 'block'; }
 
+            // 帶入 btn-outline-dark-theme 取代原本的深灰藍色
             const clinicContainer = document.getElementById('clinicGroup'); clinicContainer.innerHTML = '';
             response.data.clinics.forEach((c, idx) => {
               const spanClass = (c === '非診間') ? 'style="grid-column: span 2;"' : '';
-              clinicContainer.innerHTML += `<div ${spanClass}><input type="radio" class="btn-check clinic-radio" name="clinic" id="c_${idx}" value="${c}" onchange="toggleRankName()"><label class="btn btn-outline-theme fw-bold" for="c_${idx}">${c}</label></div>`;
+              clinicContainer.innerHTML += `<div ${spanClass}><input type="radio" class="btn-check clinic-radio" name="clinic" id="c_${idx}" value="${c}" onchange="toggleRankName()"><label class="btn btn-outline-dark-theme fw-bold" for="c_${idx}">${c}</label></div>`;
             });
 
-            // 這裡加入了 onchange 跳轉機制：點按職級後，游標自動跳轉到餐點名稱！
+            // 點按職級後，自動聚焦 (focus) 到餐點名稱輸入格！
             const rankContainer = document.getElementById('rankGroup'); rankContainer.innerHTML = '';
             response.data.ranks.forEach((r, idx) => {
-              rankContainer.innerHTML += `<div class="col-4"><input type="radio" class="btn-check rank-radio" name="rank" id="r_${idx}" value="${r}" onchange="setTimeout(() => document.getElementById('bentoName').focus(), 100);"><label class="btn btn-outline-theme w-100 fw-bold rank-label-custom" for="r_${idx}">${r}</label></div>`;
+              rankContainer.innerHTML += `<div class="col-4"><input type="radio" class="btn-check rank-radio" name="rank" id="r_${idx}" value="${r}" onchange="setTimeout(() => document.getElementById('bentoName').focus(), 100);"><label class="btn btn-outline-dark-theme w-100 fw-bold rank-label-custom" for="r_${idx}">${r}</label></div>`;
             });
 
           } else { 
@@ -267,16 +269,20 @@
 
       window.onload = () => loadData(true);
 
-      // --- 修復 iOS 跳格被置頂橫幅擋住的機制 ---
+      // --- 完美對齊手機鍵盤的自動捲動公式 ---
       document.addEventListener('focusin', function(e) {
         if (e.target && e.target.tagName === 'INPUT') {
           setTimeout(() => {
-            const rect = e.target.getBoundingClientRect();
-            // 如果輸入框被吸頂的橫幅(約60px)遮住或靠太近，主動往下捲一點
-            if (rect.top < 85) {
-              window.scrollBy({ top: rect.top - 100, behavior: 'smooth' });
+            if (window.visualViewport) {
+              const rect = e.target.getBoundingClientRect();
+              const absoluteTop = rect.top + window.scrollY;
+              // 我們精準計算：讓輸入框的底部，剛好停在手機鍵盤 (即視窗可視範圍底部) 的上方約 10px 處
+              const desiredScrollY = absoluteTop + rect.height + 10 - window.visualViewport.height;
+              // 確保只要一碰到輸入框，不管上下跳格，都完美卡在鍵盤上方！
+              window.scrollTo({ top: Math.max(0, desiredScrollY), behavior: 'smooth' });
+            } else {
+              e.target.scrollIntoView({ behavior: 'smooth', block: 'end' });
             }
-            // 若在可見範圍內，則完全交給手機原生鍵盤處理，不會再把輸入框推到螢幕最上方
           }, 300);
         }
       });
@@ -286,7 +292,7 @@
         if (c && c.value === "非診間") { 
           document.getElementById('rankDiv').classList.add('d-none'); 
           document.getElementById('nameDiv').classList.remove('d-none'); 
-          setTimeout(() => document.getElementById('name').focus(), 100); // 選非診間自動跳轉姓名
+          setTimeout(() => document.getElementById('name').focus(), 100); // 若點非診間自動聚焦到姓名
         }
         else { 
           document.getElementById('rankDiv').classList.remove('d-none'); 
