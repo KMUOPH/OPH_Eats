@@ -250,28 +250,33 @@
       window.onload = () => loadData();
 
       // ==========================================================
-      // 🚀 回歸最純粹的強制對齊公式：無條件瞬間貼齊鍵盤
+      // 🚀 極簡。極速定位：不再猶豫，0.05秒瞬間釘在鍵盤上方！
       // ==========================================================
       function alignToKeyboard(target) {
         if (window.visualViewport) {
           const rect = target.getBoundingClientRect();
           const vpHeight = window.visualViewport.height;
-          const targetY = window.scrollY + rect.bottom - vpHeight + 12;
+          // 無論如何，算出輸入格底部到鍵盤上方的距離 (預留 10px 避免太貼)
+          const targetY = window.scrollY + rect.bottom - vpHeight + 10;
+          // behavior: 'auto' 就是「零過場動畫瞬間位移」
           window.scrollTo({ top: Math.max(0, targetY), behavior: 'auto' });
         }
       }
 
+      // 當輸入格被選中時 (包含上一項/下一項跳格)
       document.addEventListener('focusin', function(e) {
         if (e.target && e.target.tagName === 'INPUT') {
-          setTimeout(() => alignToKeyboard(e.target), 300);
+          // 縮減到極限的 50毫秒。足夠讓 DOM 吃到焦點，同時快到肉眼感覺不到延遲
+          setTimeout(() => alignToKeyboard(e.target), 50);
         }
       });
 
+      // 當鍵盤彈起/收回，或切換鍵盤高度時
       if (window.visualViewport) {
         window.visualViewport.addEventListener('resize', function() {
           const active = document.activeElement;
           if (active && active.tagName === 'INPUT') {
-            setTimeout(() => alignToKeyboard(active), 100);
+            setTimeout(() => alignToKeyboard(active), 50);
           }
         });
       }
@@ -290,7 +295,6 @@
         }
       }
 
-      // --- 智慧防呆：漏填自動跳轉與聚焦 ---
       function submitOrder() {
         const clinic = document.querySelector('input[name="clinic"]:checked') ? document.querySelector('input[name="clinic"]:checked').value : "";
         const rank = document.querySelector('input[name="rank"]:checked') ? document.querySelector('input[name="rank"]:checked').value : "";
