@@ -23,6 +23,9 @@
     .btn-theme { background-color: #9b727a !important; color: white !important; border: none; }
     .btn-theme:hover { background-color: #846068 !important; }
     
+    .btn-outline-dark-theme { color: #495057; border-color: #adb5bd; }
+    .btn-outline-dark-theme:hover { background-color: #e9ecef; color: #212529; }
+    
     /* 無粉色的乾淨標籤樣式 */
     .tag-item { display: inline-block; background: #ffffff; color: #343a40; padding: 5px 10px; border-radius: 8px; margin: 4px; font-weight: bold; border: 1px solid #ced4da;}
     .tag-action { cursor: pointer; color: #6c757d; padding: 0 4px; font-size: 0.9em;}
@@ -31,10 +34,10 @@
     
     .section-block { margin-bottom: 28px; }
     
-    /* 深灰底白字的標題列 */
+    /* 淺灰底黑字的標題列 */
     .section-header { 
-      background-color: #343a40; 
-      color: #ffffff; 
+      background-color: #e9ecef; 
+      color: #212529; 
       border-radius: 8px; 
       padding: 10px 15px; 
       font-size: 1rem; 
@@ -82,12 +85,9 @@
           <!-- 系統狀態 -->
           <div class="section-block">
             <div class="section-header">今日點餐系統狀態</div>
-            <div class="d-flex flex-column align-items-center px-2">
-              <span id="systemStatusText" class="fw-bold fs-5 text-secondary mb-3">狀態讀取中...</span>
-              <div class="d-flex w-100 gap-2">
-                <button class="btn btn-success btn-lg fw-bold flex-fill" onclick="toggleSys(true)">開放</button>
-                <button class="btn btn-danger btn-lg fw-bold flex-fill" onclick="toggleSys(false)">關閉</button>
-              </div>
+            <div class="d-flex justify-content-between align-items-center px-2">
+              <span id="systemStatusText" class="fw-bold fs-5">狀態讀取中...</span>
+              <button class="btn btn-outline-dark-theme fw-bold" onclick="toggleSystemState()">切換狀態</button>
             </div>
           </div>
 
@@ -97,13 +97,11 @@
             <div class="px-2">
               <button class="btn btn-theme btn-sm w-100 fw-bold mb-3" onclick="loadDriveFiles()">重新整理圖庫清單</button>
               
-              <label class="form-label text-secondary fw-bold small">設定餐點</label>
               <div class="input-group mb-3">
                 <select class="form-select fw-bold" id="bentoSelect"><option value="">載入中...</option></select>
                 <button class="btn btn-theme fw-bold px-4" onclick="setMenu('bento')">套用</button>
               </div>
               
-              <label class="form-label text-secondary fw-bold small">設定飲料</label>
               <div class="input-group">
                 <select class="form-select fw-bold" id="drinkSelect"><option value="">載入中...</option></select>
                 <button class="btn btn-theme fw-bold px-4" onclick="setMenu('drink')">套用</button>
@@ -111,22 +109,19 @@
             </div>
           </div>
 
-          <!-- 菜單圖庫管理 (分開兩列) -->
+          <!-- 菜單圖庫管理 -->
           <div class="section-block">
             <div class="section-header">菜單圖庫管理</div>
-            <p class="text-muted small px-2 mb-3 fw-bold">純粹上傳至圖庫，不影響今日點餐畫面。</p>
             
-            <div class="px-2 mb-3">
-              <label class="form-label text-secondary fw-bold small">上傳餐點至圖庫</label>
-              <div class="input-group mb-2">
-                <input type="text" class="form-control fw-bold" id="libBentoName" placeholder="輸入店家名稱 (如:老紀)">
+            <div class="px-2 mb-3 mt-2">
+              <div class="input-group mb-3">
+                <input type="text" class="form-control fw-bold" id="libBentoName" placeholder="輸入餐點店家名稱">
                 <input type="file" class="form-control" id="libBentoFile" accept="image/*">
                 <button class="btn btn-theme fw-bold" onclick="uploadToLibrary('bento')">上傳</button>
               </div>
               
-              <label class="form-label text-secondary fw-bold small mt-3">上傳飲料至圖庫</label>
               <div class="input-group mb-3">
-                <input type="text" class="form-control fw-bold" id="libDrinkName" placeholder="輸入店家名稱 (如:萬波)">
+                <input type="text" class="form-control fw-bold" id="libDrinkName" placeholder="輸入飲料店家名稱">
                 <input type="file" class="form-control" id="libDrinkFile" accept="image/*">
                 <button class="btn btn-theme fw-bold" onclick="uploadToLibrary('drink')">上傳</button>
               </div>
@@ -142,13 +137,14 @@
 
           <!-- 診次與職級設定 -->
           <div class="section-block">
-            <!-- 改為深灰底白字按鈕，刪除展開收合文字 -->
             <button class="btn btn-dark w-100 fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#optionsCollapse">
               診次與職級清單設定
             </button>
             
             <div class="collapse" id="optionsCollapse">
               <div class="p-3 mt-2" style="background-color: #f8f9fa; border-radius: 8px; border: 1px solid #dee2e6;">
+                <p class="text-muted small mb-3 fw-bold">💡 點擊 ◀ ▶ 調整順序，點擊 ✖ 刪除項目</p>
+
                 <label class="form-label text-secondary fw-bold small">診次清單</label>
                 <div id="clinicTags" class="mb-2"></div>
                 <div class="input-group mb-4">
@@ -236,11 +232,12 @@
       }); 
     }
 
-    function toggleSys(isOpen) { 
-      if(!confirm(`確定要${isOpen ? '開放' : '關閉'}系統嗎？`)) return; 
+    function toggleSystemState() { 
+      const newState = !isSystemOpen;
+      if(!confirm(`確定要${newState ? '開放' : '關閉'}系統嗎？`)) return; 
       showLoading("設定狀態中..."); 
-      apiCall({ action: "toggleSystem", status: isOpen, password: currentPwd }, null, (data) => {
-        isSystemOpen = isOpen;
+      apiCall({ action: "toggleSystem", status: newState, password: currentPwd }, null, (data) => {
+        isSystemOpen = newState;
         updateStatusUI();
         alert("系統狀態已更新！");
       }); 
@@ -275,13 +272,12 @@
       if(!url) return alert("請先選擇菜單！");
       
       const text = select.options[select.selectedIndex].text;
-      const shopName = text.replace(/^\[.*?\]/, '').replace(/_\d+\.jpg$/, '');
+      const shopName = text.replace(/^\[.*?\]/, '').replace(/_\d{8}_\d{4}\.jpg$/, '').replace(/_\d+\.jpg$/, '');
       
       showLoading("套用設定中..."); 
       apiCall({ action: "setMenuUrl", menuType: type, url: url, shopName: shopName, password: currentPwd }, "✅ 今日菜單已成功套用！");
     }
 
-    // 負責圖庫管理上傳的獨立函式
     function uploadToLibrary(type) {
       const nameInput = document.getElementById(type === 'bento' ? 'libBentoName' : 'libDrinkName');
       const fileInput = document.getElementById(type === 'bento' ? 'libBentoFile' : 'libDrinkFile');
@@ -292,7 +288,11 @@
       const file = fileInput.files[0];
       const prefix = type === 'bento' ? '[餐點]' : '[飲料]';
       const shopName = nameInput.value.trim();
-      const finalFilename = `${prefix}${shopName}_${new Date().getTime()}.jpg`;
+      
+      // 產生可讀性高的時間戳記 (YYYYMMDD_HHmm)
+      const now = new Date();
+      const timeStr = `${now.getFullYear()}${String(now.getMonth()+1).padStart(2,'0')}${String(now.getDate()).padStart(2,'0')}_${String(now.getHours()).padStart(2,'0')}${String(now.getMinutes()).padStart(2,'0')}`;
+      const finalFilename = `${prefix}${shopName}_${timeStr}.jpg`;
       
       showLoading("照片壓縮與上傳中...");
       const reader = new FileReader();
@@ -374,7 +374,6 @@
     function saveOptions() { 
       showLoading("儲存設定中..."); 
       apiCall({ action: "updateOptions", clinics: clinicsList, ranks: ranksList, password: currentPwd }, "選單設定已儲存！", () => {
-        // 儲存成功後自動收合區塊
         const collapseElement = document.getElementById('optionsCollapse');
         const bsCollapse = bootstrap.Collapse.getInstance(collapseElement);
         if(bsCollapse) bsCollapse.hide();
