@@ -14,6 +14,7 @@
     
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
+      html { scroll-padding-top: 70px; }
       body { background-color: #ffffff; padding: 0; padding-bottom: 30px; font-family: "微軟正黑體", sans-serif; }
       
       .form-label { font-weight: bold; color: #343a40; margin-bottom: 8px; }
@@ -58,10 +59,9 @@
       .btn-clear { border-color: #ced4da; color: #6c757d; }
       .btn-clear:hover { background-color: #e9ecef; color: #495057; }
       
-      /* --- 新增：膠囊狀按鈕專屬樣式 --- */
       .capsule-btn {
-        border-radius: 50px !important; /* 絕對的半圓角 */
-        padding: 6px 18px; /* 增加左右留白，形狀更像膠囊 */
+        border-radius: 50px !important;
+        padding: 6px 18px;
         font-size: 0.9rem;
       }
     </style>
@@ -137,7 +137,6 @@
               <div class="section-block">
                 <div class="section-header">備註</div>
                 <div class="d-flex gap-2 mb-2 quick-notes" style="overflow-x: auto; white-space: nowrap;">
-                  <!-- 套用專屬的 capsule-btn 膠囊樣式 -->
                   <button type="button" class="btn btn-outline-dark-theme fw-bold capsule-btn" onclick="addNote('改單，以這筆為主')">改單，以這筆為主</button>
                   <button type="button" class="btn btn-outline-dark-theme fw-bold capsule-btn" onclick="addNote('兩筆都要')">兩筆都要</button>
                 </div>
@@ -251,35 +250,30 @@
       window.onload = () => loadData();
 
       // ==========================================================
-      // 🚀 聰明的「安全緩衝區」定位公式：解決鍵盤高度變化造成的抖動
+      // 🚀 回歸最純粹的強制對齊公式：無條件瞬間貼齊鍵盤
       // ==========================================================
       function alignToKeyboard(target) {
         if (window.visualViewport) {
           const rect = target.getBoundingClientRect();
           const vpHeight = window.visualViewport.height;
           
-          // 邏輯：只有當輸入框「被鍵盤蓋住」(bottom > vpHeight - 15) 
-          // 或是「跑得太上面被橫幅蓋住」(top < 65) 時，才強制拉動畫面。
-          // 💡 這創造了一個「安全區」，從注音切到數字鍵盤時，只要格子還露在外面，就不會亂飄！
-          if (rect.bottom > vpHeight - 15) {
-            const targetY = window.scrollY + rect.bottom - vpHeight + 15;
-            window.scrollTo({ top: Math.max(0, targetY), behavior: 'auto' });
-          } else if (rect.top < 65) {
-            const targetY = window.scrollY + rect.top - 70;
-            window.scrollTo({ top: Math.max(0, targetY), behavior: 'auto' });
-          }
+          // 無條件計算：永遠將輸入框底部貼在視窗底部 (鍵盤上緣)，並預留 12px 空隙
+          const targetY = window.scrollY + rect.bottom - vpHeight + 12;
+          
+          // behavior: 'auto'，一丁點過場動畫都不留，瞬間抵達！
+          window.scrollTo({ top: Math.max(0, targetY), behavior: 'auto' });
         }
       }
 
-      // 監聽 1：點擊與換格
+      // 監聽 1：當輸入框被點擊、或上一項/下一項跳格時
       document.addEventListener('focusin', function(e) {
         if (e.target && e.target.tagName === 'INPUT') {
-          // 延遲 300 毫秒，等待鍵盤切換完成後再做定位判斷
+          // 等待 300ms 讓鍵盤的高度變化結束，然後瞬間強制歸位
           setTimeout(() => alignToKeyboard(e.target), 300);
         }
       });
 
-      // 監聽 2：畫面因鍵盤彈出而改變高度
+      // 監聽 2：當鍵盤改變高度時 (例如注音切換到數字)
       if (window.visualViewport) {
         window.visualViewport.addEventListener('resize', function() {
           const active = document.activeElement;
