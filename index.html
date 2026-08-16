@@ -14,7 +14,8 @@
     
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
-      html { scroll-padding-top: 70px; }
+      /* 強制關閉任何內建的平滑捲動，保證瞬間跳轉 */
+      html, body { scroll-behavior: auto !important; }
       body { background-color: #ffffff; padding: 0; padding-bottom: 30px; font-family: "微軟正黑體", sans-serif; }
       
       .form-label { font-weight: bold; color: #343a40; margin-bottom: 8px; }
@@ -250,36 +251,28 @@
       window.onload = () => loadData();
 
       // ==========================================================
-      // 🚀 極簡。極速定位：不再猶豫，0.05秒瞬間釘在鍵盤上方！
+      // 🚀 極簡化：刪除 resize 監聽，只在 focus 時單純定位一次
       // ==========================================================
-      function alignToKeyboard(target) {
-        if (window.visualViewport) {
-          const rect = target.getBoundingClientRect();
-          const vpHeight = window.visualViewport.height;
-          // 無論如何，算出輸入格底部到鍵盤上方的距離 (預留 10px 避免太貼)
-          const targetY = window.scrollY + rect.bottom - vpHeight + 10;
-          // behavior: 'auto' 就是「零過場動畫瞬間位移」
-          window.scrollTo({ top: Math.max(0, targetY), behavior: 'auto' });
-        }
-      }
-
-      // 當輸入格被選中時 (包含上一項/下一項跳格)
       document.addEventListener('focusin', function(e) {
         if (e.target && e.target.tagName === 'INPUT') {
-          // 縮減到極限的 50毫秒。足夠讓 DOM 吃到焦點，同時快到肉眼感覺不到延遲
-          setTimeout(() => alignToKeyboard(e.target), 50);
+          
+          // 判斷：鍵盤是否【已經】在畫面上？ (視窗高度被壓縮超過 15%)
+          const isKeyboardAlreadyUp = window.visualViewport && (window.visualViewport.height < window.innerHeight * 0.85);
+          
+          // 如果鍵盤已經開啟(換格/上一項/下一項)，延遲 10ms 瞬間完成。
+          // 如果鍵盤還沒開啟(第一次點擊)，等待蘋果的升起動畫播完 (350ms)。
+          const delayTime = isKeyboardAlreadyUp ? 10 : 350;
+
+          setTimeout(() => {
+            if (window.visualViewport) {
+              const rect = e.target.getBoundingClientRect();
+              const targetY = window.scrollY + rect.bottom - window.visualViewport.height + 10;
+              // 使用 behavior: 'auto' 進行零過場瞬間位移
+              window.scrollTo({ top: Math.max(0, targetY), behavior: 'auto' });
+            }
+          }, delayTime);
         }
       });
-
-      // 當鍵盤彈起/收回，或切換鍵盤高度時
-      if (window.visualViewport) {
-        window.visualViewport.addEventListener('resize', function() {
-          const active = document.activeElement;
-          if (active && active.tagName === 'INPUT') {
-            setTimeout(() => alignToKeyboard(active), 50);
-          }
-        });
-      }
       // ==========================================================
 
       function toggleRankName() {
