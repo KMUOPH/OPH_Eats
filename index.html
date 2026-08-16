@@ -27,7 +27,7 @@
       .btn-outline-dark-theme:hover { background-color: #e9ecef; color: #212529; }
       .btn-check:checked + .btn-outline-dark-theme { background-color: #343a40; color: white; border-color: #343a40; }
       
-      /* --- 恢復原生的完美藍色發光邊框 --- */
+      /* --- 確保完美的藍色發光光暈不被蓋掉 --- */
       .form-control:focus {
         border-color: #86b7fe !important;
         box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25) !important;
@@ -36,9 +36,10 @@
       #loadingScreen, #closedScreen { text-align: center; padding: 40px 20px; }
       .menu-img { width: 100%; border-radius: 8px; margin-bottom: 12px; display: none; box-shadow: 0 2px 5px rgba(0,0,0,0.15); border: 1px solid #e2e8f0; }
       
-      .banner-header { background-color: #536e86; color: white; height: 60px; margin-bottom: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); width: 100%; display: flex; align-items: center; padding: 0 15px; }
+      .banner-header { background-color: #536e86; color: white; height: 60px; margin-bottom: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); width: 100%; display: flex; justify-content: space-between; align-items: center; padding-right: 15px; }
       
-      .section-block { margin-bottom: 24px; overflow: hidden; }
+      /* ⚠️ 徹底移除 overflow: hidden，讓發光邊框能完整顯示 */
+      .section-block { margin-bottom: 24px; }
       
       .section-header { 
         background-color: #e9ecef; 
@@ -65,8 +66,10 @@
   <body>
     
     <div class="banner-header">
-      <img src="logo.jpg" alt="Logo" style="height: 46px; width: 46px; border-radius: 50%; object-fit: cover; box-shadow: 0 2px 4px rgba(0,0,0,0.2); margin-right: 12px;">
-      <h3 class="mb-0 fw-bold text-truncate" style="font-size: 1.25rem;">OPH Eats 眼科訂餐</h3>
+      <div class="d-flex align-items-center h-100 overflow-hidden ms-2">
+        <img src="logo.jpg" alt="Logo" style="height: 46px; width: 46px; border-radius: 50%; object-fit: cover; box-shadow: 0 2px 4px rgba(0,0,0,0.2); margin-right: 12px;">
+        <h3 class="mb-0 fw-bold text-truncate" style="font-size: 1.25rem;">OPH Eats 眼科訂餐</h3>
+      </div>
     </div>
 
     <div class="container">
@@ -239,30 +242,28 @@
 
       window.onload = () => loadData();
 
-      // --- 終極版：精準攔截 iOS 原生動畫，完美貼齊鍵盤公式 ---
+      // --- 終極極速版：瞬間貼齊鍵盤公式 ---
       function alignToKeyboard(target) {
-        // 確保鍵盤真的是彈出來的狀態 (視窗高度小於螢幕高度的 85%)
-        if (window.visualViewport && window.visualViewport.height < window.innerHeight * 0.85) {
+        if (window.visualViewport) {
           const rect = target.getBoundingClientRect();
           const vpHeight = window.visualViewport.height;
-          // 目標：計算輸入框底部到可視範圍底部(即鍵盤上緣)的距離，並預留 15px 空隙
-          const targetY = window.scrollY + rect.bottom - vpHeight + 15;
-          // 強制平滑捲動，把亂跑的置中動畫拉下來
-          window.scrollTo({ top: Math.max(0, targetY), behavior: 'smooth' });
+          // 目標：計算輸入框底部到鍵盤上緣的距離，預留 10px 空間
+          const targetY = window.scrollY + rect.bottom - vpHeight + 10;
+          // 改為 'auto' (瞬間定位)，移除原本 'smooth' 造成的愚蠢緩慢滑動感
+          window.scrollTo({ top: Math.max(0, targetY), behavior: 'auto' });
         }
       }
 
-      // 監聽 1：點擊輸入框、跳格 (上一項/下一項)
+      // 監聽：點擊輸入框、跳格 (上一項/下一項)
       document.addEventListener('focusin', function(e) {
         if (e.target && e.target.tagName === 'INPUT') {
-          // 在 0.3 秒修正跳格定位
+          // 大幅縮短等待時間，分為 100ms 與 300ms 兩階段「瞬間」攔截定位
+          setTimeout(() => alignToKeyboard(e.target), 100);
           setTimeout(() => alignToKeyboard(e.target), 300);
-          // 在 0.7 秒做終極防線，攔截蘋果延遲發生的「強制置中」動畫
-          setTimeout(() => alignToKeyboard(e.target), 700);
         }
       });
 
-      // 監聽 2：手機鍵盤從無到有「滑上來」的瞬間
+      // 監聽：手機鍵盤改變高度時
       if (window.visualViewport) {
         window.visualViewport.addEventListener('resize', function() {
           const active = document.activeElement;
