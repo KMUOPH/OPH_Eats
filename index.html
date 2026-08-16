@@ -14,7 +14,6 @@
     
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
-      html { scroll-padding-top: 70px; }
       body { background-color: #ffffff; padding: 0; padding-bottom: 30px; font-family: "微軟正黑體", sans-serif; }
       
       .form-label { font-weight: bold; color: #343a40; margin-bottom: 8px; }
@@ -108,9 +107,11 @@
                 <img id="bentoMenuImg" class="menu-img" alt="餐點菜單">
                 <div class="row g-2">
                   <div class="col-8">
+                    <!-- 按 Enter(或手機鍵盤的 next) 會自動聚焦到金額格 -->
                     <input type="text" class="form-control fw-bold" id="bentoName" placeholder="餐點" enterkeyhint="next" onkeydown="if(event.key==='Enter' || event.keyCode===13){event.preventDefault(); document.getElementById('bentoAmount').focus();}" onfocus="this.select()">
                   </div>
                   <div class="col-4">
+                    <!-- 金額格按 Enter 會自動聚焦到飲料名稱格 -->
                     <input type="text" inputmode="numeric" class="form-control fw-bold" id="bentoAmount" placeholder="金額" enterkeyhint="next" onkeydown="if(event.key==='Enter' || event.keyCode===13){event.preventDefault(); document.getElementById('drinkName').focus();}" onfocus="this.select()">
                   </div>
                 </div>
@@ -176,31 +177,19 @@
 
       function addNote(text) { const n = document.getElementById('notes'); n.value = n.value ? n.value + "。" + text : text; }
 
-      function loadData(isInitial = true) {
-        if (!isInitial) {
-          const overlay = document.createElement('div'); overlay.id = 'syncOverlay';
-          overlay.style = 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 1060; display: flex; justify-content: center; align-items: center; color: white; flex-direction: column;';
-          overlay.innerHTML = '<div class="spinner-border text-light mb-3" style="width: 3rem; height: 3rem;" role="status"></div><h4 class="fw-bold">更新中...</h4>';
-          document.body.appendChild(overlay);
-        }
-
+      function loadData() {
+        document.getElementById('loadingScreen').classList.remove('d-none');
+        document.getElementById('mainContent').classList.add('d-none');
+        document.getElementById('closedScreen').classList.add('d-none');
         document.getElementById('closedTitle').innerText = "今日點餐已關閉";
         document.getElementById('closedDesc').innerText = "目前不在開放點餐時間，請稍後再試或洽詢管理員。";
 
         fetchWithRetry(GAS_API_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action: "getSystemData" }) })
         .then(response => {
-          if (isInitial) document.getElementById('loadingScreen').classList.add('d-none');
-          else { 
-            const overlay = document.getElementById('syncOverlay'); if (overlay) overlay.remove(); 
-            document.getElementById('orderForm').reset();
-            document.querySelectorAll('.btn-check').forEach(radio => radio.checked = false);
-            toggleRankName();
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-          }
+          document.getElementById('loadingScreen').classList.add('d-none');
 
           if(response.success && response.data.isOpen) {
             document.getElementById('mainContent').classList.remove('d-none');
-            document.getElementById('closedScreen').classList.add('d-none');
             
             let isToday = false; let m = "", d = "", w = "";
             const today = new Date();
@@ -237,61 +226,22 @@
 
             const rankContainer = document.getElementById('rankGroup'); rankContainer.innerHTML = '';
             response.data.ranks.forEach((r, idx) => {
+              // 保留選取職級後自動跳轉餐點名稱
               rankContainer.innerHTML += `<div class="col-4"><input type="radio" class="btn-check rank-radio" name="rank" id="r_${idx}" value="${r}" onchange="setTimeout(() => document.getElementById('bentoName').focus(), 100);"><label class="btn btn-outline-dark-theme w-100 fw-bold rank-label-custom" for="r_${idx}">${r}</label></div>`;
             });
 
           } else { 
-            document.getElementById('mainContent').classList.add('d-none'); document.getElementById('closedScreen').classList.remove('d-none'); 
+            document.getElementById('closedScreen').classList.remove('d-none'); 
           }
         }).catch(err => {
           document.getElementById('loadingScreen').classList.add('d-none');
-          if (!isInitial) { const overlay = document.getElementById('syncOverlay'); if (overlay) overlay.remove(); }
-          
-          document.getElementById('mainContent').classList.add('d-none');
           document.getElementById('closedScreen').classList.remove('d-none');
           document.getElementById('closedTitle').innerText = "⚠️ 系統連線失敗";
           document.getElementById('closedDesc').innerHTML = `無法取得最新資料。<br><b>錯誤原因：</b>${err.message}<br><br><span style="color:#8c2b32; font-weight:bold;">💡 若出現 Unexpected token 代表 Google API 驗證失敗。請維護者確保 Apps Script 已發布為新版本且權限設為「所有人」。</span>`;
         });
       };
 
-      window.onload = () => loadData(true);
-
-      // ==========================================================
-      // 🚀 極速定位公式：不用迴圈、不用慢動作，瞬間貼齊鍵盤
-      // ==========================================================
-      function alignToKeyboard(target) {
-        if (window.visualViewport) {
-          const rect = target.getBoundingClientRect();
-          const vpHeight = window.visualViewport.height;
-          // 目標：輸入框底部 剛好切齊 在可視區域(鍵盤上方)的底部，並留 10px 空隙
-          const targetY = window.scrollY + rect.bottom - vpHeight + 10;
-          
-          // behavior: 'auto' 代表【瞬間】切換過去，不帶任何拖泥帶水的滑動動畫！
-          window.scrollTo({ top: Math.max(0, targetY), behavior: 'auto' });
-        }
-      }
-
-      // 監聽 1：點擊輸入框、或用上一項/下一項跳格
-      document.addEventListener('focusin', function(e) {
-        if (e.target && e.target.tagName === 'INPUT') {
-          // 在 0ms 瞬間搶在蘋果原生動畫前做一次定位
-          alignToKeyboard(e.target);
-          
-          // 延遲 300ms 蘋果原生動畫跑完後，再做一次最終矯正
-          setTimeout(() => { alignToKeyboard(e.target); }, 300);
-        }
-      });
-
-      // 監聽 2：當鍵盤正在彈出 (畫面高度被壓縮) 的時候，黏著鍵盤上去
-      if (window.visualViewport) {
-        window.visualViewport.addEventListener('resize', function() {
-          const active = document.activeElement;
-          if (active && active.tagName === 'INPUT') {
-            alignToKeyboard(active);
-          }
-        });
-      }
-      // ==========================================================
+      window.onload = () => loadData();
 
       function toggleRankName() {
         const c = document.querySelector('input[name="clinic"]:checked');
