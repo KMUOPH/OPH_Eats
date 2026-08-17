@@ -126,8 +126,8 @@
                     <input type="text" class="form-control fw-bold" id="bentoName" placeholder="餐點" enterkeyhint="next" onkeydown="if(event.key==='Enter' || event.keyCode===13){event.preventDefault(); document.getElementById('bentoAmount').focus();}" onfocus="this.select()">
                   </div>
                   <div class="col-4">
-                    <!-- 改為收起鍵盤並捲動到飲料格 -->
-                    <input type="text" inputmode="numeric" class="form-control fw-bold" id="bentoAmount" placeholder="金額" enterkeyhint="next" onkeydown="if(event.key==='Enter' || event.keyCode===13){event.preventDefault(); this.blur(); scrollToDrink();}" onfocus="this.select()">
+                    <!-- 攔截 Enter 與 Tab，強制收起鍵盤並捲動到飲料區 -->
+                    <input type="text" inputmode="numeric" class="form-control fw-bold" id="bentoAmount" placeholder="金額" enterkeyhint="done" onkeydown="if(event.key==='Enter' || event.keyCode===13 || event.key==='Tab' || event.keyCode===9){event.preventDefault(); this.blur(); setTimeout(scrollToDrink, 150);}" onfocus="this.select()">
                   </div>
                 </div>
               </div>
@@ -146,8 +146,8 @@
                     <input type="text" class="form-control fw-bold" id="drinkName" placeholder="飲料" enterkeyhint="next" onkeydown="if(event.key==='Enter' || event.keyCode===13){event.preventDefault(); document.getElementById('drinkAmount').focus();}" onfocus="this.select()">
                   </div>
                   <div class="col-4">
-                    <!-- 飲料金額填完後，可以選擇捲動到備註格，或者單純收起鍵盤 -->
-                    <input type="text" inputmode="numeric" class="form-control fw-bold" id="drinkAmount" placeholder="金額" enterkeyhint="next" onkeydown="if(event.key==='Enter' || event.keyCode===13){event.preventDefault(); this.blur(); document.getElementById('notes').focus();}" onfocus="this.select()">
+                    <!-- 攔截 Enter 與 Tab，強制收起鍵盤並捲動到備註區 -->
+                    <input type="text" inputmode="numeric" class="form-control fw-bold" id="drinkAmount" placeholder="金額" enterkeyhint="done" onkeydown="if(event.key==='Enter' || event.keyCode===13 || event.key==='Tab' || event.keyCode===9){event.preventDefault(); this.blur(); setTimeout(scrollToNotes, 150);}" onfocus="this.select()">
                   </div>
                 </div>
               </div>
@@ -159,7 +159,6 @@
                   <button type="button" class="btn btn-outline-dark-theme fw-bold capsule-btn" onclick="addNote('兩筆都要')">兩筆都要</button>
                 </div>
                 <div class="input-group">
-                  <!-- 修正了原本 event.target.blur() 的拼字 -->
                   <input type="text" class="form-control fw-bold" id="notes" placeholder="其他需求..." enterkeyhint="done" onkeydown="if(event.key==='Enter' || event.keyCode===13){event.preventDefault(); this.blur();}" onfocus="this.select()">
                   <button class="btn btn-clear" type="button" onclick="document.getElementById('notes').value='';" title="清除內容">✖</button>
                 </div>
@@ -200,7 +199,7 @@
 
       function addNote(text) { const n = document.getElementById('notes'); n.value = n.value ? n.value + "。" + text : text; }
 
-      // --- 新增：處理圖片載入失敗與重試 ---
+      // --- 處理圖片載入失敗與重試 ---
       function handleImgError(type) {
         document.getElementById(type + 'MenuImg').style.display = 'none';
         document.getElementById(type + 'ImgError').style.display = 'block';
@@ -211,7 +210,6 @@
         document.getElementById(type + 'ImgError').style.display = 'none';
         
         let currentSrc = img.src;
-        // 加上時間參數強迫瀏覽器重新抓取，不吃快取
         if(currentSrc.includes('&retry=')) {
           currentSrc = currentSrc.replace(/&retry=\d+/, '&retry=' + new Date().getTime());
         } else {
@@ -222,21 +220,33 @@
         img.style.display = 'block';
       }
 
-      // --- 平滑捲動到餐點格 ---
-      function scrollToBento() {
-        const bentoInput = document.getElementById('bentoName');
-        if (bentoInput) {
-          const rect = bentoInput.getBoundingClientRect();
+      // --- 職級點選後：延遲一下再平滑捲動到餐點格 ---
+      function handleRankChange() {
+        setTimeout(() => {
+          const bentoInput = document.getElementById('bentoName');
+          if (bentoInput) {
+            const rect = bentoInput.getBoundingClientRect();
+            const targetY = window.scrollY + rect.bottom - window.innerHeight + 30;
+            window.scrollTo({ top: Math.max(0, targetY), behavior: 'smooth' });
+          }
+        }, 350); // 350毫秒的視覺停留
+      }
+
+      // --- 平滑捲動到飲料格 ---
+      function scrollToDrink() {
+        const drinkInput = document.getElementById('drinkName');
+        if (drinkInput) {
+          const rect = drinkInput.getBoundingClientRect();
           const targetY = window.scrollY + rect.bottom - window.innerHeight + 30;
           window.scrollTo({ top: Math.max(0, targetY), behavior: 'smooth' });
         }
       }
 
-      // --- 新增：平滑捲動到飲料格 (不彈出鍵盤) ---
-      function scrollToDrink() {
-        const drinkInput = document.getElementById('drinkName');
-        if (drinkInput) {
-          const rect = drinkInput.getBoundingClientRect();
+      // --- 平滑捲動到備註格 ---
+      function scrollToNotes() {
+        const notesInput = document.getElementById('notes');
+        if (notesInput) {
+          const rect = notesInput.getBoundingClientRect();
           const targetY = window.scrollY + rect.bottom - window.innerHeight + 30;
           window.scrollTo({ top: Math.max(0, targetY), behavior: 'smooth' });
         }
@@ -294,7 +304,8 @@
 
             const rankContainer = document.getElementById('rankGroup'); rankContainer.innerHTML = '';
             response.data.ranks.forEach((r, idx) => {
-              rankContainer.innerHTML += `<div class="col-4"><input type="radio" class="btn-check rank-radio" name="rank" id="r_${idx}" value="${r}" onchange="scrollToBento()"><label class="btn btn-outline-dark-theme w-100 fw-bold rank-label-custom" for="r_${idx}">${r}</label></div>`;
+              // 綁定新的延遲捲動函式
+              rankContainer.innerHTML += `<div class="col-4"><input type="radio" class="btn-check rank-radio" name="rank" id="r_${idx}" value="${r}" onchange="handleRankChange()"><label class="btn btn-outline-dark-theme w-100 fw-bold rank-label-custom" for="r_${idx}">${r}</label></div>`;
             });
 
           } else { 
@@ -311,7 +322,7 @@
       window.onload = () => loadData();
 
       // ==========================================================
-      // 🚀 設定安全距離為 25px 進行測試 (點擊格子時依然有效)
+      // 🚀 設定安全距離為 25px 進行測試
       // ==========================================================
       document.addEventListener('focusin', function(e) {
         if (e.target && e.target.tagName === 'INPUT') {
