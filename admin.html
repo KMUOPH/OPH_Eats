@@ -37,9 +37,9 @@
     /* 頂部橫幅 */
     .banner-header { background-color: #9b727a; color: white; height: 60px; margin-bottom: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); width: 100%; display: flex; align-items: center; padding: 0 15px; }
 
-    /* 深灰底白字的標題列 */
+    /* 統一且適中的深灰底白字標題列 (#495057) */
     .section-header { 
-      background-color: #343a40; 
+      background-color: #495057; 
       color: #ffffff; 
       border-radius: 6px; 
       padding: 8px 12px; 
@@ -56,7 +56,8 @@
     .slider:before { position: absolute; content: ""; height: 22px; width: 22px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
     input:checked + .slider { background-color: #198754; }
     input:checked + .slider:before { transform: translateX(24px); }
-    input.status-loading + .slider { background-color: #6c757d; cursor: not-allowed; }
+    /* 讀取中改為淺灰色 */
+    input.status-loading + .slider { background-color: #ced4da; cursor: not-allowed; }
 
     /* --- 列表底部淡出效果 --- */
     .fade-bottom-wrapper { position: relative; display: flex; flex-direction: column; }
@@ -118,7 +119,6 @@
           <!-- 系統狀態 -->
           <div class="section-block my-3">
             <div class="d-flex align-items-center justify-content-between px-1">
-              <!-- 狀態讀取中改為淺灰底、深色字 -->
               <span id="systemStatusText" class="badge px-4 py-2 fs-5 shadow-sm" style="background-color: #e9ecef; color: #212529; border: 1px solid #ced4da;">讀取中...</span>
               <label class="switch">
                 <input type="checkbox" id="systemStatusToggle" class="status-loading" onchange="toggleSystemState(this.checked)" disabled>
@@ -155,8 +155,7 @@
 
                 <!-- 2. 新增餐點區 -->
                 <div class="p-2 border rounded bg-light">
-                  <input type="text" class="form-control form-control-sm fw-bold mb-1 custom-placeholder" id="libBentoName" placeholder="(新增餐點)輸入店家名稱">
-                  <!-- 選擇圖片按鈕改為灰底黑字灰框 -->
+                  <input type="text" class="form-control form-control-sm fw-bold mb-1 custom-placeholder" id="libBentoName" placeholder="(新增餐點)輸入店家名稱" onfocus="this.select()">
                   <label for="libBentoFile" class="btn w-100 mb-1 fw-bold text-truncate" id="bentoFileLabel" style="background-color: #e9ecef; color: #212529; border: 1px solid #ced4da; font-size: 0.8rem;">選擇圖片</label>
                   <input type="file" id="libBentoFile" accept="image/*" style="display: none;" onchange="updateFileLabel('bento')">
                   <button class="btn btn-theme btn-sm fw-bold w-100" onclick="uploadToLibrary('bento')">上傳</button>
@@ -187,8 +186,7 @@
 
                 <!-- 2. 新增飲料區 -->
                 <div class="p-2 border rounded bg-light">
-                  <input type="text" class="form-control form-control-sm fw-bold mb-1 custom-placeholder" id="libDrinkName" placeholder="(新增飲料)輸入店家名稱">
-                  <!-- 選擇圖片按鈕改為灰底黑字灰框 -->
+                  <input type="text" class="form-control form-control-sm fw-bold mb-1 custom-placeholder" id="libDrinkName" placeholder="(新增飲料)輸入店家名稱" onfocus="this.select()">
                   <label for="libDrinkFile" class="btn w-100 mb-1 fw-bold text-truncate" id="drinkFileLabel" style="background-color: #e9ecef; color: #212529; border: 1px solid #ced4da; font-size: 0.8rem;">選擇圖片</label>
                   <input type="file" id="libDrinkFile" accept="image/*" style="display: none;" onchange="updateFileLabel('drink')">
                   <button class="btn btn-theme btn-sm fw-bold w-100" onclick="uploadToLibrary('drink')">上傳</button>
@@ -413,12 +411,13 @@
       
       apiCall({ action: "setMenuUrl", menuType: type, url: url, shopName: shopName, password: currentPwd }, null, () => {
         
-        let cleanName = textName.replace(/^\[.*?\]/, '').replace(/\.[a-zA-Z0-9]+$/, '');
-        document.getElementById(type + 'Input').value = cleanName;
+        // 取得純店家名稱 (過濾掉時間與副檔名) 帶入搜尋格
+        let pureName = textName.replace(/^\[.*?\]/, '').replace(/_\d{8}_\d{4}\.jpg$/, '').replace(/_\d+\.jpg$/, '').replace(/\.jpg$/i, '');
+        document.getElementById(type + 'Input').value = pureName;
         
         const applyBtn = document.getElementById(type + 'ApplyBtn');
         applyBtn.innerText = "已套用";
-        applyBtn.className = "btn btn-theme fw-bold px-2";
+        applyBtn.className = "btn btn-theme fw-bold px-2"; // 維持粉色
         
         const container = document.getElementById(type + 'FileListContainer');
         container.querySelectorAll('.select-btn').forEach(btn => {
@@ -431,7 +430,7 @@
           }
         });
 
-        // 回復下方的列表顯示全部庫存
+        // 展開所有庫存列表
         container.querySelectorAll('.file-item').forEach(item => {
           item.style.display = 'flex';
         });
@@ -444,14 +443,8 @@
       
       if (fileInput.files.length > 0) {
         label.innerText = "已選：" + fileInput.files[0].name;
-        label.style.backgroundColor = '#198754'; 
-        label.style.color = '#ffffff';
-        label.style.borderColor = '#198754';
       } else {
         label.innerText = "選擇圖片";
-        label.style.backgroundColor = '#e9ecef'; 
-        label.style.color = '#212529';
-        label.style.borderColor = '#ced4da';
       }
     }
 
