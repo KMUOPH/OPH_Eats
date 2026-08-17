@@ -82,7 +82,7 @@
     .svg-trash { width: 16px; height: 16px; fill: currentColor; margin-bottom: 2px; }
     
     /* 圖庫列表微調 */
-    .file-item { border-bottom: 1px solid #dee2e6; padding: 6px 0; display: flex; align-items: flex-start; }
+    .file-item { border-bottom: 1px solid #dee2e6; padding: 6px 0; display: flex; align-items: center; }
     .file-item:last-child { border-bottom: none; }
     .file-name-text { word-break: break-all; font-size: 0.8rem; line-height: 1.2; color: #343a40; padding-right: 4px; }
 
@@ -141,9 +141,9 @@
                 <!-- 1. 列表＋今日區框架 -->
                 <div class="p-2 border rounded bg-light d-flex flex-column">
                   
+                  <!-- 搜尋格與套用按鈕 (拔除 list 與 datalist，加入 autocomplete="off") -->
                   <div class="input-group input-group-sm mb-2 shadow-sm">
-                    <input type="text" class="form-control fw-bold custom-placeholder" id="bentoInput" list="bentoDatalist" placeholder="--搜尋今日餐點--" oninput="filterList(this.value, 'bento')" onfocus="this.select()">
-                    <datalist id="bentoDatalist"></datalist>
+                    <input type="text" class="form-control fw-bold custom-placeholder" id="bentoInput" autocomplete="off" placeholder="--搜尋今日餐點--" oninput="filterList(this.value, 'bento')" onfocus="this.select()">
                     <button class="btn btn-theme fw-bold px-2" id="bentoApplyBtn" onclick="setMenu('bento')">套用</button>
                   </div>
                   
@@ -156,7 +156,7 @@
 
                 <!-- 2. 新增餐點區 -->
                 <div class="p-2 border rounded bg-light">
-                  <input type="text" class="form-control form-control-sm fw-bold mb-1 custom-placeholder" id="libBentoName" placeholder="(新增餐點)輸入店家名稱" onfocus="this.select()">
+                  <input type="text" class="form-control form-control-sm fw-bold mb-1 custom-placeholder" id="libBentoName" autocomplete="off" placeholder="(新增餐點)輸入店家名稱" onfocus="this.select()">
                   <label for="libBentoFile" class="btn w-100 mb-1 fw-bold text-truncate" id="bentoFileLabel" style="background-color: #e9ecef; color: #212529; border: 1px solid #ced4da; font-size: 0.8rem;">選擇圖片</label>
                   <input type="file" id="libBentoFile" accept="image/*" style="display: none;" onchange="updateFileLabel('bento')">
                   <button class="btn btn-theme btn-sm fw-bold w-100" onclick="uploadToLibrary('bento')">上傳</button>
@@ -170,9 +170,9 @@
                 <!-- 1. 列表＋今日區框架 -->
                 <div class="p-2 border rounded bg-light d-flex flex-column">
                   
+                  <!-- 搜尋格與套用按鈕 (拔除 list 與 datalist，加入 autocomplete="off") -->
                   <div class="input-group input-group-sm mb-2 shadow-sm">
-                    <input type="text" class="form-control fw-bold custom-placeholder" id="drinkInput" list="drinkDatalist" placeholder="--搜尋今日飲料--" oninput="filterList(this.value, 'drink')" onfocus="this.select()">
-                    <datalist id="drinkDatalist"></datalist>
+                    <input type="text" class="form-control fw-bold custom-placeholder" id="drinkInput" autocomplete="off" placeholder="--搜尋今日飲料--" oninput="filterList(this.value, 'drink')" onfocus="this.select()">
                     <button class="btn btn-theme fw-bold px-2" id="drinkApplyBtn" onclick="setMenu('drink')">套用</button>
                   </div>
                   
@@ -185,7 +185,7 @@
 
                 <!-- 2. 新增飲料區 -->
                 <div class="p-2 border rounded bg-light">
-                  <input type="text" class="form-control form-control-sm fw-bold mb-1 custom-placeholder" id="libDrinkName" placeholder="(新增飲料)輸入店家名稱" onfocus="this.select()">
+                  <input type="text" class="form-control form-control-sm fw-bold mb-1 custom-placeholder" id="libDrinkName" autocomplete="off" placeholder="(新增飲料)輸入店家名稱" onfocus="this.select()">
                   <label for="libDrinkFile" class="btn w-100 mb-1 fw-bold text-truncate" id="drinkFileLabel" style="background-color: #e9ecef; color: #212529; border: 1px solid #ced4da; font-size: 0.8rem;">選擇圖片</label>
                   <input type="file" id="libDrinkFile" accept="image/*" style="display: none;" onchange="updateFileLabel('drink')">
                   <button class="btn btn-theme btn-sm fw-bold w-100" onclick="uploadToLibrary('drink')">上傳</button>
@@ -210,8 +210,9 @@
                   <div class="col-6 border-end d-flex flex-column">
                     <div class="fw-bold text-secondary small mb-0 text-center">診次</div>
                     <div id="clinicList" class="bg-white border rounded p-1 mb-2 mt-1 flex-grow-1"></div>
+                    
                     <div class="input-group input-group-sm mt-auto">
-                      <input type="text" class="form-control fw-bold custom-placeholder" id="newClinicInput" placeholder="輸入" onfocus="this.select()">
+                      <input type="text" class="form-control fw-bold custom-placeholder" id="newClinicInput" autocomplete="off" placeholder="輸入" onfocus="this.select()">
                       <button class="btn btn-theme fw-bold" onclick="addOption('clinic')">新增</button>
                     </div>
                   </div>
@@ -220,8 +221,9 @@
                   <div class="col-6 d-flex flex-column">
                     <div class="fw-bold text-secondary small mb-0 text-center">職級</div>
                     <div id="rankList" class="bg-white border rounded p-1 mb-2 mt-1 flex-grow-1"></div>
+                    
                     <div class="input-group input-group-sm mt-auto">
-                      <input type="text" class="form-control fw-bold custom-placeholder" id="newRankInput" placeholder="輸入" onfocus="this.select()">
+                      <input type="text" class="form-control fw-bold custom-placeholder" id="newRankInput" autocomplete="off" placeholder="輸入" onfocus="this.select()">
                       <button class="btn btn-theme fw-bold" onclick="addOption('rank')">新增</button>
                     </div>
                   </div>
@@ -339,17 +341,16 @@
       });
     }
 
+    // 將按鈕改為膠囊狀並明確標示「設為今日」
     function createListItemHtml(f, menuType) {
       let cleanName = f.name.replace(/^\[.*?\]/, '').replace(/\.[a-zA-Z0-9]+$/, '');
       let formattedName = cleanName.replace(/(_\d{8}_\d{4})$/, '<br><span class="text-secondary fw-normal" style="font-size:0.75rem;">$1</span>');
       
       return `
-        <div class="file-item align-items-start" data-name="${cleanName}">
-          <div class="d-flex w-100 mt-1">
-            <button class="btn btn-sm btn-outline-theme fw-bold p-0 px-2 me-1 flex-shrink-0 select-btn" data-id="${f.id}" style="font-size:0.75rem; height: 24px;" onclick="quickSetMenu('${menuType}', '${f.url}', '${f.name}', '${f.id}')">選擇</button>
-            <div class="file-name-text fw-bold flex-grow-1" title="${cleanName}">${formattedName}</div>
-            <span class="trash-btn flex-shrink-0 p-0 px-1" onclick="deleteMenuFile('${f.id}', '${f.name}')">${trashSvg}</span>
-          </div>
+        <div class="file-item align-items-center" data-name="${cleanName}">
+          <button class="btn btn-sm btn-outline-theme fw-bold px-2 py-0 me-2 flex-shrink-0 select-btn" data-id="${f.id}" style="font-size:0.75rem; height: 26px; border-radius: 12px;" onclick="quickSetMenu('${menuType}', '${f.url}', '${f.name}', '${f.id}')">設為今日</button>
+          <div class="file-name-text fw-bold flex-grow-1" title="${cleanName}">${formattedName}</div>
+          <span class="trash-btn flex-shrink-0 ms-2 p-1" onclick="deleteMenuFile('${f.id}', '${f.name}')">${trashSvg}</span>
         </div>`;
     }
 
@@ -358,28 +359,20 @@
       apiCall({ action: "getDriveFiles", password: currentPwd }, null, (res) => {
         currentDriveFiles = res.files;
         
-        let bentoOptions = ''; let drinkOptions = ''; 
         let bentoListHtml = ''; let drinkListHtml = '';
         
         currentDriveFiles.forEach(f => {
-          let cleanName = f.name.replace(/^\[.*?\]/, '').replace(/\.[a-zA-Z0-9]+$/, '');
-          const opt = `<option value="${cleanName}">`;
-
           if (f.name.startsWith('[餐點]')) {
-            bentoOptions += opt;
             bentoListHtml += createListItemHtml(f, 'bento');
           } else if (f.name.startsWith('[飲料]')) {
-            drinkOptions += opt;
             drinkListHtml += createListItemHtml(f, 'drink');
           } else { 
-            bentoOptions += opt; drinkOptions += opt; 
             bentoListHtml += createListItemHtml(f, 'bento');
             drinkListHtml += createListItemHtml(f, 'drink');
           }
         });
         
-        document.getElementById('bentoDatalist').innerHTML = bentoOptions; 
-        document.getElementById('drinkDatalist').innerHTML = drinkOptions;
+        // 已拔除 datalist 寫入邏輯
         document.getElementById('bentoFileListContainer').innerHTML = bentoListHtml || '<div class="text-muted small text-center py-2">無資料</div>';
         document.getElementById('drinkFileListContainer').innerHTML = drinkListHtml || '<div class="text-muted small text-center py-2">無資料</div>';
       });
@@ -388,14 +381,14 @@
     function setMenu(type) {
       const input = document.getElementById(type + 'Input');
       const keyword = input.value.trim(); 
-      if(!keyword) return alert("請先搜尋或選擇菜單！");
+      if(!keyword) return alert("請先搜尋或輸入菜單名稱！");
       
       const fileObj = currentDriveFiles.find(f => {
         let clean = f.name.replace(/^\[.*?\]/, '').replace(/\.[a-zA-Z0-9]+$/, '');
         return clean === keyword || f.name.includes(keyword);
       });
 
-      if(!fileObj) return alert("找不到符合的檔案，請從下方清單選擇！");
+      if(!fileObj) return alert("找不到符合的檔案，請從下方清單直接點擊「設為今日」！");
       
       quickSetMenu(type, fileObj.url, fileObj.name, fileObj.id);
     }
@@ -415,15 +408,16 @@
         
         const container = document.getElementById(type + 'FileListContainer');
         container.querySelectorAll('.select-btn').forEach(btn => {
-          btn.innerText = "選擇";
+          btn.innerText = "設為今日";
           btn.classList.replace('btn-theme', 'btn-outline-theme');
           
           if (btn.getAttribute('data-id') === fileId) {
-            btn.innerText = "今日";
+            btn.innerText = "✅ 今日";
             btn.classList.replace('btn-outline-theme', 'btn-theme');
           }
         });
 
+        // 靜默處理，不跳出 alert
         container.querySelectorAll('.file-item').forEach(item => {
           item.style.display = 'flex';
         });
@@ -545,7 +539,6 @@
 
     function saveOptions() { 
       showLoading("儲存設定中..."); 
-      /* 靜默儲存，不跳對話框 */
       apiCall({ action: "updateOptions", clinics: clinicsList, ranks: ranksList, password: currentPwd }, null, () => {
         const collapseElement = document.getElementById('optionsCollapse');
         const bsCollapse = bootstrap.Collapse.getInstance(collapseElement);
