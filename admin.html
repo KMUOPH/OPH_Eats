@@ -107,7 +107,8 @@
 
   <div class="banner-header">
     <div class="d-flex align-items-center h-100 overflow-hidden">
-      <img src="logo.jpg" alt="Logo" style="height: 46px; width: 46px; border-radius: 50%; object-fit: cover; box-shadow: 0 2px 4px rgba(0,0,0,0.2); margin-right: 12px;">
+      <!-- 更新為 logoa.jpg -->
+      <img src="logoa.jpg" alt="Logo" style="height: 46px; width: 46px; border-radius: 50%; object-fit: cover; box-shadow: 0 2px 4px rgba(0,0,0,0.2); margin-right: 12px;">
       <h3 class="mb-0 fw-bold text-truncate" style="font-size: 1.25rem;">OPH Eats 後台管理</h3>
     </div>
   </div>
@@ -514,7 +515,6 @@
       const timeStr = `${now.getFullYear()}${String(now.getMonth()+1).padStart(2,'0')}${String(now.getDate()).padStart(2,'0')}_${String(now.getHours()).padStart(2,'0')}${String(now.getMinutes()).padStart(2,'0')}`;
       const finalFilename = `${prefix}${shopName}_${timeStr}.jpg`;
       
-      // 內嵌處理與上傳函式
       const processAndUpload = (imageBlob) => {
         showLoading("照片壓縮與上傳中...");
         const reader = new FileReader();
@@ -557,13 +557,11 @@
         reader.readAsDataURL(imageBlob);
       };
 
-      // 🛑 自動攔截 HEIF/HEIC 並在背景轉換為 JPEG
       if (isHeic) {
         showLoading("蘋果 HEIF/HEIC 格式自動轉換中...");
         if (typeof heic2any !== 'undefined') {
           heic2any({ blob: file, toType: "image/jpeg", quality: 0.8 })
             .then((convertedBlob) => {
-              // 有些照片會回傳陣列 (例如原況照片)，只取第一張
               let finalBlob = Array.isArray(convertedBlob) ? convertedBlob[0] : convertedBlob;
               processAndUpload(finalBlob);
             })
@@ -576,7 +574,6 @@
           alert("❌ 缺少轉檔套件，請重新整理網頁再試。");
         }
       } else {
-        // 一般格式直接執行
         processAndUpload(file);
       }
     }
