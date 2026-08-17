@@ -141,14 +141,12 @@
                 <!-- 1. 列表＋今日區框架 -->
                 <div class="p-2 border rounded bg-light d-flex flex-column">
                   
-                  <!-- 搜尋格與套用按鈕 -->
                   <div class="input-group input-group-sm mb-2 shadow-sm">
                     <input type="text" class="form-control fw-bold custom-placeholder" id="bentoInput" list="bentoDatalist" placeholder="--搜尋今日餐點--" oninput="filterList(this.value, 'bento')" onfocus="this.select()">
                     <datalist id="bentoDatalist"></datalist>
                     <button class="btn btn-theme fw-bold px-2" id="bentoApplyBtn" onclick="setMenu('bento')">套用</button>
                   </div>
                   
-                  <!-- 列表區 (高度 220px) -->
                   <div class="fade-bottom-wrapper">
                     <div id="bentoFileListContainer" class="bg-white border rounded p-1" style="height: 220px; overflow-y: auto; overflow-x: hidden; padding-bottom: 25px !important;">
                       <div class="text-muted small text-center py-2">讀取中...</div>
@@ -172,14 +170,12 @@
                 <!-- 1. 列表＋今日區框架 -->
                 <div class="p-2 border rounded bg-light d-flex flex-column">
                   
-                  <!-- 搜尋格與套用按鈕 -->
                   <div class="input-group input-group-sm mb-2 shadow-sm">
                     <input type="text" class="form-control fw-bold custom-placeholder" id="drinkInput" list="drinkDatalist" placeholder="--搜尋今日飲料--" oninput="filterList(this.value, 'drink')" onfocus="this.select()">
                     <datalist id="drinkDatalist"></datalist>
                     <button class="btn btn-theme fw-bold px-2" id="drinkApplyBtn" onclick="setMenu('drink')">套用</button>
                   </div>
                   
-                  <!-- 列表區 (高度 220px) -->
                   <div class="fade-bottom-wrapper">
                     <div id="drinkFileListContainer" class="bg-white border rounded p-1" style="height: 220px; overflow-y: auto; overflow-x: hidden; padding-bottom: 25px !important;">
                       <div class="text-muted small text-center py-2">讀取中...</div>
@@ -210,25 +206,25 @@
               <div class="p-3 mt-2" style="background-color: #f8f9fa; border-radius: 8px; border: 1px solid #dee2e6;">
                 
                 <div class="row g-3 mb-2">
-                  <!-- 左欄：診次 -->
-                  <div class="col-6 border-end">
+                  <!-- 左欄：診次 (套用 Flexbox 強制對齊底部輸入框) -->
+                  <div class="col-6 border-end d-flex flex-column">
                     <div class="fw-bold text-secondary small mb-0 text-center">診次</div>
-                    <!-- 移除固定高度與 fade 效果，讓它完整列出所有項目 -->
-                    <div id="clinicList" class="bg-white border rounded p-1 mb-2 mt-1"></div>
+                    <!-- 移除固定高度，讓內容自然撐開，並加上 flex-grow-1 填滿剩餘空間 -->
+                    <div id="clinicList" class="bg-white border rounded p-1 mb-2 mt-1 flex-grow-1"></div>
                     
-                    <div class="input-group input-group-sm">
+                    <div class="input-group input-group-sm mt-auto">
                       <input type="text" class="form-control fw-bold custom-placeholder" id="newClinicInput" placeholder="輸入" onfocus="this.select()">
                       <button class="btn btn-theme fw-bold" onclick="addOption('clinic')">新增</button>
                     </div>
                   </div>
                   
-                  <!-- 右欄：職級 -->
-                  <div class="col-6">
+                  <!-- 右欄：職級 (套用 Flexbox 強制對齊底部輸入框) -->
+                  <div class="col-6 d-flex flex-column">
                     <div class="fw-bold text-secondary small mb-0 text-center">職級</div>
-                    <!-- 移除固定高度與 fade 效果，讓它完整列出所有項目 -->
-                    <div id="rankList" class="bg-white border rounded p-1 mb-2 mt-1"></div>
+                    <!-- 移除固定高度，讓內容自然撐開，並加上 flex-grow-1 填滿剩餘空間 -->
+                    <div id="rankList" class="bg-white border rounded p-1 mb-2 mt-1 flex-grow-1"></div>
                     
-                    <div class="input-group input-group-sm">
+                    <div class="input-group input-group-sm mt-auto">
                       <input type="text" class="form-control fw-bold custom-placeholder" id="newRankInput" placeholder="輸入" onfocus="this.select()">
                       <button class="btn btn-theme fw-bold" onclick="addOption('rank')">新增</button>
                     </div>
@@ -533,7 +529,7 @@
       if (dir === -1 && idx > 0) {
         [arr[idx-1], arr[idx]] = [arr[idx], arr[idx-1]]; 
       } else if (dir === 1 && idx < arr.length - 1) {
-        [arr[idx], arr[idx+1], arr[idx]]; 
+        [arr[idx], arr[idx+1]] = [arr[idx+1], arr[idx]]; 
       }
       renderVerticalLists(); 
     }
