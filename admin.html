@@ -206,24 +206,20 @@
               <div class="p-3 mt-2" style="background-color: #f8f9fa; border-radius: 8px; border: 1px solid #dee2e6;">
                 
                 <div class="row g-3 mb-2">
-                  <!-- 左欄：診次 (套用 Flexbox 強制對齊底部輸入框) -->
+                  <!-- 左欄：診次 -->
                   <div class="col-6 border-end d-flex flex-column">
                     <div class="fw-bold text-secondary small mb-0 text-center">診次</div>
-                    <!-- 移除固定高度，讓內容自然撐開，並加上 flex-grow-1 填滿剩餘空間 -->
                     <div id="clinicList" class="bg-white border rounded p-1 mb-2 mt-1 flex-grow-1"></div>
-                    
                     <div class="input-group input-group-sm mt-auto">
                       <input type="text" class="form-control fw-bold custom-placeholder" id="newClinicInput" placeholder="輸入" onfocus="this.select()">
                       <button class="btn btn-theme fw-bold" onclick="addOption('clinic')">新增</button>
                     </div>
                   </div>
                   
-                  <!-- 右欄：職級 (套用 Flexbox 強制對齊底部輸入框) -->
+                  <!-- 右欄：職級 -->
                   <div class="col-6 d-flex flex-column">
                     <div class="fw-bold text-secondary small mb-0 text-center">職級</div>
-                    <!-- 移除固定高度，讓內容自然撐開，並加上 flex-grow-1 填滿剩餘空間 -->
                     <div id="rankList" class="bg-white border rounded p-1 mb-2 mt-1 flex-grow-1"></div>
-                    
                     <div class="input-group input-group-sm mt-auto">
                       <input type="text" class="form-control fw-bold custom-placeholder" id="newRankInput" placeholder="輸入" onfocus="this.select()">
                       <button class="btn btn-theme fw-bold" onclick="addOption('rank')">新增</button>
@@ -549,7 +545,8 @@
 
     function saveOptions() { 
       showLoading("儲存設定中..."); 
-      apiCall({ action: "updateOptions", clinics: clinicsList, ranks: ranksList, password: currentPwd }, "選單設定已儲存！", () => {
+      /* 靜默儲存，不跳對話框 */
+      apiCall({ action: "updateOptions", clinics: clinicsList, ranks: ranksList, password: currentPwd }, null, () => {
         const collapseElement = document.getElementById('optionsCollapse');
         const bsCollapse = bootstrap.Collapse.getInstance(collapseElement);
         if(bsCollapse) bsCollapse.hide();
