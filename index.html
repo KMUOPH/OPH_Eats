@@ -126,7 +126,8 @@
                     <input type="text" class="form-control fw-bold" id="bentoName" placeholder="餐點" enterkeyhint="next" onkeydown="if(event.key==='Enter' || event.keyCode===13){event.preventDefault(); document.getElementById('bentoAmount').focus();}" onfocus="this.select()">
                   </div>
                   <div class="col-4">
-                    <input type="text" inputmode="numeric" class="form-control fw-bold" id="bentoAmount" placeholder="金額" enterkeyhint="next" onkeydown="if(event.key==='Enter' || event.keyCode===13){event.preventDefault(); document.getElementById('drinkName').focus();}" onfocus="this.select()">
+                    <!-- 改為收起鍵盤並捲動到飲料格 -->
+                    <input type="text" inputmode="numeric" class="form-control fw-bold" id="bentoAmount" placeholder="金額" enterkeyhint="next" onkeydown="if(event.key==='Enter' || event.keyCode===13){event.preventDefault(); this.blur(); scrollToDrink();}" onfocus="this.select()">
                   </div>
                 </div>
               </div>
@@ -145,7 +146,8 @@
                     <input type="text" class="form-control fw-bold" id="drinkName" placeholder="飲料" enterkeyhint="next" onkeydown="if(event.key==='Enter' || event.keyCode===13){event.preventDefault(); document.getElementById('drinkAmount').focus();}" onfocus="this.select()">
                   </div>
                   <div class="col-4">
-                    <input type="text" inputmode="numeric" class="form-control fw-bold" id="drinkAmount" placeholder="金額" enterkeyhint="next" onkeydown="if(event.key==='Enter' || event.keyCode===13){event.preventDefault(); document.getElementById('notes').focus();}" onfocus="this.select()">
+                    <!-- 飲料金額填完後，可以選擇捲動到備註格，或者單純收起鍵盤 -->
+                    <input type="text" inputmode="numeric" class="form-control fw-bold" id="drinkAmount" placeholder="金額" enterkeyhint="next" onkeydown="if(event.key==='Enter' || event.keyCode===13){event.preventDefault(); this.blur(); document.getElementById('notes').focus();}" onfocus="this.select()">
                   </div>
                 </div>
               </div>
@@ -157,7 +159,8 @@
                   <button type="button" class="btn btn-outline-dark-theme fw-bold capsule-btn" onclick="addNote('兩筆都要')">兩筆都要</button>
                 </div>
                 <div class="input-group">
-                  <input type="text" class="form-control fw-bold" id="notes" placeholder="其他需求..." enterkeyhint="done" onkeydown="if(event.key==='Enter' || event.keyCode===13){event.preventDefault(); e.target.blur();}" onfocus="this.select()">
+                  <!-- 修正了原本 event.target.blur() 的拼字 -->
+                  <input type="text" class="form-control fw-bold" id="notes" placeholder="其他需求..." enterkeyhint="done" onkeydown="if(event.key==='Enter' || event.keyCode===13){event.preventDefault(); this.blur();}" onfocus="this.select()">
                   <button class="btn btn-clear" type="button" onclick="document.getElementById('notes').value='';" title="清除內容">✖</button>
                 </div>
               </div>
@@ -219,11 +222,21 @@
         img.style.display = 'block';
       }
 
-      // --- 平滑捲動到餐點格 (不彈出鍵盤) ---
+      // --- 平滑捲動到餐點格 ---
       function scrollToBento() {
         const bentoInput = document.getElementById('bentoName');
         if (bentoInput) {
           const rect = bentoInput.getBoundingClientRect();
+          const targetY = window.scrollY + rect.bottom - window.innerHeight + 30;
+          window.scrollTo({ top: Math.max(0, targetY), behavior: 'smooth' });
+        }
+      }
+
+      // --- 新增：平滑捲動到飲料格 (不彈出鍵盤) ---
+      function scrollToDrink() {
+        const drinkInput = document.getElementById('drinkName');
+        if (drinkInput) {
+          const rect = drinkInput.getBoundingClientRect();
           const targetY = window.scrollY + rect.bottom - window.innerHeight + 30;
           window.scrollTo({ top: Math.max(0, targetY), behavior: 'smooth' });
         }
