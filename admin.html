@@ -25,6 +25,10 @@
     .btn-theme { background-color: #9b727a !important; color: white !important; border: none; }
     .btn-theme:hover { background-color: #846068 !important; }
     
+    /* 粉色框線按鈕 (用於列表套用) */
+    .btn-outline-theme { color: #9b727a; border-color: #9b727a; background-color: transparent; }
+    .btn-outline-theme:hover { color: white; background-color: #9b727a; border-color: #9b727a; }
+    
     .section-block { margin-bottom: 24px; }
     
     #adminPanel { display: none; }
@@ -99,11 +103,10 @@
     <div class="row justify-content-center">
       <div class="col-md-8 col-lg-6 px-3">
         
-        <!-- 登入區塊 (減少上方留白、併排設計) -->
+        <!-- 登入區塊 -->
         <div id="loginSection" class="mt-3 mb-3">
           <h4 class="fw-bold text-theme mb-3 text-center">後台管理登入</h4>
           <div class="d-flex gap-2">
-            <!-- 加上 autofocus 與數字鍵盤屬性 -->
             <input type="password" inputmode="numeric" pattern="[0-9]*" id="adminPwd" class="form-control fw-bold" placeholder="請輸入密碼" autofocus>
             <button class="btn btn-theme fw-bold text-nowrap px-4" onclick="login()">登入系統</button>
           </div>
@@ -112,7 +115,7 @@
         <!-- 後台管理區塊 -->
         <div id="adminPanel">
           
-          <!-- 系統狀態 (上下留白一致) -->
+          <!-- 系統狀態 -->
           <div class="section-block my-3">
             <div class="d-flex align-items-center justify-content-between px-1">
               <span id="systemStatusText" class="badge bg-secondary px-4 py-2 fs-5 shadow-sm">讀取中...</span>
@@ -133,17 +136,16 @@
                 
                 <!-- 1. 今日餐點 -->
                 <div class="p-2 border rounded bg-light">
-                  <div class="fw-bold text-secondary small mb-1">今日餐點</div>
-                  <input type="text" class="form-control form-control-sm fw-bold mb-1 custom-placeholder" id="bentoInput" list="bentoDatalist" placeholder="--選擇今日餐點--">
+                  <input type="text" class="form-control form-control-sm fw-bold mb-1 custom-placeholder" id="bentoInput" list="bentoDatalist" placeholder="--選擇/搜尋今日餐點--">
                   <datalist id="bentoDatalist"></datalist>
                   <button class="btn btn-theme btn-sm fw-bold w-100" onclick="setMenu('bento')">套用</button>
                 </div>
 
                 <!-- 2. 新增餐點 -->
                 <div class="p-2 border rounded bg-light">
-                  <div class="fw-bold text-secondary small mb-1">新增餐點</div>
                   <input type="text" class="form-control form-control-sm fw-bold mb-1 custom-placeholder" id="libBentoName" placeholder="(新增餐點)輸入店家名稱">
-                  <label for="libBentoFile" class="btn btn-light border btn-sm w-100 mb-1 fw-bold text-secondary text-truncate" id="bentoFileLabel" style="font-size: 0.8rem;">選擇圖片</label>
+                  <!-- 改用較深的外框按鈕 -->
+                  <label for="libBentoFile" class="btn btn-outline-secondary btn-sm w-100 mb-1 fw-bold text-truncate" id="bentoFileLabel" style="font-size: 0.8rem;">選擇圖片</label>
                   <input type="file" id="libBentoFile" accept="image/*" style="display: none;" onchange="updateFileLabel('bento')">
                   <button class="btn btn-theme btn-sm fw-bold w-100" onclick="uploadToLibrary('bento')">上傳</button>
                 </div>
@@ -165,17 +167,15 @@
                 
                 <!-- 1. 今日飲料 -->
                 <div class="p-2 border rounded bg-light">
-                  <div class="fw-bold text-secondary small mb-1">今日飲料</div>
-                  <input type="text" class="form-control form-control-sm fw-bold mb-1 custom-placeholder" id="drinkInput" list="drinkDatalist" placeholder="--選擇今日飲料--">
+                  <input type="text" class="form-control form-control-sm fw-bold mb-1 custom-placeholder" id="drinkInput" list="drinkDatalist" placeholder="--選擇/搜尋今日飲料--">
                   <datalist id="drinkDatalist"></datalist>
                   <button class="btn btn-theme btn-sm fw-bold w-100" onclick="setMenu('drink')">套用</button>
                 </div>
 
                 <!-- 2. 新增飲料 -->
                 <div class="p-2 border rounded bg-light">
-                  <div class="fw-bold text-secondary small mb-1">新增飲料</div>
                   <input type="text" class="form-control form-control-sm fw-bold mb-1 custom-placeholder" id="libDrinkName" placeholder="(新增飲料)輸入店家名稱">
-                  <label for="libDrinkFile" class="btn btn-light border btn-sm w-100 mb-1 fw-bold text-secondary text-truncate" id="drinkFileLabel" style="font-size: 0.8rem;">選擇圖片</label>
+                  <label for="libDrinkFile" class="btn btn-outline-secondary btn-sm w-100 mb-1 fw-bold text-truncate" id="drinkFileLabel" style="font-size: 0.8rem;">選擇圖片</label>
                   <input type="file" id="libDrinkFile" accept="image/*" style="display: none;" onchange="updateFileLabel('drink')">
                   <button class="btn btn-theme btn-sm fw-bold w-100" onclick="uploadToLibrary('drink')">上傳</button>
                 </div>
@@ -192,8 +192,6 @@
               </div>
 
             </div>
-            
-            <button class="btn btn-outline-secondary btn-sm w-100 fw-bold mt-2" onclick="loadDriveFiles()">🔄 手動重新整理圖庫清單</button>
           </div>
 
           <!-- 診次與職級設定 -->
@@ -209,9 +207,9 @@
                 <div class="row g-3 mb-2">
                   <!-- 左欄：診次 -->
                   <div class="col-6 border-end">
-                    <div class="fw-bold text-secondary small mb-1 text-center">診次</div>
+                    <div class="fw-bold text-secondary small mb-0 text-center">診次</div>
                     <div class="fade-bottom-wrapper">
-                      <div id="clinicList" class="bg-white border rounded p-1 mb-2" style="height: 200px; overflow-y: auto; padding-bottom: 25px !important;"></div>
+                      <div id="clinicList" class="bg-white border rounded p-1 mb-2 mt-1" style="height: 200px; overflow-y: auto; padding-bottom: 25px !important;"></div>
                     </div>
                     <div class="input-group input-group-sm">
                       <input type="text" class="form-control fw-bold custom-placeholder" id="newClinicInput" placeholder="輸入">
@@ -221,9 +219,9 @@
                   
                   <!-- 右欄：職級 -->
                   <div class="col-6">
-                    <div class="fw-bold text-secondary small mb-1 text-center">職級</div>
+                    <div class="fw-bold text-secondary small mb-0 text-center">職級</div>
                     <div class="fade-bottom-wrapper">
-                      <div id="rankList" class="bg-white border rounded p-1 mb-2" style="height: 200px; overflow-y: auto; padding-bottom: 25px !important;"></div>
+                      <div id="rankList" class="bg-white border rounded p-1 mb-2 mt-1" style="height: 200px; overflow-y: auto; padding-bottom: 25px !important;"></div>
                     </div>
                     <div class="input-group input-group-sm">
                       <input type="text" class="form-control fw-bold custom-placeholder" id="newRankInput" placeholder="輸入">
@@ -321,14 +319,18 @@
       }); 
     }
 
-    // 渲染單個圖庫列表項目 (包含一鍵套用按鈕)
+    // 渲染單個圖庫列表項目 (粉色框線按鈕 + 去除副檔名)
     function createListItemHtml(f, menuType) {
-      let formattedName = f.name.replace(/(_\d{4,}(_\d{4})?\.[a-zA-Z0-9]+)$/, '<br><span class="text-secondary fw-normal" style="font-size:0.75rem;">$1</span>');
+      // 去除結尾的 .jpg (不論大小寫)
+      let nameNoExt = f.name.replace(/\.[a-zA-Z0-9]+$/, '');
+      // 擷取時間戳記縮小並換行顯示
+      let formattedName = nameNoExt.replace(/(_\d{8}_\d{4})$/, '<br><span class="text-secondary fw-normal" style="font-size:0.75rem;">$1</span>');
+      
       return `
         <div class="file-item align-items-start">
           <div class="d-flex w-100 mt-1">
-            <button class="btn btn-sm btn-outline-success fw-bold p-0 px-2 me-1 flex-shrink-0" style="font-size:0.75rem; height: 24px;" onclick="quickSetMenu('${menuType}', '${f.url}', '${f.name}')">套用</button>
-            <div class="file-name-text fw-bold flex-grow-1" title="${f.name}">${formattedName}</div>
+            <button class="btn btn-sm btn-outline-theme fw-bold p-0 px-2 me-1 flex-shrink-0" style="font-size:0.75rem; height: 24px;" onclick="quickSetMenu('${menuType}', '${f.url}', '${f.name}')">套用</button>
+            <div class="file-name-text fw-bold flex-grow-1" title="${nameNoExt}">${formattedName}</div>
             <span class="trash-btn flex-shrink-0 p-0 px-1" onclick="deleteMenuFile('${f.id}', '${f.name}')">${trashSvg}</span>
           </div>
         </div>`;
@@ -364,7 +366,6 @@
       });
     }
 
-    // 從搜尋框套用
     function setMenu(type) {
       const input = document.getElementById(type + 'Input');
       const fileName = input.value; 
@@ -375,7 +376,6 @@
       quickSetMenu(type, fileObj.url, fileObj.name);
     }
 
-    // 從列表一鍵套用
     function quickSetMenu(type, url, textName) {
       const shopName = textName.replace(/^\[.*?\]/, '').replace(/_\d{8}_\d{4}\.jpg$/, '').replace(/_\d+\.jpg$/, '');
       showLoading("套用設定中..."); 
@@ -388,11 +388,11 @@
       
       if (fileInput.files.length > 0) {
         label.innerText = "已選：" + fileInput.files[0].name;
-        label.classList.replace('btn-light', 'btn-success'); 
+        label.classList.replace('btn-outline-secondary', 'btn-success'); 
         label.classList.replace('text-secondary', 'text-white');
       } else {
         label.innerText = "選擇圖片";
-        label.classList.replace('btn-success', 'btn-light'); 
+        label.classList.replace('btn-success', 'btn-outline-secondary'); 
         label.classList.replace('text-white', 'text-secondary');
       }
     }
