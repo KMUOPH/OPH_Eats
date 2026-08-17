@@ -25,7 +25,7 @@
     .btn-theme { background-color: #9b727a !important; color: white !important; border: none; }
     .btn-theme:hover { background-color: #846068 !important; }
     
-    /* 粉色框線按鈕 (用於列表套用) */
+    /* 粉色框線按鈕 (用於列表選擇) */
     .btn-outline-theme { color: #9b727a; border-color: #9b727a; background-color: transparent; }
     .btn-outline-theme:hover { color: white; background-color: #9b727a; border-color: #9b727a; }
     
@@ -126,68 +126,69 @@
             </div>
           </div>
 
-          <!-- 餐點與飲料圖庫區 -->
+          <!-- 餐點與飲料區 -->
           <div class="section-block">
             <div class="row g-2 align-items-stretch">
               
-              <!-- 左欄：餐點 -->
+              <!-- ================= 左欄：餐點 ================= -->
               <div class="col-6 d-flex flex-column gap-2">
                 <div class="section-header">餐點區</div>
                 
-                <!-- 1. 今日餐點 -->
-                <div class="p-2 border rounded bg-light">
-                  <input type="text" class="form-control form-control-sm fw-bold mb-1 custom-placeholder" id="bentoInput" list="bentoDatalist" placeholder="--選擇/搜尋今日餐點--">
-                  <datalist id="bentoDatalist"></datalist>
-                  <button class="btn btn-theme btn-sm fw-bold w-100" onclick="setMenu('bento')">套用</button>
+                <!-- 1. 列表＋今日區框架 -->
+                <div class="p-2 border rounded bg-light d-flex flex-column">
+                  
+                  <!-- 搜尋格與套用按鈕 -->
+                  <div class="input-group input-group-sm mb-2 shadow-sm">
+                    <input type="text" class="form-control fw-bold custom-placeholder" id="bentoInput" placeholder="--搜尋今日餐點--" oninput="filterList(this.value, 'bento')">
+                    <button class="btn btn-theme fw-bold px-2" id="bentoApplyBtn" onclick="setMenu('bento')">套用</button>
+                  </div>
+                  
+                  <!-- 列表區 (精準設定高度，約顯示 5 個檔案) -->
+                  <div class="fade-bottom-wrapper">
+                    <div id="bentoFileListContainer" class="bg-white border rounded p-1" style="height: 175px; overflow-y: auto; overflow-x: hidden; padding-bottom: 25px !important;">
+                      <div class="text-muted small text-center py-2">讀取中...</div>
+                    </div>
+                  </div>
                 </div>
 
-                <!-- 2. 新增餐點 -->
+                <!-- 2. 新增餐點區 -->
                 <div class="p-2 border rounded bg-light">
                   <input type="text" class="form-control form-control-sm fw-bold mb-1 custom-placeholder" id="libBentoName" placeholder="(新增餐點)輸入店家名稱">
-                  <!-- 改用較深的外框按鈕 -->
-                  <label for="libBentoFile" class="btn btn-outline-secondary btn-sm w-100 mb-1 fw-bold text-truncate" id="bentoFileLabel" style="font-size: 0.8rem;">選擇圖片</label>
+                  <!-- 灰底按鈕 -->
+                  <label for="libBentoFile" class="btn btn-secondary btn-sm w-100 mb-1 fw-bold text-truncate text-white" id="bentoFileLabel" style="font-size: 0.8rem;">選擇圖片</label>
                   <input type="file" id="libBentoFile" accept="image/*" style="display: none;" onchange="updateFileLabel('bento')">
                   <button class="btn btn-theme btn-sm fw-bold w-100" onclick="uploadToLibrary('bento')">上傳</button>
                 </div>
-
-                <!-- 3. 庫存列表 -->
-                <div class="p-2 border rounded bg-light flex-grow-1 d-flex flex-column">
-                  <div class="fw-bold text-secondary small mb-1">庫存餐點列表</div>
-                  <div class="fade-bottom-wrapper flex-grow-1">
-                    <div id="bentoFileListContainer" class="bg-white border rounded p-1" style="min-height: 150px; max-height: 200px; overflow-y: auto; overflow-x: hidden; padding-bottom: 25px !important;">
-                      <div class="text-muted small text-center py-2">讀取中...</div>
-                    </div>
-                  </div>
-                </div>
               </div>
               
-              <!-- 右欄：飲料 -->
+              <!-- ================= 右欄：飲料 ================= -->
               <div class="col-6 d-flex flex-column gap-2">
                 <div class="section-header">飲料區</div>
                 
-                <!-- 1. 今日飲料 -->
-                <div class="p-2 border rounded bg-light">
-                  <input type="text" class="form-control form-control-sm fw-bold mb-1 custom-placeholder" id="drinkInput" list="drinkDatalist" placeholder="--選擇/搜尋今日飲料--">
-                  <datalist id="drinkDatalist"></datalist>
-                  <button class="btn btn-theme btn-sm fw-bold w-100" onclick="setMenu('drink')">套用</button>
-                </div>
-
-                <!-- 2. 新增飲料 -->
-                <div class="p-2 border rounded bg-light">
-                  <input type="text" class="form-control form-control-sm fw-bold mb-1 custom-placeholder" id="libDrinkName" placeholder="(新增飲料)輸入店家名稱">
-                  <label for="libDrinkFile" class="btn btn-outline-secondary btn-sm w-100 mb-1 fw-bold text-truncate" id="drinkFileLabel" style="font-size: 0.8rem;">選擇圖片</label>
-                  <input type="file" id="libDrinkFile" accept="image/*" style="display: none;" onchange="updateFileLabel('drink')">
-                  <button class="btn btn-theme btn-sm fw-bold w-100" onclick="uploadToLibrary('drink')">上傳</button>
-                </div>
-
-                <!-- 3. 庫存列表 -->
-                <div class="p-2 border rounded bg-light flex-grow-1 d-flex flex-column">
-                  <div class="fw-bold text-secondary small mb-1">庫存飲料列表</div>
-                  <div class="fade-bottom-wrapper flex-grow-1">
-                    <div id="drinkFileListContainer" class="bg-white border rounded p-1" style="min-height: 150px; max-height: 200px; overflow-y: auto; overflow-x: hidden; padding-bottom: 25px !important;">
+                <!-- 1. 列表＋今日區框架 -->
+                <div class="p-2 border rounded bg-light d-flex flex-column">
+                  
+                  <!-- 搜尋格與套用按鈕 -->
+                  <div class="input-group input-group-sm mb-2 shadow-sm">
+                    <input type="text" class="form-control fw-bold custom-placeholder" id="drinkInput" placeholder="--搜尋今日飲料--" oninput="filterList(this.value, 'drink')">
+                    <button class="btn btn-theme fw-bold px-2" id="drinkApplyBtn" onclick="setMenu('drink')">套用</button>
+                  </div>
+                  
+                  <!-- 列表區 (精準設定高度，約顯示 5 個檔案) -->
+                  <div class="fade-bottom-wrapper">
+                    <div id="drinkFileListContainer" class="bg-white border rounded p-1" style="height: 175px; overflow-y: auto; overflow-x: hidden; padding-bottom: 25px !important;">
                       <div class="text-muted small text-center py-2">讀取中...</div>
                     </div>
                   </div>
+                </div>
+
+                <!-- 2. 新增飲料區 -->
+                <div class="p-2 border rounded bg-light">
+                  <input type="text" class="form-control form-control-sm fw-bold mb-1 custom-placeholder" id="libDrinkName" placeholder="(新增飲料)輸入店家名稱">
+                  <!-- 灰底按鈕 -->
+                  <label for="libDrinkFile" class="btn btn-secondary btn-sm w-100 mb-1 fw-bold text-truncate text-white" id="drinkFileLabel" style="font-size: 0.8rem;">選擇圖片</label>
+                  <input type="file" id="libDrinkFile" accept="image/*" style="display: none;" onchange="updateFileLabel('drink')">
+                  <button class="btn btn-theme btn-sm fw-bold w-100" onclick="uploadToLibrary('drink')">上傳</button>
                 </div>
               </div>
 
@@ -319,17 +320,38 @@
       }); 
     }
 
-    // 渲染單個圖庫列表項目 (粉色框線按鈕 + 去除副檔名)
+    // 動態搜尋過濾列表
+    function filterList(keyword, type) {
+      // 只要打字搜尋，就將「已套用」按鈕恢復為「套用」
+      const applyBtn = document.getElementById(type + 'ApplyBtn');
+      if (applyBtn.innerText === "已套用") {
+        applyBtn.innerText = "套用";
+        applyBtn.classList.replace('btn-success', 'btn-theme');
+      }
+
+      const container = document.getElementById(type + 'FileListContainer');
+      const items = container.querySelectorAll('.file-item');
+      const lowerKw = keyword.toLowerCase();
+      
+      items.forEach(item => {
+        const text = item.getAttribute('data-name').toLowerCase();
+        if (text.includes(lowerKw)) item.style.display = 'flex';
+        else item.style.display = 'none';
+      });
+    }
+
+    // 渲染單個圖庫列表項目
     function createListItemHtml(f, menuType) {
-      // 去除結尾的 .jpg (不論大小寫)
+      // 取得完整檔名並去除 .jpg
       let nameNoExt = f.name.replace(/\.[a-zA-Z0-9]+$/, '');
-      // 擷取時間戳記縮小並換行顯示
+      
+      // 擷取後面的時間戳記縮小並換行顯示
       let formattedName = nameNoExt.replace(/(_\d{8}_\d{4})$/, '<br><span class="text-secondary fw-normal" style="font-size:0.75rem;">$1</span>');
       
       return `
-        <div class="file-item align-items-start">
+        <div class="file-item align-items-start" data-name="${f.name}">
           <div class="d-flex w-100 mt-1">
-            <button class="btn btn-sm btn-outline-theme fw-bold p-0 px-2 me-1 flex-shrink-0" style="font-size:0.75rem; height: 24px;" onclick="quickSetMenu('${menuType}', '${f.url}', '${f.name}')">套用</button>
+            <button class="btn btn-sm btn-outline-theme fw-bold p-0 px-2 me-1 flex-shrink-0 select-btn" data-id="${f.id}" style="font-size:0.75rem; height: 24px;" onclick="quickSetMenu('${menuType}', '${f.url}', '${f.name}', '${f.id}')">選擇</button>
             <div class="file-name-text fw-bold flex-grow-1" title="${nameNoExt}">${formattedName}</div>
             <span class="trash-btn flex-shrink-0 p-0 px-1" onclick="deleteMenuFile('${f.id}', '${f.name}')">${trashSvg}</span>
           </div>
@@ -341,45 +363,63 @@
       apiCall({ action: "getDriveFiles", password: currentPwd }, null, (res) => {
         currentDriveFiles = res.files;
         
-        let bentoOptions = ''; let drinkOptions = ''; 
         let bentoListHtml = ''; let drinkListHtml = '';
         
         currentDriveFiles.forEach(f => {
-          const opt = `<option value="${f.name}">`;
           if (f.name.startsWith('[餐點]')) {
-            bentoOptions += opt;
             bentoListHtml += createListItemHtml(f, 'bento');
           } else if (f.name.startsWith('[飲料]')) {
-            drinkOptions += opt;
             drinkListHtml += createListItemHtml(f, 'drink');
           } else { 
-            bentoOptions += opt; drinkOptions += opt; 
             bentoListHtml += createListItemHtml(f, 'bento');
             drinkListHtml += createListItemHtml(f, 'drink');
           }
         });
         
-        document.getElementById('bentoDatalist').innerHTML = bentoOptions; 
-        document.getElementById('drinkDatalist').innerHTML = drinkOptions;
         document.getElementById('bentoFileListContainer').innerHTML = bentoListHtml || '<div class="text-muted small text-center py-2">無資料</div>';
         document.getElementById('drinkFileListContainer').innerHTML = drinkListHtml || '<div class="text-muted small text-center py-2">無資料</div>';
       });
     }
 
+    // 由搜尋格右側的套用按鈕觸發
     function setMenu(type) {
       const input = document.getElementById(type + 'Input');
-      const fileName = input.value; 
-      if(!fileName) return alert("請先選擇或輸入菜單名稱！");
+      const keyword = input.value.trim(); 
+      if(!keyword) return alert("請先搜尋或選擇菜單！");
       
-      const fileObj = currentDriveFiles.find(f => f.name === fileName);
-      if(!fileObj) return alert("找不到該檔案，請從下拉清單中選擇正確的菜單！");
-      quickSetMenu(type, fileObj.url, fileObj.name);
+      const fileObj = currentDriveFiles.find(f => f.name === keyword || f.name.includes(keyword));
+      if(!fileObj) return alert("找不到符合的檔案，請從下方清單選擇！");
+      
+      quickSetMenu(type, fileObj.url, fileObj.name, fileObj.id);
     }
 
-    function quickSetMenu(type, url, textName) {
+    // 從列表「選擇」一鍵套用與連動 UI 變化
+    function quickSetMenu(type, url, textName, fileId) {
       const shopName = textName.replace(/^\[.*?\]/, '').replace(/_\d{8}_\d{4}\.jpg$/, '').replace(/_\d+\.jpg$/, '');
       showLoading("套用設定中..."); 
-      apiCall({ action: "setMenuUrl", menuType: type, url: url, shopName: shopName, password: currentPwd }, "✅ 今日菜單已成功套用！");
+      
+      apiCall({ action: "setMenuUrl", menuType: type, url: url, shopName: shopName, password: currentPwd }, "✅ 今日菜單已成功套用！", () => {
+        
+        // 1. 檔名帶入搜尋格
+        document.getElementById(type + 'Input').value = textName;
+        
+        // 2. 套用按鈕改為「已套用」(綠底)
+        const applyBtn = document.getElementById(type + 'ApplyBtn');
+        applyBtn.innerText = "已套用";
+        applyBtn.classList.replace('btn-theme', 'btn-success');
+        
+        // 3. 變更列表按鈕狀態 (全部歸零為選擇，當前點擊的改為今日)
+        const container = document.getElementById(type + 'FileListContainer');
+        container.querySelectorAll('.select-btn').forEach(btn => {
+          btn.innerText = "選擇";
+          btn.classList.replace('btn-theme', 'btn-outline-theme');
+          
+          if (btn.getAttribute('data-id') === fileId) {
+            btn.innerText = "今日";
+            btn.classList.replace('btn-outline-theme', 'btn-theme');
+          }
+        });
+      });
     }
 
     function updateFileLabel(type) {
@@ -388,12 +428,10 @@
       
       if (fileInput.files.length > 0) {
         label.innerText = "已選：" + fileInput.files[0].name;
-        label.classList.replace('btn-outline-secondary', 'btn-success'); 
-        label.classList.replace('text-secondary', 'text-white');
+        label.classList.replace('btn-secondary', 'btn-success'); 
       } else {
         label.innerText = "選擇圖片";
-        label.classList.replace('btn-success', 'btn-outline-secondary'); 
-        label.classList.replace('text-white', 'text-secondary');
+        label.classList.replace('btn-success', 'btn-secondary'); 
       }
     }
 
