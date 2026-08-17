@@ -14,7 +14,6 @@
     
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
-      /* 強制關閉任何內建的平滑捲動，保證瞬間跳轉 */
       html, body { scroll-behavior: auto !important; }
       body { background-color: #ffffff; padding: 0; padding-bottom: 30px; font-family: "微軟正黑體", sans-serif; }
       
@@ -40,9 +39,10 @@
       
       .section-block { margin-bottom: 24px; }
       
+      /* 前台的標題統一改為與後台一致的深灰色 (#495057) 白字 */
       .section-header { 
-        background-color: #e9ecef; 
-        color: #212529; 
+        background-color: #495057; 
+        color: #ffffff; 
         border-radius: 8px; 
         padding: 10px 15px; 
         font-size: 1rem; 
@@ -261,10 +261,7 @@
           setTimeout(() => {
             if (window.visualViewport) {
               const rect = e.target.getBoundingClientRect();
-              
-              // 【核心修改】將原本的 45px 調整為 25px，重新測試高度視覺
               const targetY = window.scrollY + rect.bottom - window.visualViewport.height + 25;
-              
               window.scrollTo({ top: Math.max(0, targetY), behavior: 'auto' });
             }
           }, delayTime);
