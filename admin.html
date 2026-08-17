@@ -25,10 +25,6 @@
     .btn-theme { background-color: #9b727a !important; color: white !important; border: none; }
     .btn-theme:hover { background-color: #846068 !important; }
     
-    /* 粉色框線按鈕 (用於列表選擇) */
-    .btn-outline-theme { color: #9b727a; border-color: #9b727a; background-color: transparent; }
-    .btn-outline-theme:hover { color: white; background-color: #9b727a; border-color: #9b727a; }
-    
     .section-block { margin-bottom: 24px; }
     
     #adminPanel { display: none; }
@@ -53,7 +49,7 @@
       cursor: pointer;
     }
 
-    /* --- Toggle Switch 樣式 --- */
+    /* --- 系統狀態 Toggle Switch (大) --- */
     .switch { position: relative; display: inline-block; width: 52px; height: 28px; margin: 0; }
     .switch input { opacity: 0; width: 0; height: 0; }
     .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #dc3545; transition: .4s; border-radius: 34px; box-shadow: inset 0 1px 3px rgba(0,0,0,0.2); }
@@ -61,6 +57,13 @@
     input:checked + .slider { background-color: #198754; }
     input:checked + .slider:before { transform: translateX(24px); }
     input.status-loading + .slider { background-color: #ced4da; cursor: not-allowed; }
+
+    /* --- 列表項目 Toggle Switch (小，淺灰/乾燥玫瑰) --- */
+    .switch-sm { width: 36px; height: 20px; margin: 0; }
+    .switch-sm .slider { background-color: #e9ecef; border: 1px solid #ced4da; box-shadow: inset 0 1px 2px rgba(0,0,0,0.1); }
+    .switch-sm .slider:before { height: 14px; width: 14px; left: 2px; bottom: 2px; box-shadow: 0 1px 2px rgba(0,0,0,0.3); }
+    .switch-sm input:checked + .slider { background-color: #9b727a; border-color: #9b727a; }
+    .switch-sm input:checked + .slider:before { transform: translateX(16px); }
 
     /* --- 列表底部淡出效果 --- */
     .fade-bottom-wrapper { position: relative; display: flex; flex-direction: column; }
@@ -82,9 +85,9 @@
     .svg-trash { width: 16px; height: 16px; fill: currentColor; margin-bottom: 2px; }
     
     /* 圖庫列表微調 */
-    .file-item { border-bottom: 1px solid #dee2e6; padding: 6px 0; display: flex; align-items: center; }
+    .file-item { border-bottom: 1px solid #dee2e6; padding: 6px 2px; display: flex; align-items: center; }
     .file-item:last-child { border-bottom: none; }
-    .file-name-text { word-break: break-all; font-size: 0.8rem; line-height: 1.2; color: #343a40; padding-right: 4px; }
+    .file-name-text { word-break: break-all; font-size: 0.85rem; line-height: 1.2; color: #212529; }
 
     .custom-placeholder::placeholder { color: #495057 !important; opacity: 1 !important; }
   </style>
@@ -141,12 +144,16 @@
                 <!-- 1. 列表＋今日區框架 -->
                 <div class="p-2 border rounded bg-light d-flex flex-column">
                   
-                  <!-- 搜尋格與套用按鈕 (拔除 list 與 datalist，加入 autocomplete="off") -->
                   <div class="input-group input-group-sm mb-2 shadow-sm">
                     <input type="text" class="form-control fw-bold custom-placeholder" id="bentoInput" autocomplete="off" placeholder="--搜尋今日餐點--" oninput="filterList(this.value, 'bento')" onfocus="this.select()">
                     <button class="btn btn-theme fw-bold px-2" id="bentoApplyBtn" onclick="setMenu('bento')">套用</button>
                   </div>
                   
+                  <!-- 設為今日 小標題 -->
+                  <div class="d-flex justify-content-between align-items-end mb-1 px-1">
+                    <span class="fw-bold text-secondary" style="font-size: 0.7rem;">設為今日</span>
+                  </div>
+
                   <div class="fade-bottom-wrapper">
                     <div id="bentoFileListContainer" class="bg-white border rounded p-1" style="height: 220px; overflow-y: auto; overflow-x: hidden; padding-bottom: 25px !important;">
                       <div class="text-muted small text-center py-2">讀取中...</div>
@@ -170,12 +177,16 @@
                 <!-- 1. 列表＋今日區框架 -->
                 <div class="p-2 border rounded bg-light d-flex flex-column">
                   
-                  <!-- 搜尋格與套用按鈕 (拔除 list 與 datalist，加入 autocomplete="off") -->
                   <div class="input-group input-group-sm mb-2 shadow-sm">
                     <input type="text" class="form-control fw-bold custom-placeholder" id="drinkInput" autocomplete="off" placeholder="--搜尋今日飲料--" oninput="filterList(this.value, 'drink')" onfocus="this.select()">
                     <button class="btn btn-theme fw-bold px-2" id="drinkApplyBtn" onclick="setMenu('drink')">套用</button>
                   </div>
                   
+                  <!-- 設為今日 小標題 -->
+                  <div class="d-flex justify-content-between align-items-end mb-1 px-1">
+                    <span class="fw-bold text-secondary" style="font-size: 0.7rem;">設為今日</span>
+                  </div>
+
                   <div class="fade-bottom-wrapper">
                     <div id="drinkFileListContainer" class="bg-white border rounded p-1" style="height: 220px; overflow-y: auto; overflow-x: hidden; padding-bottom: 25px !important;">
                       <div class="text-muted small text-center py-2">讀取中...</div>
@@ -341,16 +352,32 @@
       });
     }
 
-    // 將按鈕改為膠囊狀並明確標示「設為今日」
+    // 重新設計的兩列式列表 HTML (採用 Radio Switch)
     function createListItemHtml(f, menuType) {
+      // 1. 去除前綴與副檔名
       let cleanName = f.name.replace(/^\[.*?\]/, '').replace(/\.[a-zA-Z0-9]+$/, '');
-      let formattedName = cleanName.replace(/(_\d{8}_\d{4})$/, '<br><span class="text-secondary fw-normal" style="font-size:0.75rem;">$1</span>');
-      
+      // 2. 擷取純店家名稱 (去除時間)
+      let shopNameOnly = cleanName.replace(/_\d{8}_\d{4}$/, '');
+      // 3. 擷取時間戳記
+      let timeMatch = cleanName.match(/_(\d{8}_\d{4})$/);
+      let timeStr = timeMatch ? timeMatch[1].replace('_', '') : '';
+
       return `
-        <div class="file-item align-items-center" data-name="${cleanName}">
-          <button class="btn btn-sm btn-outline-theme fw-bold px-2 py-0 me-2 flex-shrink-0 select-btn" data-id="${f.id}" style="font-size:0.75rem; height: 26px; border-radius: 12px;" onclick="quickSetMenu('${menuType}', '${f.url}', '${f.name}', '${f.id}')">設為今日</button>
-          <div class="file-name-text fw-bold flex-grow-1" title="${cleanName}">${formattedName}</div>
-          <span class="trash-btn flex-shrink-0 ms-2 p-1" onclick="deleteMenuFile('${f.id}', '${f.name}')">${trashSvg}</span>
+        <div class="file-item" data-name="${cleanName}">
+          <!-- 左側 Toggle Switch (使用 radio 確保單選) -->
+          <label class="switch switch-sm flex-shrink-0 me-2 mb-0">
+            <input type="radio" name="${menuType}ToggleGroup" class="list-toggle-btn" data-id="${f.id}" onchange="quickSetMenu('${menuType}', '${f.url}', '${f.name}', '${f.id}')">
+            <span class="slider rounded-pill"></span>
+          </label>
+          
+          <!-- 中間 兩列式檔名區 -->
+          <div class="d-flex flex-column flex-grow-1 overflow-hidden" style="min-width: 0;">
+            <span class="fw-bold text-dark text-truncate" title="${shopNameOnly}" style="font-size: 0.85rem; line-height: 1.2;">${shopNameOnly}</span>
+            <span class="text-secondary text-truncate" style="font-size: 0.65rem; line-height: 1.1; margin-top: 1px;">${timeStr}</span>
+          </div>
+          
+          <!-- 右側 垃圾桶 -->
+          <span class="trash-btn flex-shrink-0 ms-1 p-1" onclick="deleteMenuFile('${f.id}', '${f.name}')">${trashSvg}</span>
         </div>`;
     }
 
@@ -372,7 +399,6 @@
           }
         });
         
-        // 已拔除 datalist 寫入邏輯
         document.getElementById('bentoFileListContainer').innerHTML = bentoListHtml || '<div class="text-muted small text-center py-2">無資料</div>';
         document.getElementById('drinkFileListContainer').innerHTML = drinkListHtml || '<div class="text-muted small text-center py-2">無資料</div>';
       });
@@ -388,36 +414,34 @@
         return clean === keyword || f.name.includes(keyword);
       });
 
-      if(!fileObj) return alert("找不到符合的檔案，請從下方清單直接點擊「設為今日」！");
+      if(!fileObj) return alert("找不到符合的檔案，請從下方清單直接打開開關！");
       
       quickSetMenu(type, fileObj.url, fileObj.name, fileObj.id);
     }
 
     function quickSetMenu(type, url, textName, fileId) {
+      // 擷取最乾淨的「純店名」用於顯示在搜尋格中
       const shopName = textName.replace(/^\[.*?\]/, '').replace(/_\d{8}_\d{4}\.jpg$/, '').replace(/_\d+\.jpg$/, '').replace(/\.jpg$/i, '');
       showLoading("套用設定中..."); 
       
       apiCall({ action: "setMenuUrl", menuType: type, url: url, shopName: shopName, password: currentPwd }, null, () => {
         
-        let cleanName = textName.replace(/^\[.*?\]/, '').replace(/\.[a-zA-Z0-9]+$/, '');
-        document.getElementById(type + 'Input').value = cleanName;
+        // 將純店名寫入搜尋格
+        document.getElementById(type + 'Input').value = shopName;
         
         const applyBtn = document.getElementById(type + 'ApplyBtn');
         applyBtn.innerText = "已套用";
         applyBtn.className = "btn btn-theme fw-bold px-2";
         
+        // 更新 Toggle 開關狀態
         const container = document.getElementById(type + 'FileListContainer');
-        container.querySelectorAll('.select-btn').forEach(btn => {
-          btn.innerText = "設為今日";
-          btn.classList.replace('btn-theme', 'btn-outline-theme');
-          
-          if (btn.getAttribute('data-id') === fileId) {
-            btn.innerText = "✅ 今日";
-            btn.classList.replace('btn-outline-theme', 'btn-theme');
+        container.querySelectorAll('.list-toggle-btn').forEach(radio => {
+          if (radio.getAttribute('data-id') === fileId) {
+            radio.checked = true;
           }
         });
 
-        // 靜默處理，不跳出 alert
+        // 靜默處理，將隱藏的過濾列表恢復顯示
         container.querySelectorAll('.file-item').forEach(item => {
           item.style.display = 'flex';
         });
