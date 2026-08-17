@@ -20,38 +20,49 @@
     html, body { scroll-behavior: auto !important; }
     body { background-color: #ffffff; padding: 0; padding-bottom: 30px; font-family: "微軟正黑體", sans-serif; }
     
-    /* 乾燥玫瑰粉色系 (按鈕全域套用) */
+    /* 乾燥玫瑰粉色系 */
     .text-theme { color: #9b727a !important; }
     .btn-theme { background-color: #9b727a !important; color: white !important; border: none; }
     .btn-theme:hover { background-color: #846068 !important; }
     
-    .section-block { margin-bottom: 28px; }
+    .section-block { margin-bottom: 24px; }
     
     #adminPanel { display: none; }
     #overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 9999; justify-content: center; align-items: center; color: white; flex-direction: column; }
     
     /* 頂部橫幅 */
-    .banner-header { background-color: #9b727a; color: white; height: 60px; margin-bottom: 25px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); width: 100%; display: flex; align-items: center; padding: 0 15px; }
+    .banner-header { background-color: #9b727a; color: white; height: 60px; margin-bottom: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); width: 100%; display: flex; align-items: center; padding: 0 15px; }
 
-    /* --- Toggle Switch 樣式 (精簡版狀態切換) --- */
+    /* 深灰底白字的標題列 */
+    .section-header { 
+      background-color: #343a40; 
+      color: #ffffff; 
+      border-radius: 6px; 
+      padding: 8px 12px; 
+      font-size: 0.95rem; 
+      font-weight: bold; 
+      margin-bottom: 8px; 
+      text-align: center;
+    }
+
+    /* --- Toggle Switch 樣式 --- */
     .switch { position: relative; display: inline-block; width: 52px; height: 28px; margin: 0; }
     .switch input { opacity: 0; width: 0; height: 0; }
     .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #dc3545; transition: .4s; border-radius: 34px; box-shadow: inset 0 1px 3px rgba(0,0,0,0.2); }
     .slider:before { position: absolute; content: ""; height: 22px; width: 22px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
     input:checked + .slider { background-color: #198754; }
     input:checked + .slider:before { transform: translateX(24px); }
-    /* 讀取中狀態顯示灰色且無法點擊 */
     input.status-loading + .slider { background-color: #6c757d; cursor: not-allowed; }
 
     /* --- 列表底部淡出效果 --- */
     .fade-bottom-wrapper { position: relative; display: flex; flex-direction: column; }
     .fade-bottom-wrapper::after {
-      content: ""; position: absolute; bottom: 0; left: 0; right: 0; height: 30px;
+      content: ""; position: absolute; bottom: 0; left: 0; right: 0; height: 25px;
       background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,1));
       pointer-events: none; border-bottom-left-radius: 0.25rem; border-bottom-right-radius: 0.25rem;
     }
 
-    /* 垂直清單微調 (列高進一步縮小至極致) */
+    /* 垂直清單微調 */
     .list-item-custom { border-bottom: 1px solid #dee2e6; padding: 2px 4px; min-height: 28px; display: flex; justify-content: space-between; align-items: center; }
     .list-item-custom:last-child { border-bottom: none; }
     .arrow-btn { cursor: pointer; color: #6c757d; padding: 0 4px; font-size: 14px; line-height: 1; }
@@ -63,15 +74,11 @@
     .svg-trash { width: 16px; height: 16px; fill: currentColor; margin-bottom: 2px; }
     
     /* 圖庫列表微調 */
-    .file-item { border-bottom: 1px solid #dee2e6; padding: 6px 0; display: flex; justify-content: space-between; align-items: center; }
+    .file-item { border-bottom: 1px solid #dee2e6; padding: 6px 0; display: flex; align-items: flex-start; }
     .file-item:last-child { border-bottom: none; }
-    .file-name-text { word-break: break-all; font-size: 0.85rem; line-height: 1.2; color: #343a40; padding-right: 8px; }
+    .file-name-text { word-break: break-all; font-size: 0.8rem; line-height: 1.2; color: #343a40; padding-right: 4px; }
 
-    /* 修改輸入框的 placeholder 顏色，與選單預設值文字一致 */
-    .custom-placeholder::placeholder {
-      color: #212529 !important; /* 深黑色，同 Bootstrap 的標準字體顏色 */
-      opacity: 1 !important;
-    }
+    .custom-placeholder::placeholder { color: #495057 !important; opacity: 1 !important; }
   </style>
 </head>
 <body>
@@ -84,7 +91,7 @@
   <div class="banner-header">
     <div class="d-flex align-items-center h-100 overflow-hidden">
       <img src="logo.jpg" alt="Logo" style="height: 46px; width: 46px; border-radius: 50%; object-fit: cover; box-shadow: 0 2px 4px rgba(0,0,0,0.2); margin-right: 12px;">
-      <h3 class="mb-0 fw-bold text-truncate" style="font-size: 1.25rem;">OPH Eats 眼科訂餐後台管理</h3>
+      <h3 class="mb-0 fw-bold text-truncate" style="font-size: 1.25rem;">OPH Eats 後台管理</h3>
     </div>
   </div>
 
@@ -92,18 +99,21 @@
     <div class="row justify-content-center">
       <div class="col-md-8 col-lg-6 px-3">
         
-        <!-- 登入區塊 -->
-        <div id="loginSection" class="mt-5">
-          <h4 class="fw-bold text-theme mb-4 text-center">後台管理登入</h4>
-          <input type="password" inputmode="numeric" pattern="[0-9]*" id="adminPwd" class="form-control mb-3 fw-bold" placeholder="請輸入管理員密碼">
-          <button class="btn btn-theme w-100 fw-bold" onclick="login()">登入系統</button>
+        <!-- 登入區塊 (減少上方留白、併排設計) -->
+        <div id="loginSection" class="mt-3 mb-3">
+          <h4 class="fw-bold text-theme mb-3 text-center">後台管理登入</h4>
+          <div class="d-flex gap-2">
+            <!-- 加上 autofocus 與數字鍵盤屬性 -->
+            <input type="password" inputmode="numeric" pattern="[0-9]*" id="adminPwd" class="form-control fw-bold" placeholder="請輸入密碼" autofocus>
+            <button class="btn btn-theme fw-bold text-nowrap px-4" onclick="login()">登入系統</button>
+          </div>
         </div>
 
         <!-- 後台管理區塊 -->
         <div id="adminPanel">
           
-          <!-- 第一區：精簡版系統狀態 -->
-          <div class="section-block mt-3 mb-4">
+          <!-- 系統狀態 (上下留白一致) -->
+          <div class="section-block my-3">
             <div class="d-flex align-items-center justify-content-between px-1">
               <span id="systemStatusText" class="badge bg-secondary px-4 py-2 fs-5 shadow-sm">讀取中...</span>
               <label class="switch">
@@ -113,32 +123,36 @@
             </div>
           </div>
 
-          <!-- 第二區：今日菜單與圖庫管理 -->
+          <!-- 餐點與飲料圖庫區 -->
           <div class="section-block">
-            
             <div class="row g-2 align-items-stretch">
+              
               <!-- 左欄：餐點 -->
-              <div class="col-6">
-                <div class="p-2 border rounded h-100 d-flex flex-column" style="background-color: #f8f9fa;">
-                  <div class="fw-bold text-secondary small mb-2 text-center">🍱 餐點區</div>
-                  
-                  <!-- 1. 選擇套用菜單 (改成支援搜尋的 input + datalist) -->
+              <div class="col-6 d-flex flex-column gap-2">
+                <div class="section-header">餐點區</div>
+                
+                <!-- 1. 今日餐點 -->
+                <div class="p-2 border rounded bg-light">
+                  <div class="fw-bold text-secondary small mb-1">今日餐點</div>
                   <input type="text" class="form-control form-control-sm fw-bold mb-1 custom-placeholder" id="bentoInput" list="bentoDatalist" placeholder="--選擇今日餐點--">
                   <datalist id="bentoDatalist"></datalist>
-                  <button class="btn btn-theme btn-sm fw-bold w-100 mb-2" onclick="setMenu('bento')">套用</button>
-                  <hr class="my-2">
-                  
-                  <!-- 2. 上傳新圖庫 -->
-                  <input type="text" class="form-control form-control-sm fw-bold mb-1 custom-placeholder" id="libBentoName" placeholder="新增：輸入店家名稱">
-                  <label for="libBentoFile" class="btn btn-secondary btn-sm w-100 mb-1 fw-bold text-truncate" id="bentoFileLabel" style="font-size: 0.8rem;">選擇圖片</label>
+                  <button class="btn btn-theme btn-sm fw-bold w-100" onclick="setMenu('bento')">套用</button>
+                </div>
+
+                <!-- 2. 新增餐點 -->
+                <div class="p-2 border rounded bg-light">
+                  <div class="fw-bold text-secondary small mb-1">新增餐點</div>
+                  <input type="text" class="form-control form-control-sm fw-bold mb-1 custom-placeholder" id="libBentoName" placeholder="(新增餐點)輸入店家名稱">
+                  <label for="libBentoFile" class="btn btn-light border btn-sm w-100 mb-1 fw-bold text-secondary text-truncate" id="bentoFileLabel" style="font-size: 0.8rem;">選擇圖片</label>
                   <input type="file" id="libBentoFile" accept="image/*" style="display: none;" onchange="updateFileLabel('bento')">
                   <button class="btn btn-theme btn-sm fw-bold w-100" onclick="uploadToLibrary('bento')">上傳</button>
-                  <hr class="my-2">
+                </div>
 
-                  <!-- 3. 圖庫列表 -->
-                  <div class="fw-bold text-secondary text-center mb-1" style="font-size: 0.75rem;">現有餐點列表</div>
+                <!-- 3. 庫存列表 -->
+                <div class="p-2 border rounded bg-light flex-grow-1 d-flex flex-column">
+                  <div class="fw-bold text-secondary small mb-1">庫存餐點列表</div>
                   <div class="fade-bottom-wrapper flex-grow-1">
-                    <div id="bentoFileListContainer" class="bg-white border rounded p-1" style="min-height: 150px; max-height: 200px; overflow-y: auto; overflow-x: hidden; padding-bottom: 30px !important;">
+                    <div id="bentoFileListContainer" class="bg-white border rounded p-1" style="min-height: 150px; max-height: 200px; overflow-y: auto; overflow-x: hidden; padding-bottom: 25px !important;">
                       <div class="text-muted small text-center py-2">讀取中...</div>
                     </div>
                   </div>
@@ -146,72 +160,79 @@
               </div>
               
               <!-- 右欄：飲料 -->
-              <div class="col-6">
-                <div class="p-2 border rounded h-100 d-flex flex-column" style="background-color: #f8f9fa;">
-                  <div class="fw-bold text-secondary small mb-2 text-center">🥤 飲料區</div>
-                  
-                  <!-- 1. 選擇套用菜單 (改成支援搜尋的 input + datalist) -->
+              <div class="col-6 d-flex flex-column gap-2">
+                <div class="section-header">飲料區</div>
+                
+                <!-- 1. 今日飲料 -->
+                <div class="p-2 border rounded bg-light">
+                  <div class="fw-bold text-secondary small mb-1">今日飲料</div>
                   <input type="text" class="form-control form-control-sm fw-bold mb-1 custom-placeholder" id="drinkInput" list="drinkDatalist" placeholder="--選擇今日飲料--">
                   <datalist id="drinkDatalist"></datalist>
-                  <button class="btn btn-theme btn-sm fw-bold w-100 mb-2" onclick="setMenu('drink')">套用</button>
-                  <hr class="my-2">
-                  
-                  <!-- 2. 上傳新圖庫 -->
-                  <input type="text" class="form-control form-control-sm fw-bold mb-1 custom-placeholder" id="libDrinkName" placeholder="新增：輸入店家名稱">
-                  <label for="libDrinkFile" class="btn btn-secondary btn-sm w-100 mb-1 fw-bold text-truncate" id="drinkFileLabel" style="font-size: 0.8rem;">選擇圖片</label>
+                  <button class="btn btn-theme btn-sm fw-bold w-100" onclick="setMenu('drink')">套用</button>
+                </div>
+
+                <!-- 2. 新增飲料 -->
+                <div class="p-2 border rounded bg-light">
+                  <div class="fw-bold text-secondary small mb-1">新增飲料</div>
+                  <input type="text" class="form-control form-control-sm fw-bold mb-1 custom-placeholder" id="libDrinkName" placeholder="(新增飲料)輸入店家名稱">
+                  <label for="libDrinkFile" class="btn btn-light border btn-sm w-100 mb-1 fw-bold text-secondary text-truncate" id="drinkFileLabel" style="font-size: 0.8rem;">選擇圖片</label>
                   <input type="file" id="libDrinkFile" accept="image/*" style="display: none;" onchange="updateFileLabel('drink')">
                   <button class="btn btn-theme btn-sm fw-bold w-100" onclick="uploadToLibrary('drink')">上傳</button>
-                  <hr class="my-2">
+                </div>
 
-                  <!-- 3. 圖庫列表 -->
-                  <div class="fw-bold text-secondary text-center mb-1" style="font-size: 0.75rem;">現有飲料列表</div>
+                <!-- 3. 庫存列表 -->
+                <div class="p-2 border rounded bg-light flex-grow-1 d-flex flex-column">
+                  <div class="fw-bold text-secondary small mb-1">庫存飲料列表</div>
                   <div class="fade-bottom-wrapper flex-grow-1">
-                    <div id="drinkFileListContainer" class="bg-white border rounded p-1" style="min-height: 150px; max-height: 200px; overflow-y: auto; overflow-x: hidden; padding-bottom: 30px !important;">
+                    <div id="drinkFileListContainer" class="bg-white border rounded p-1" style="min-height: 150px; max-height: 200px; overflow-y: auto; overflow-x: hidden; padding-bottom: 25px !important;">
                       <div class="text-muted small text-center py-2">讀取中...</div>
                     </div>
                   </div>
                 </div>
               </div>
+
             </div>
+            
+            <button class="btn btn-outline-secondary btn-sm w-100 fw-bold mt-2" onclick="loadDriveFiles()">🔄 手動重新整理圖庫清單</button>
           </div>
 
-          <!-- 第三區：診次與職級設定 -->
+          <!-- 診次與職級設定 -->
           <div class="section-block">
-            <button class="btn btn-light border w-100 fw-bold shadow-sm text-secondary d-flex justify-content-between align-items-center px-3" type="button" data-bs-toggle="collapse" data-bs-target="#optionsCollapse" id="optionsToggleBtn">
+            <div class="section-header d-flex justify-content-between align-items-center mb-0" style="cursor: pointer;" data-bs-toggle="collapse" data-bs-target="#optionsCollapse" id="optionsToggleBtn">
               <span>診次與職級管理</span>
               <span style="font-size: 0.8em;">▼</span>
-            </button>
+            </div>
             
             <div class="collapse" id="optionsCollapse">
               <div class="p-3 mt-2" style="background-color: #f8f9fa; border-radius: 8px; border: 1px solid #dee2e6;">
                 
-                <div class="row g-3 mb-3">
+                <div class="row g-3 mb-2">
                   <!-- 左欄：診次 -->
                   <div class="col-6 border-end">
-                    <div class="fw-bold text-secondary small mb-2 text-center">診次</div>
+                    <div class="fw-bold text-secondary small mb-1 text-center">診次</div>
                     <div class="fade-bottom-wrapper">
-                      <div id="clinicList" class="bg-white border rounded p-1 mb-2" style="height: 240px; overflow-y: auto; padding-bottom: 30px !important;"></div>
+                      <div id="clinicList" class="bg-white border rounded p-1 mb-2" style="height: 200px; overflow-y: auto; padding-bottom: 25px !important;"></div>
                     </div>
                     <div class="input-group input-group-sm">
-                      <input type="text" class="form-control fw-bold" id="newClinicInput" placeholder="輸入">
+                      <input type="text" class="form-control fw-bold custom-placeholder" id="newClinicInput" placeholder="輸入">
                       <button class="btn btn-theme fw-bold" onclick="addOption('clinic')">新增</button>
                     </div>
                   </div>
                   
                   <!-- 右欄：職級 -->
                   <div class="col-6">
-                    <div class="fw-bold text-secondary small mb-2 text-center">職級</div>
+                    <div class="fw-bold text-secondary small mb-1 text-center">職級</div>
                     <div class="fade-bottom-wrapper">
-                      <div id="rankList" class="bg-white border rounded p-1 mb-2" style="height: 240px; overflow-y: auto; padding-bottom: 30px !important;"></div>
+                      <div id="rankList" class="bg-white border rounded p-1 mb-2" style="height: 200px; overflow-y: auto; padding-bottom: 25px !important;"></div>
                     </div>
                     <div class="input-group input-group-sm">
-                      <input type="text" class="form-control fw-bold" id="newRankInput" placeholder="輸入">
+                      <input type="text" class="form-control fw-bold custom-placeholder" id="newRankInput" placeholder="輸入">
                       <button class="btn btn-theme fw-bold" onclick="addOption('rank')">新增</button>
                     </div>
                   </div>
                 </div>
 
-                <button class="btn btn-theme w-100 fw-bold py-2 shadow-sm" onclick="saveOptions()">儲存選單設定</button>
+                <button class="btn btn-theme w-100 fw-bold py-2 shadow-sm mt-2" onclick="saveOptions()">儲存選單設定</button>
               </div>
             </div>
           </div>
@@ -274,7 +295,7 @@
       toggleEl.checked = isSystemOpen; 
       
       if (isSystemOpen) {
-        textEl.innerText = "開放訂餐中";
+        textEl.innerText = "開放訂餐";
         textEl.className = "badge bg-success px-4 py-2 fs-5 shadow-sm";
       } else {
         textEl.innerText = "關閉訂餐";
@@ -300,37 +321,39 @@
       }); 
     }
 
+    // 渲染單個圖庫列表項目 (包含一鍵套用按鈕)
+    function createListItemHtml(f, menuType) {
+      let formattedName = f.name.replace(/(_\d{4,}(_\d{4})?\.[a-zA-Z0-9]+)$/, '<br><span class="text-secondary fw-normal" style="font-size:0.75rem;">$1</span>');
+      return `
+        <div class="file-item align-items-start">
+          <div class="d-flex w-100 mt-1">
+            <button class="btn btn-sm btn-outline-success fw-bold p-0 px-2 me-1 flex-shrink-0" style="font-size:0.75rem; height: 24px;" onclick="quickSetMenu('${menuType}', '${f.url}', '${f.name}')">套用</button>
+            <div class="file-name-text fw-bold flex-grow-1" title="${f.name}">${formattedName}</div>
+            <span class="trash-btn flex-shrink-0 p-0 px-1" onclick="deleteMenuFile('${f.id}', '${f.name}')">${trashSvg}</span>
+          </div>
+        </div>`;
+    }
+
     function loadDriveFiles() {
       showLoading("讀取圖庫中...");
       apiCall({ action: "getDriveFiles", password: currentPwd }, null, (res) => {
         currentDriveFiles = res.files;
         
-        let bentoOptions = ''; 
-        let drinkOptions = ''; 
-        let bentoListHtml = '';
-        let drinkListHtml = '';
+        let bentoOptions = ''; let drinkOptions = ''; 
+        let bentoListHtml = ''; let drinkListHtml = '';
         
         currentDriveFiles.forEach(f => {
-          // 給 datalist 使用的選項 (只需要純檔名)
           const opt = `<option value="${f.name}">`;
-          
-          let formattedName = f.name.replace(/(_\d{4,}(_\d{4})?\.[a-zA-Z0-9]+)$/, '<br><span class="text-secondary fw-normal" style="font-size:0.75rem;">$1</span>');
-          
-          const fileDiv = `
-            <div class="file-item">
-              <span class="file-name-text fw-bold" title="${f.name}">${formattedName}</span>
-              <span class="trash-btn" onclick="deleteMenuFile('${f.id}', '${f.name}')">${trashSvg}</span>
-            </div>`;
-
           if (f.name.startsWith('[餐點]')) {
             bentoOptions += opt;
-            bentoListHtml += fileDiv;
+            bentoListHtml += createListItemHtml(f, 'bento');
           } else if (f.name.startsWith('[飲料]')) {
             drinkOptions += opt;
-            drinkListHtml += fileDiv;
+            drinkListHtml += createListItemHtml(f, 'drink');
           } else { 
             bentoOptions += opt; drinkOptions += opt; 
-            bentoListHtml += fileDiv; drinkListHtml += fileDiv;
+            bentoListHtml += createListItemHtml(f, 'bento');
+            drinkListHtml += createListItemHtml(f, 'drink');
           }
         });
         
@@ -341,21 +364,20 @@
       });
     }
 
+    // 從搜尋框套用
     function setMenu(type) {
       const input = document.getElementById(type + 'Input');
       const fileName = input.value; 
-      
       if(!fileName) return alert("請先選擇或輸入菜單名稱！");
       
-      // 防呆：檢查使用者輸入的檔名是否存在於圖庫清單中
       const fileObj = currentDriveFiles.find(f => f.name === fileName);
-      if(!fileObj) {
-        return alert("找不到該檔案，請從下拉清單中選擇正確的菜單！");
-      }
-      
-      const url = fileObj.url;
-      const shopName = fileName.replace(/^\[.*?\]/, '').replace(/_\d{8}_\d{4}\.jpg$/, '').replace(/_\d+\.jpg$/, '');
-      
+      if(!fileObj) return alert("找不到該檔案，請從下拉清單中選擇正確的菜單！");
+      quickSetMenu(type, fileObj.url, fileObj.name);
+    }
+
+    // 從列表一鍵套用
+    function quickSetMenu(type, url, textName) {
+      const shopName = textName.replace(/^\[.*?\]/, '').replace(/_\d{8}_\d{4}\.jpg$/, '').replace(/_\d+\.jpg$/, '');
       showLoading("套用設定中..."); 
       apiCall({ action: "setMenuUrl", menuType: type, url: url, shopName: shopName, password: currentPwd }, "✅ 今日菜單已成功套用！");
     }
@@ -365,11 +387,13 @@
       const label = document.getElementById(type === 'bento' ? 'bentoFileLabel' : 'drinkFileLabel');
       
       if (fileInput.files.length > 0) {
-        label.innerText = fileInput.files[0].name;
-        label.classList.replace('btn-secondary', 'btn-success'); 
+        label.innerText = "已選：" + fileInput.files[0].name;
+        label.classList.replace('btn-light', 'btn-success'); 
+        label.classList.replace('text-secondary', 'text-white');
       } else {
         label.innerText = "選擇圖片";
-        label.classList.replace('btn-success', 'btn-secondary'); 
+        label.classList.replace('btn-success', 'btn-light'); 
+        label.classList.replace('text-white', 'text-secondary');
       }
     }
 
@@ -436,7 +460,7 @@
           <div class="d-flex align-items-center">
             <span class="arrow-btn" onclick="moveOption('${type}', ${i}, -1)">🔼</span>
             <span class="arrow-btn" onclick="moveOption('${type}', ${i}, 1)">🔽</span>
-            <span class="trash-btn ms-2" onclick="removeOption('${type}', ${i})">${trashSvg}</span>
+            <span class="trash-btn ms-1" onclick="removeOption('${type}', ${i})">${trashSvg}</span>
           </div>
         </div>
       `).join('');
