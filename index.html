@@ -27,8 +27,8 @@
       .btn-outline-dark-theme { color: #495057; border-color: #adb5bd; border-radius: 5px !important; }
       .btn-outline-dark-theme:hover { background-color: #e9ecef; color: #212529; }
       
-      /* 將選取後的底色加深 (#adb5bd) */
-      .btn-check:checked + .btn-outline-dark-theme { background-color: #adb5bd; color: #1a1e21; border-color: #868e96; font-weight: bold; }
+      /* 修改選取後的顏色為淺灰底深色字 */
+      .btn-check:checked + .btn-outline-dark-theme { background-color: #ced4da; color: #212529; border-color: #adb5bd; font-weight: bold; }
       
       .form-control:focus {
         border-color: #86b7fe !important;
@@ -42,7 +42,7 @@
       
       .section-block { margin-bottom: 24px; }
       
-      /* 標題列改為：淺灰藍底 (#e2e8f0) 深色字 (#212529) */
+      /* 標題列：淺灰藍底 (#e2e8f0) 深色字 (#212529) */
       .section-header { 
         background-color: #e2e8f0; 
         color: #212529; 
@@ -51,9 +51,10 @@
         font-size: 1rem; 
         font-weight: bold; 
         margin-bottom: 12px; 
+        display: flex; 
+        justify-content: space-between; /* 讓標籤能自動靠右對齊 */
+        align-items: center; 
       }
-      
-      .not-today-header { background-color: #8c2b32 !important; color: #ffffff !important; }
       
       .clinic-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; }
       .clinic-grid label { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; padding: 6px 0; font-size: 0.95rem; margin: 0; }
@@ -69,7 +70,7 @@
         font-size: 0.9rem;
       }
 
-      /* 隱形陷阱：用來沒收手機鍵盤的 Next 行為，讓 iOS 能順利選取但看不見 */
+      /* 隱形陷阱：用來沒收手機鍵盤的 Next 行為 */
       .dummy-trap { 
         position: absolute; 
         opacity: 0; 
@@ -88,7 +89,8 @@
         <img src="logo.jpg" alt="Logo" style="height: 46px; width: 46px; border-radius: 50%; object-fit: cover; box-shadow: 0 2px 4px rgba(0,0,0,0.2); margin-right: 12px;">
         <h3 class="mb-0 fw-bold text-truncate" style="font-size: 1.25rem;">OPH Eats 眼科訂餐</h3>
       </div>
-      <div id="dateStatusBadge"></div>
+      <!-- 固定在右上角的全局圖片重整按鈕 -->
+      <button class="btn btn-sm text-white flex-shrink-0" style="background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.5); border-radius: 15px; padding: 4px 10px; font-size: 0.85rem; font-weight: bold;" onclick="forceRetryImages()">🔄 圖片重整</button>
     </div>
 
     <div class="container">
@@ -109,26 +111,26 @@
             <form id="orderForm">
               
               <div class="section-block">
-                <div class="section-header">診次</div>
+                <div class="section-header"><span>診次</span></div>
                 <div class="clinic-grid" id="clinicGroup"></div>
               </div>
 
               <div class="section-block" id="rankDiv">
-                <div class="section-header">職級</div>
+                <div class="section-header"><span>職級</span></div>
                 <div class="row g-2" id="rankGroup"></div>
               </div>
 
               <div class="section-block d-none" id="nameDiv">
-                <div class="section-header">姓名</div>
+                <div class="section-header"><span>姓名</span></div>
                 <input type="text" class="form-control fw-bold" id="name" placeholder="請輸入姓名" onfocus="this.select()">
               </div>
 
-              <div class="section-block" id="bentoSectionTitle">
-                <div class="section-header">餐點</div>
+              <div class="section-block" id="bentoSectionBlock">
+                <div class="section-header" id="bentoSectionTitle"><span>餐點</span></div>
+                <!-- 菜單圖片與失敗重試區塊 -->
                 <img id="bentoMenuImg" class="menu-img" alt="餐點菜單" onerror="handleImgError('bento')">
                 <div id="bentoImgError" class="text-center p-3 mb-3 border rounded" style="background-color: #f8f9fa; display: none;">
-                  <span class="text-secondary fw-bold small">圖片載入超時或失敗</span>
-                  <button type="button" class="btn btn-sm btn-outline-secondary ms-2 fw-bold" onclick="retryImg('bento')">🔄 重新載入</button>
+                  <span class="text-secondary fw-bold small">圖片載入超時，請點擊右上角「圖片重整」</span>
                 </div>
                 
                 <div class="row g-2">
@@ -136,19 +138,18 @@
                     <input type="text" class="form-control fw-bold" id="bentoName" placeholder="餐點" enterkeyhint="next" onfocus="this.select()">
                   </div>
                   <div class="col-4">
-                    <!-- 綁定 onblur 觸發置頂，保留 dummy-trap 抓下一項 -->
                     <input type="text" inputmode="numeric" class="form-control fw-bold" id="bentoAmount" placeholder="金額" enterkeyhint="done" onblur="onAmountBlur('bentoAmount')" onfocus="this.select()">
                     <input type="text" class="dummy-trap" tabindex="0" inputmode="none" onfocus="this.blur();">
                   </div>
                 </div>
               </div>
 
-              <div class="section-block" id="drinkSectionTitle">
-                <div class="section-header">飲料</div>
+              <div class="section-block" id="drinkSectionBlock">
+                <div class="section-header" id="drinkSectionTitle"><span>飲料</span></div>
+                <!-- 飲料圖片與失敗重試區塊 -->
                 <img id="drinkMenuImg" class="menu-img" alt="飲料菜單" onerror="handleImgError('drink')">
                 <div id="drinkImgError" class="text-center p-3 mb-3 border rounded" style="background-color: #f8f9fa; display: none;">
-                  <span class="text-secondary fw-bold small">圖片載入超時或失敗</span>
-                  <button type="button" class="btn btn-sm btn-outline-secondary ms-2 fw-bold" onclick="retryImg('drink')">🔄 重新載入</button>
+                  <span class="text-secondary fw-bold small">圖片載入超時，請點擊右上角「圖片重整」</span>
                 </div>
                 
                 <div class="row g-2">
@@ -156,7 +157,6 @@
                     <input type="text" class="form-control fw-bold" id="drinkName" placeholder="飲料" enterkeyhint="next" onfocus="this.select()">
                   </div>
                   <div class="col-4">
-                    <!-- 綁定 onblur 觸發置頂，保留 dummy-trap 抓下一項 -->
                     <input type="text" inputmode="numeric" class="form-control fw-bold" id="drinkAmount" placeholder="金額" enterkeyhint="done" onblur="onAmountBlur('drinkAmount')" onfocus="this.select()">
                     <input type="text" class="dummy-trap" tabindex="0" inputmode="none" onfocus="this.blur();">
                   </div>
@@ -164,7 +164,7 @@
               </div>
               
               <div class="section-block" id="notesSectionTitle">
-                <div class="section-header">備註</div>
+                <div class="section-header"><span>備註</span></div>
                 <div class="d-flex gap-2 mb-2 quick-notes" style="overflow-x: auto; white-space: nowrap;">
                   <button type="button" class="btn btn-outline-dark-theme fw-bold capsule-btn" onclick="addNote('改單，以這筆為主')">改單，以這筆為主</button>
                   <button type="button" class="btn btn-outline-dark-theme fw-bold capsule-btn" onclick="addNote('兩筆都要')">兩筆都要</button>
@@ -210,25 +210,35 @@
 
       function addNote(text) { const n = document.getElementById('notes'); n.value = n.value ? n.value + "。" + text : text; }
 
-      // --- 處理圖片載入失敗與重試 ---
+      // --- 處理圖片載入失敗 (隱藏圖片，顯示提示) ---
       function handleImgError(type) {
         document.getElementById(type + 'MenuImg').style.display = 'none';
         document.getElementById(type + 'ImgError').style.display = 'block';
       }
 
-      function retryImg(type) {
-        const img = document.getElementById(type + 'MenuImg');
-        document.getElementById(type + 'ImgError').style.display = 'none';
-        
-        let currentSrc = img.src;
-        if(currentSrc.includes('&retry=')) {
-          currentSrc = currentSrc.replace(/&retry=\d+/, '&retry=' + new Date().getTime());
-        } else {
-          currentSrc += '&retry=' + new Date().getTime();
-        }
-        
-        img.src = currentSrc;
-        img.style.display = 'block';
+      // --- 全局手動強制重整圖片 ---
+      function forceRetryImages() {
+        ['bento', 'drink'].forEach(type => {
+          const img = document.getElementById(type + 'MenuImg');
+          const errorDiv = document.getElementById(type + 'ImgError');
+          
+          if (img && img.src && img.src !== window.location.href) {
+            if (errorDiv) errorDiv.style.display = 'none';
+            
+            let currentSrc = img.src;
+            if(currentSrc.includes('&retry=')) {
+              currentSrc = currentSrc.replace(/&retry=\d+/, '&retry=' + new Date().getTime());
+            } else {
+              currentSrc += '&retry=' + new Date().getTime();
+            }
+            
+            img.style.display = 'none'; // 先隱藏
+            setTimeout(() => {
+              img.src = currentSrc;
+              img.style.display = 'block'; // 重新載入並顯示
+            }, 50);
+          }
+        });
       }
 
       // --- 職級點選後：精準捲動「該被點擊的職級」到螢幕最上方 ---
@@ -242,19 +252,13 @@
         }, 350); 
       }
 
-      // --- 【終極絕招】金額輸入完成：等待鍵盤收起，並讓該金額列置頂 ---
+      // --- 金額輸入完成：等待鍵盤收起，並讓該金額列置頂 ---
       function onAmountBlur(inputId) {
-        // 等待 400 毫秒，讓手機鍵盤完全滑下，避免因為螢幕高度變化導致捲動算錯
         setTimeout(() => {
           const active = document.activeElement;
-          
-          // 防呆：如果使用者不是按打勾/下一項，而是手動點了其他格子（例如飲料名稱格）
-          // 我們就不做任何捲動，以免畫面亂跳打架！
           if (active && active.tagName === 'INPUT' && !active.classList.contains('dummy-trap')) {
             return;
           }
-          
-          // 確認鍵盤收起後，將該金額格的這列，平滑拉到螢幕最頂端 (預留 15px)
           const el = document.getElementById(inputId);
           if (el) {
             const targetY = window.scrollY + el.getBoundingClientRect().top - 15;
@@ -269,7 +273,6 @@
         document.getElementById('closedScreen').classList.add('d-none');
         document.getElementById('closedTitle').innerText = "今日點餐已關閉";
         document.getElementById('closedDesc').innerText = "目前不在開放點餐時間，請稍後再試或洽詢管理員。";
-        document.getElementById('dateStatusBadge').innerHTML = ""; 
 
         fetchWithRetry(GAS_API_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action: "getSystemData" }) })
         .then(response => {
@@ -290,18 +293,17 @@
               isToday = (response.data.menuDate === todayStr);
             }
 
-            if (!isToday && response.data.menuDate) {
-              document.getElementById('dateStatusBadge').innerHTML = `<span class="badge" style="background-color: #8c2b32; font-size: 0.85rem; padding: 5px 10px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.4); box-shadow: 0 2px 4px rgba(0,0,0,0.2);">⚠️ 非今日菜單</span>`;
-            }
+            // 構建右側的警告標籤
+            let badgeHtml = (!isToday && response.data.menuDate) ? `<span class="badge" style="background-color: #8c2b32; font-size: 0.8rem; padding: 4px 8px; border-radius: 6px; box-shadow: 0 1px 3px rgba(0,0,0,0.2);">⚠️ 非今日</span>` : '';
 
-            const bTitle = document.getElementById('bentoSectionTitle').querySelector('.section-header');
+            const bTitle = document.getElementById('bentoSectionTitle');
             if (response.data.bentoMenuUrl && response.data.menuDate) {
-              bTitle.innerText = `${m}/${d} 週${w} ${response.data.bentoShopName}`;
+              bTitle.innerHTML = `<span>${m}/${d} 週${w} ${response.data.bentoShopName}</span>${badgeHtml}`;
             }
             
-            const dTitle = document.getElementById('drinkSectionTitle').querySelector('.section-header');
+            const dTitle = document.getElementById('drinkSectionTitle');
             if (response.data.drinkMenuUrl && response.data.menuDate) {
-              dTitle.innerText = `${m}/${d} 週${w} ${response.data.drinkShopName}`;
+              dTitle.innerHTML = `<span>${m}/${d} 週${w} ${response.data.drinkShopName}</span>${badgeHtml}`;
             }
             
             if(response.data.bentoMenuUrl) { const bImg = document.getElementById('bentoMenuImg'); bImg.src = formatDriveImageUrl(response.data.bentoMenuUrl); bImg.style.display = 'block'; }
