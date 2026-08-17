@@ -91,8 +91,8 @@
         <img src="logo.jpg" alt="Logo" style="height: 46px; width: 46px; border-radius: 50%; object-fit: cover; box-shadow: 0 2px 4px rgba(0,0,0,0.2); margin-right: 12px;">
         <h3 class="mb-0 fw-bold text-truncate" style="font-size: 1.25rem;">OPH Eats 眼科訂餐</h3>
       </div>
-      <!-- 非今日警告標籤將顯示於此 -->
-      <div id="dateStatusBadge"></div>
+      <!-- 圖片重整按鈕移回全局右上角 -->
+      <button type="button" class="btn btn-sm text-white flex-shrink-0" style="background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.5); border-radius: 15px; padding: 4px 10px; font-size: 0.85rem; font-weight: bold;" onclick="forceRetryImagesAll()">🔄 圖片重整</button>
     </div>
 
     <div class="container">
@@ -127,47 +127,55 @@
                 <input type="text" class="form-control fw-bold" id="name" placeholder="請輸入姓名" onfocus="this.select()">
               </div>
 
+              <!-- 餐點區塊 -->
               <div class="section-block" id="bentoSectionBlock">
                 <div class="section-header" id="bentoSectionTitle">
                   <span>餐點</span>
-                  <!-- 圖片重整按鈕 -->
-                  <button type="button" class="btn btn-sm text-secondary fw-bold p-0" style="font-size: 0.85rem;" onclick="forceRetryImages('bento')">🔄 圖片重整</button>
                 </div>
-                <!-- 菜單圖片與失敗重試區塊 -->
                 <img id="bentoMenuImg" class="menu-img" alt="餐點菜單" onerror="handleImgError('bento')">
                 <div id="bentoImgError" class="text-center p-3 mb-3 border rounded" style="background-color: #f8f9fa; display: none;">
                   <span class="text-secondary fw-bold small">圖片載入超時，請點擊上方「🔄 圖片重整」</span>
                 </div>
                 
-                <div class="row g-2">
-                  <div class="col-8">
+                <div class="row g-2 mb-2">
+                  <div class="col-12">
                     <input type="text" class="form-control fw-bold" id="bentoName" placeholder="餐點" enterkeyhint="next" onfocus="this.select()">
                   </div>
+                </div>
+                <div class="row g-2">
+                  <div class="col-8">
+                    <!-- 新增客製項目 -->
+                    <input type="text" class="form-control fw-bold text-secondary" id="bentoCustom" placeholder="客製項目" enterkeyhint="next" onfocus="this.select()">
+                  </div>
                   <div class="col-4">
-                    <input type="text" inputmode="numeric" class="form-control fw-bold" id="bentoAmount" placeholder="金額" enterkeyhint="done" onblur="onAmountBlur('bentoAmount')" onfocus="this.select()">
+                    <input type="text" inputmode="numeric" class="form-control fw-bold" id="bentoAmount" placeholder="金額" enterkeyhint="done" oninput="calculateTotal()" onblur="onAmountBlur('bentoAmount')" onfocus="this.select()">
                     <input type="text" class="dummy-trap" tabindex="0" inputmode="none" onfocus="this.blur();">
                   </div>
                 </div>
               </div>
 
+              <!-- 飲料區塊 -->
               <div class="section-block" id="drinkSectionBlock">
                 <div class="section-header" id="drinkSectionTitle">
                   <span>飲料</span>
-                  <!-- 圖片重整按鈕 -->
-                  <button type="button" class="btn btn-sm text-secondary fw-bold p-0" style="font-size: 0.85rem;" onclick="forceRetryImages('drink')">🔄 圖片重整</button>
                 </div>
-                <!-- 飲料圖片與失敗重試區塊 -->
                 <img id="drinkMenuImg" class="menu-img" alt="飲料菜單" onerror="handleImgError('drink')">
                 <div id="drinkImgError" class="text-center p-3 mb-3 border rounded" style="background-color: #f8f9fa; display: none;">
                   <span class="text-secondary fw-bold small">圖片載入超時，請點擊上方「🔄 圖片重整」</span>
                 </div>
                 
-                <div class="row g-2">
-                  <div class="col-8">
+                <div class="row g-2 mb-2">
+                  <div class="col-12">
                     <input type="text" class="form-control fw-bold" id="drinkName" placeholder="飲料" enterkeyhint="next" onfocus="this.select()">
                   </div>
+                </div>
+                <div class="row g-2">
+                  <div class="col-8">
+                    <!-- 新增客製項目 -->
+                    <input type="text" class="form-control fw-bold text-secondary" id="drinkCustom" placeholder="客製項目" enterkeyhint="next" onfocus="this.select()">
+                  </div>
                   <div class="col-4">
-                    <input type="text" inputmode="numeric" class="form-control fw-bold" id="drinkAmount" placeholder="金額" enterkeyhint="done" onblur="onAmountBlur('drinkAmount')" onfocus="this.select()">
+                    <input type="text" inputmode="numeric" class="form-control fw-bold" id="drinkAmount" placeholder="金額" enterkeyhint="done" oninput="calculateTotal()" onblur="onAmountBlur('drinkAmount')" onfocus="this.select()">
                     <input type="text" class="dummy-trap" tabindex="0" inputmode="none" onfocus="this.blur();">
                   </div>
                 </div>
@@ -186,6 +194,7 @@
               </div>
 
               <div class="d-grid mt-2 mb-4">
+                <div id="totalDisplay" class="text-center fw-bold mb-2" style="font-size: 1.15rem; color: #9b727a; display: none;"></div>
                 <button type="button" class="btn btn-theme btn-lg fw-bold shadow-sm" id="submitBtn" onclick="submitOrder()">送出訂單</button>
               </div>
             </form>
@@ -220,13 +229,32 @@
 
       function addNote(text) { const n = document.getElementById('notes'); n.value = n.value ? n.value + "。" + text : text; }
 
-      // --- 處理圖片載入失敗 (隱藏圖片，顯示提示) ---
+      function calculateTotal() {
+        const bAmt = parseInt(document.getElementById('bentoAmount').value, 10) || 0;
+        const dAmt = parseInt(document.getElementById('drinkAmount').value, 10) || 0;
+        const total = bAmt + dAmt;
+        const display = document.getElementById('totalDisplay');
+        
+        if (total > 0) {
+          display.innerText = `總共 $${total}`;
+          display.style.display = 'block';
+        } else {
+          display.innerText = '';
+          display.style.display = 'none';
+        }
+      }
+
       function handleImgError(type) {
         document.getElementById(type + 'MenuImg').style.display = 'none';
         document.getElementById(type + 'ImgError').style.display = 'block';
       }
 
-      // --- 局部手動強制重整圖片 ---
+      // 新增：同時重整餐點與飲料，且保留已輸入資料
+      function forceRetryImagesAll() {
+        forceRetryImages('bento');
+        forceRetryImages('drink');
+      }
+
       function forceRetryImages(type) {
         const img = document.getElementById(type + 'MenuImg');
         const errorDiv = document.getElementById(type + 'ImgError');
@@ -241,15 +269,14 @@
             currentSrc += '&retry=' + new Date().getTime();
           }
           
-          img.style.display = 'none'; // 先隱藏
+          img.style.display = 'none'; 
           setTimeout(() => {
             img.src = currentSrc;
-            img.style.display = 'block'; // 重新載入並顯示
+            img.style.display = 'block'; 
           }, 50);
         }
       }
 
-      // --- 職級點選後：精準捲動「該被點擊的職級」到螢幕最上方 ---
       function handleRankChange(radioId) {
         setTimeout(() => {
           const el = document.getElementById(radioId);
@@ -260,7 +287,6 @@
         }, 350); 
       }
 
-      // --- 金額輸入完成：等待鍵盤收起，並讓該金額列置頂 ---
       function onAmountBlur(inputId) {
         setTimeout(() => {
           const active = document.activeElement;
@@ -301,18 +327,17 @@
               isToday = (response.data.menuDate === todayStr);
             }
 
-            // 構建右側的警告標籤
+            // ⚠️ 非今日標籤移至標題列內
             let badgeHtml = (!isToday && response.data.menuDate) ? `<span class="badge" style="background-color: #8c2b32; font-size: 0.85rem; padding: 5px 10px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.4); box-shadow: 0 2px 4px rgba(0,0,0,0.2);">⚠️ 非今日菜單</span>` : '';
-            document.getElementById('dateStatusBadge').innerHTML = badgeHtml;
 
-            const bTitle = document.getElementById('bentoSectionTitle').querySelector('.section-header span:first-child');
+            const bTitle = document.getElementById('bentoSectionTitle');
             if (response.data.bentoMenuUrl && response.data.menuDate) {
-              bTitle.innerHTML = `${m}/${d} 週${w} ${response.data.bentoShopName}`;
+              bTitle.innerHTML = `<span>${m}/${d} 週${w} ${response.data.bentoShopName}</span> ${badgeHtml}`;
             }
             
-            const dTitle = document.getElementById('drinkSectionTitle').querySelector('.section-header span:first-child');
+            const dTitle = document.getElementById('drinkSectionTitle');
             if (response.data.drinkMenuUrl && response.data.menuDate) {
-              dTitle.innerHTML = `${m}/${d} 週${w} ${response.data.drinkShopName}`;
+              dTitle.innerHTML = `<span>${m}/${d} 週${w} ${response.data.drinkShopName}</span> ${badgeHtml}`;
             }
             
             if(response.data.bentoMenuUrl) { const bImg = document.getElementById('bentoMenuImg'); bImg.src = formatDriveImageUrl(response.data.bentoMenuUrl); bImg.style.display = 'block'; }
@@ -342,9 +367,6 @@
 
       window.onload = () => loadData();
 
-      // ==========================================================
-      // 🚀 設定安全距離為 25px 進行測試 (點擊格子時依然有效)
-      // ==========================================================
       document.addEventListener('focusin', function(e) {
         if (e.target && e.target.tagName === 'INPUT' && !e.target.classList.contains('dummy-trap')) {
           const isKeyboardAlreadyUp = window.visualViewport && (window.visualViewport.height < window.innerHeight * 0.85);
@@ -359,7 +381,6 @@
           }, delayTime);
         }
       });
-      // ==========================================================
 
       function toggleRankName() {
         const c = document.querySelector('input[name="clinic"]:checked');
@@ -396,8 +417,10 @@
         }
 
         const bName = document.getElementById('bentoName').value.trim(); 
+        const bCustom = document.getElementById('bentoCustom').value.trim(); 
         const bAmt = document.getElementById('bentoAmount').value.trim();
         const dName = document.getElementById('drinkName').value.trim(); 
+        const dCustom = document.getElementById('drinkCustom').value.trim(); 
         const dAmt = document.getElementById('drinkAmount').value.trim();
         
         if (bName && !bAmt) {
@@ -413,12 +436,25 @@
         
         const notes = document.getElementById('notes').value.trim();
         
+        // 合併品名與客製項目：如「塔香牛肉拌飯 (小的)」
+        const finalBentoItem = bName + (bCustom ? ` (${bCustom})` : "");
+        const finalDrinkItem = dName + (dCustom ? ` (${dCustom})` : "");
+
         let msgLines = [];
         const rankOrName = clinic === '非診間' ? name : rank;
         msgLines.push(`${clinic}  ${rankOrName}`);
-        if (bName) msgLines.push(`${bName} $${bAmt}`);
-        if (dName) msgLines.push(`${dName} $${dAmt}`);
+        
+        if (bName) msgLines.push(`${finalBentoItem} $${bAmt}`);
+        if (dName) msgLines.push(`${finalDrinkItem} $${dAmt}`);
         if (notes) msgLines.push(`${notes}`);
+        
+        // 只有餐點跟飲料「都有金額」時，才在對話框最底下加總
+        if (bAmt && dAmt) {
+          const totalAmount = parseFloat(bAmt) + parseFloat(dAmt);
+          msgLines.push(`------------------`);
+          msgLines.push(`總共 $${totalAmount}`);
+        }
+        
         msgLines.push(`\n👉 確定要送出嗎？`);
         
         const confirmMsg = msgLines.join('\n');
@@ -429,9 +465,15 @@
 
         fetchWithRetry(GAS_API_URL, {
           method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-          body: JSON.stringify({ action: "submitOrder", data: { clinic: clinic, rank: rank, name: name, notes: notes, bentoItem: bName, bentoAmount: bAmt, drinkItem: dName, drinkAmount: dAmt }})
+          body: JSON.stringify({ action: "submitOrder", data: { clinic: clinic, rank: rank, name: name, notes: notes, bentoItem: finalBentoItem, bentoAmount: bAmt, drinkItem: finalDrinkItem, drinkAmount: dAmt }})
         }).then(data => {
-          if(data.success) { alert(data.message); document.getElementById('orderForm').reset(); document.querySelectorAll('.btn-check').forEach(radio => radio.checked = false); toggleRankName(); window.scrollTo({ top: 0, behavior: 'smooth' });
+          if(data.success) { 
+            alert(data.message); 
+            document.getElementById('orderForm').reset(); 
+            document.getElementById('totalDisplay').style.display = 'none'; 
+            document.querySelectorAll('.btn-check').forEach(radio => radio.checked = false); 
+            toggleRankName(); 
+            window.scrollTo({ top: 0, behavior: 'smooth' });
           } else alert("錯誤：" + data.message);
         }).catch(error => {
           alert("送出訂單發生錯誤：" + error.message);
