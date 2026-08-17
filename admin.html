@@ -214,7 +214,7 @@
                   <div class="col-6 border-end">
                     <div class="fw-bold text-secondary small mb-0 text-center">診次</div>
                     <div class="fade-bottom-wrapper">
-                      <div id="clinicList" class="bg-white border rounded p-1 mb-2 mt-1" style="height: 200px; overflow-y: auto; padding-bottom: 25px !important;"></div>
+                      <div id="clinicList" class="bg-white border rounded p-1 mb-2 mt-1" style="height: 240px; overflow-y: auto; padding-bottom: 25px !important;"></div>
                     </div>
                     <div class="input-group input-group-sm">
                       <input type="text" class="form-control fw-bold custom-placeholder" id="newClinicInput" placeholder="輸入" onfocus="this.select()">
@@ -226,7 +226,7 @@
                   <div class="col-6">
                     <div class="fw-bold text-secondary small mb-0 text-center">職級</div>
                     <div class="fade-bottom-wrapper">
-                      <div id="rankList" class="bg-white border rounded p-1 mb-2 mt-1" style="height: 200px; overflow-y: auto; padding-bottom: 25px !important;"></div>
+                      <div id="rankList" class="bg-white border rounded p-1 mb-2 mt-1" style="height: 240px; overflow-y: auto; padding-bottom: 25px !important;"></div>
                     </div>
                     <div class="input-group input-group-sm">
                       <input type="text" class="form-control fw-bold custom-placeholder" id="newRankInput" placeholder="輸入" onfocus="this.select()">
@@ -409,13 +409,12 @@
     }
 
     function quickSetMenu(type, url, textName, fileId) {
-      const shopName = textName.replace(/^\[.*?\]/, '').replace(/_\d{8}_\d{4}\.jpg$/, '').replace(/_\d+\.jpg$/, '');
+      const shopName = textName.replace(/^\[.*?\]/, '').replace(/_\d{8}_\d{4}\.jpg$/, '').replace(/_\d+\.jpg$/, '').replace(/\.jpg$/i, '');
       showLoading("套用設定中..."); 
       
       apiCall({ action: "setMenuUrl", menuType: type, url: url, shopName: shopName, password: currentPwd }, null, () => {
         
-        let cleanName = textName.replace(/^\[.*?\]/, '').replace(/\.[a-zA-Z0-9]+$/, '');
-        document.getElementById(type + 'Input').value = cleanName;
+        document.getElementById(type + 'Input').value = shopName;
         
         const applyBtn = document.getElementById(type + 'ApplyBtn');
         applyBtn.innerText = "已套用";
@@ -445,9 +444,9 @@
       
       if (fileInput.files.length > 0) {
         label.innerText = "已選：" + fileInput.files[0].name;
-        label.style.backgroundColor = '#198754'; 
-        label.style.color = '#ffffff';
-        label.style.borderColor = '#198754';
+        label.style.backgroundColor = '#ced4da'; // 淺灰底
+        label.style.color = '#212529'; // 深色字
+        label.style.borderColor = '#adb5bd';
       } else {
         label.innerText = "選擇圖片";
         label.style.backgroundColor = '#e9ecef'; 
