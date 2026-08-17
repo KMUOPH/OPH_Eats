@@ -56,6 +56,8 @@
         align-items: center; 
       }
       
+      .not-today-header { background-color: #8c2b32 !important; color: #ffffff !important; }
+      
       .clinic-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; }
       .clinic-grid label { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; padding: 6px 0; font-size: 0.95rem; margin: 0; }
       .rank-label-custom { padding: 8px 0 !important; font-size: 0.95rem !important; margin: 0; }
@@ -89,8 +91,8 @@
         <img src="logo.jpg" alt="Logo" style="height: 46px; width: 46px; border-radius: 50%; object-fit: cover; box-shadow: 0 2px 4px rgba(0,0,0,0.2); margin-right: 12px;">
         <h3 class="mb-0 fw-bold text-truncate" style="font-size: 1.25rem;">OPH Eats 眼科訂餐</h3>
       </div>
-      <!-- 固定在右上角的全局圖片重整按鈕 -->
-      <button class="btn btn-sm text-white flex-shrink-0" style="background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.5); border-radius: 15px; padding: 4px 10px; font-size: 0.85rem; font-weight: bold;" onclick="forceRetryImages()">🔄 圖片重整</button>
+      <!-- 非今日警告標籤將顯示於此 -->
+      <div id="dateStatusBadge"></div>
     </div>
 
     <div class="container">
@@ -126,11 +128,15 @@
               </div>
 
               <div class="section-block" id="bentoSectionBlock">
-                <div class="section-header" id="bentoSectionTitle"><span>餐點</span></div>
+                <div class="section-header" id="bentoSectionTitle">
+                  <span>餐點</span>
+                  <!-- 圖片重整按鈕 -->
+                  <button type="button" class="btn btn-sm text-secondary fw-bold p-0" style="font-size: 0.85rem;" onclick="forceRetryImages('bento')">🔄 圖片重整</button>
+                </div>
                 <!-- 菜單圖片與失敗重試區塊 -->
                 <img id="bentoMenuImg" class="menu-img" alt="餐點菜單" onerror="handleImgError('bento')">
                 <div id="bentoImgError" class="text-center p-3 mb-3 border rounded" style="background-color: #f8f9fa; display: none;">
-                  <span class="text-secondary fw-bold small">圖片載入超時，請點擊右上角「圖片重整」</span>
+                  <span class="text-secondary fw-bold small">圖片載入超時，請點擊上方「🔄 圖片重整」</span>
                 </div>
                 
                 <div class="row g-2">
@@ -145,11 +151,15 @@
               </div>
 
               <div class="section-block" id="drinkSectionBlock">
-                <div class="section-header" id="drinkSectionTitle"><span>飲料</span></div>
+                <div class="section-header" id="drinkSectionTitle">
+                  <span>飲料</span>
+                  <!-- 圖片重整按鈕 -->
+                  <button type="button" class="btn btn-sm text-secondary fw-bold p-0" style="font-size: 0.85rem;" onclick="forceRetryImages('drink')">🔄 圖片重整</button>
+                </div>
                 <!-- 飲料圖片與失敗重試區塊 -->
                 <img id="drinkMenuImg" class="menu-img" alt="飲料菜單" onerror="handleImgError('drink')">
                 <div id="drinkImgError" class="text-center p-3 mb-3 border rounded" style="background-color: #f8f9fa; display: none;">
-                  <span class="text-secondary fw-bold small">圖片載入超時，請點擊右上角「圖片重整」</span>
+                  <span class="text-secondary fw-bold small">圖片載入超時，請點擊上方「🔄 圖片重整」</span>
                 </div>
                 
                 <div class="row g-2">
@@ -216,29 +226,27 @@
         document.getElementById(type + 'ImgError').style.display = 'block';
       }
 
-      // --- 全局手動強制重整圖片 ---
-      function forceRetryImages() {
-        ['bento', 'drink'].forEach(type => {
-          const img = document.getElementById(type + 'MenuImg');
-          const errorDiv = document.getElementById(type + 'ImgError');
+      // --- 局部手動強制重整圖片 ---
+      function forceRetryImages(type) {
+        const img = document.getElementById(type + 'MenuImg');
+        const errorDiv = document.getElementById(type + 'ImgError');
+        
+        if (img && img.src && img.src !== window.location.href) {
+          if (errorDiv) errorDiv.style.display = 'none';
           
-          if (img && img.src && img.src !== window.location.href) {
-            if (errorDiv) errorDiv.style.display = 'none';
-            
-            let currentSrc = img.src;
-            if(currentSrc.includes('&retry=')) {
-              currentSrc = currentSrc.replace(/&retry=\d+/, '&retry=' + new Date().getTime());
-            } else {
-              currentSrc += '&retry=' + new Date().getTime();
-            }
-            
-            img.style.display = 'none'; // 先隱藏
-            setTimeout(() => {
-              img.src = currentSrc;
-              img.style.display = 'block'; // 重新載入並顯示
-            }, 50);
+          let currentSrc = img.src;
+          if(currentSrc.includes('&retry=')) {
+            currentSrc = currentSrc.replace(/&retry=\d+/, '&retry=' + new Date().getTime());
+          } else {
+            currentSrc += '&retry=' + new Date().getTime();
           }
-        });
+          
+          img.style.display = 'none'; // 先隱藏
+          setTimeout(() => {
+            img.src = currentSrc;
+            img.style.display = 'block'; // 重新載入並顯示
+          }, 50);
+        }
       }
 
       // --- 職級點選後：精準捲動「該被點擊的職級」到螢幕最上方 ---
@@ -294,16 +302,17 @@
             }
 
             // 構建右側的警告標籤
-            let badgeHtml = (!isToday && response.data.menuDate) ? `<span class="badge" style="background-color: #8c2b32; font-size: 0.8rem; padding: 4px 8px; border-radius: 6px; box-shadow: 0 1px 3px rgba(0,0,0,0.2);">⚠️ 非今日</span>` : '';
+            let badgeHtml = (!isToday && response.data.menuDate) ? `<span class="badge" style="background-color: #8c2b32; font-size: 0.85rem; padding: 5px 10px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.4); box-shadow: 0 2px 4px rgba(0,0,0,0.2);">⚠️ 非今日菜單</span>` : '';
+            document.getElementById('dateStatusBadge').innerHTML = badgeHtml;
 
-            const bTitle = document.getElementById('bentoSectionTitle');
+            const bTitle = document.getElementById('bentoSectionTitle').querySelector('.section-header span:first-child');
             if (response.data.bentoMenuUrl && response.data.menuDate) {
-              bTitle.innerHTML = `<span>${m}/${d} 週${w} ${response.data.bentoShopName}</span>${badgeHtml}`;
+              bTitle.innerHTML = `${m}/${d} 週${w} ${response.data.bentoShopName}`;
             }
             
-            const dTitle = document.getElementById('drinkSectionTitle');
+            const dTitle = document.getElementById('drinkSectionTitle').querySelector('.section-header span:first-child');
             if (response.data.drinkMenuUrl && response.data.menuDate) {
-              dTitle.innerHTML = `<span>${m}/${d} 週${w} ${response.data.drinkShopName}</span>${badgeHtml}`;
+              dTitle.innerHTML = `${m}/${d} 週${w} ${response.data.drinkShopName}`;
             }
             
             if(response.data.bentoMenuUrl) { const bImg = document.getElementById('bentoMenuImg'); bImg.src = formatDriveImageUrl(response.data.bentoMenuUrl); bImg.style.display = 'block'; }
