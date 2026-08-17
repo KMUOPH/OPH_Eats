@@ -27,7 +27,7 @@
       .btn-outline-dark-theme { color: #495057; border-color: #adb5bd; border-radius: 5px !important; }
       .btn-outline-dark-theme:hover { background-color: #e9ecef; color: #212529; }
       
-      /* 將選取後的底色加深一階 (#adb5bd)，保持深色字，凸顯選取狀態 */
+      /* 選取後的底色加深 (#adb5bd) */
       .btn-check:checked + .btn-outline-dark-theme { background-color: #adb5bd; color: #1a1e21; border-color: #868e96; font-weight: bold; }
       
       .form-control:focus {
@@ -42,6 +42,7 @@
       
       .section-block { margin-bottom: 24px; }
       
+      /* 標題列改為：淺灰藍底 (#e2e8f0) 深色字 (#212529) */
       .section-header { 
         background-color: #e2e8f0; 
         color: #212529; 
@@ -111,8 +112,8 @@
                 <input type="text" class="form-control fw-bold" id="name" placeholder="請輸入姓名" onfocus="this.select()">
               </div>
 
-              <div class="section-block">
-                <div class="section-header" id="bentoSectionTitle">餐點</div>
+              <div class="section-block" id="bentoSectionTitle">
+                <div class="section-header">餐點</div>
                 <img id="bentoMenuImg" class="menu-img" alt="餐點菜單" onerror="handleImgError('bento')">
                 <div id="bentoImgError" class="text-center p-3 mb-3 border rounded" style="background-color: #f8f9fa; display: none;">
                   <span class="text-secondary fw-bold small">圖片載入超時或失敗</span>
@@ -124,14 +125,14 @@
                     <input type="text" class="form-control fw-bold" id="bentoName" placeholder="餐點" enterkeyhint="next" onkeydown="if(event.key==='Enter' || event.keyCode===13){event.preventDefault(); document.getElementById('bentoAmount').focus();}" onfocus="this.select()">
                   </div>
                   <div class="col-4">
-                    <!-- 強制攔截打勾(Enter)與下一項(Tab)，沒收鍵盤並置中飲料區 -->
-                    <input type="text" inputmode="numeric" class="form-control fw-bold" id="bentoAmount" placeholder="金額" enterkeyhint="done" onkeydown="if(event.key==='Enter' || event.keyCode===13 || event.key==='Tab' || event.keyCode===9){event.preventDefault(); this.blur(); setTimeout(function(){ document.getElementById('drinkSectionTitle').scrollIntoView({behavior:'smooth', block:'center'}); }, 150);}" onfocus="this.select()">
+                    <!-- 攔截Enter/Tab，將該金額格拉到畫面上方 -->
+                    <input type="text" inputmode="numeric" class="form-control fw-bold" id="bentoAmount" placeholder="金額" enterkeyhint="done" onkeydown="if(event.key==='Enter' || event.keyCode===13 || event.key==='Tab' || event.keyCode===9){event.preventDefault(); this.blur(); setTimeout(function(){ const el = document.getElementById('bentoAmount'); window.scrollTo({top: window.scrollY + el.getBoundingClientRect().top - 20, behavior: 'smooth'}); }, 150);}" onfocus="this.select()">
                   </div>
                 </div>
               </div>
 
-              <div class="section-block">
-                <div class="section-header" id="drinkSectionTitle">飲料</div>
+              <div class="section-block" id="drinkSectionTitle">
+                <div class="section-header">飲料</div>
                 <img id="drinkMenuImg" class="menu-img" alt="飲料菜單" onerror="handleImgError('drink')">
                 <div id="drinkImgError" class="text-center p-3 mb-3 border rounded" style="background-color: #f8f9fa; display: none;">
                   <span class="text-secondary fw-bold small">圖片載入超時或失敗</span>
@@ -143,8 +144,8 @@
                     <input type="text" class="form-control fw-bold" id="drinkName" placeholder="飲料" enterkeyhint="next" onkeydown="if(event.key==='Enter' || event.keyCode===13){event.preventDefault(); document.getElementById('drinkAmount').focus();}" onfocus="this.select()">
                   </div>
                   <div class="col-4">
-                    <!-- 強制攔截打勾(Enter)與下一項(Tab)，沒收鍵盤並置中備註區 -->
-                    <input type="text" inputmode="numeric" class="form-control fw-bold" id="drinkAmount" placeholder="金額" enterkeyhint="done" onkeydown="if(event.key==='Enter' || event.keyCode===13 || event.key==='Tab' || event.keyCode===9){event.preventDefault(); this.blur(); setTimeout(function(){ document.getElementById('notes').scrollIntoView({behavior:'smooth', block:'center'}); }, 150);}" onfocus="this.select()">
+                    <!-- 攔截Enter/Tab，將該金額格拉到畫面上方 -->
+                    <input type="text" inputmode="numeric" class="form-control fw-bold" id="drinkAmount" placeholder="金額" enterkeyhint="done" onkeydown="if(event.key==='Enter' || event.keyCode===13 || event.key==='Tab' || event.keyCode===9){event.preventDefault(); this.blur(); setTimeout(function(){ const el = document.getElementById('drinkAmount'); window.scrollTo({top: window.scrollY + el.getBoundingClientRect().top - 20, behavior: 'smooth'}); }, 150);}" onfocus="this.select()">
                   </div>
                 </div>
               </div>
@@ -156,7 +157,6 @@
                   <button type="button" class="btn btn-outline-dark-theme fw-bold capsule-btn" onclick="addNote('兩筆都要')">兩筆都要</button>
                 </div>
                 <div class="input-group">
-                  <!-- 強制攔截打勾(Enter)，沒收鍵盤並置中送出按鈕 -->
                   <input type="text" class="form-control fw-bold" id="notes" placeholder="其他需求..." enterkeyhint="done" onkeydown="if(event.key==='Enter' || event.keyCode===13){event.preventDefault(); this.blur(); setTimeout(function(){ document.getElementById('submitBtn').scrollIntoView({behavior:'smooth', block:'center'}); }, 150);}" onfocus="this.select()">
                   <button class="btn btn-clear" type="button" onclick="document.getElementById('notes').value='';" title="清除內容">✖</button>
                 </div>
@@ -218,12 +218,14 @@
         img.style.display = 'block';
       }
 
-      // --- 職級點選後：延遲一下，使用更穩定的 scrollIntoView 置中餐點區 ---
+      // --- 職級點選後：延遲一下，將「職級區塊」拉到螢幕上方 ---
       function handleRankChange() {
         setTimeout(() => {
-          const bentoSection = document.getElementById('bentoSectionTitle');
-          if (bentoSection) {
-            bentoSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          const rankSection = document.getElementById('rankDiv');
+          if (rankSection) {
+            // 往上拉到螢幕上方，預留 15px 安全邊距
+            const targetY = window.scrollY + rankSection.getBoundingClientRect().top - 15;
+            window.scrollTo({ top: Math.max(0, targetY), behavior: 'smooth' });
           }
         }, 350); 
       }
@@ -259,12 +261,12 @@
               document.getElementById('dateStatusBadge').innerHTML = `<span class="badge" style="background-color: #8c2b32; font-size: 0.85rem; padding: 5px 10px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.4); box-shadow: 0 2px 4px rgba(0,0,0,0.2);">⚠️ 非今日菜單</span>`;
             }
 
-            const bTitle = document.getElementById('bentoSectionTitle');
+            const bTitle = document.getElementById('bentoSectionTitle').querySelector('.section-header');
             if (response.data.bentoMenuUrl && response.data.menuDate) {
               bTitle.innerText = `${m}/${d} 週${w} ${response.data.bentoShopName}`;
             }
             
-            const dTitle = document.getElementById('drinkSectionTitle');
+            const dTitle = document.getElementById('drinkSectionTitle').querySelector('.section-header');
             if (response.data.drinkMenuUrl && response.data.menuDate) {
               dTitle.innerText = `${m}/${d} 週${w} ${response.data.drinkShopName}`;
             }
