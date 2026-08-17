@@ -37,9 +37,9 @@
     /* 頂部橫幅 */
     .banner-header { background-color: #9b727a; color: white; height: 60px; margin-bottom: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); width: 100%; display: flex; align-items: center; padding: 0 15px; }
 
-    /* 統一且適中的深灰底白字標題列 (#495057) */
+    /* 石板灰 (#6c757d) 底白字標題列 */
     .section-header { 
-      background-color: #495057; 
+      background-color: #6c757d; 
       color: #ffffff; 
       border-radius: 6px; 
       padding: 8px 12px; 
@@ -47,6 +47,10 @@
       font-weight: bold; 
       margin-bottom: 8px; 
       text-align: center;
+    }
+    .section-header.collapsible-header {
+      justify-content: space-between;
+      cursor: pointer;
     }
 
     /* --- Toggle Switch 樣式 --- */
@@ -56,7 +60,6 @@
     .slider:before { position: absolute; content: ""; height: 22px; width: 22px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
     input:checked + .slider { background-color: #198754; }
     input:checked + .slider:before { transform: translateX(24px); }
-    /* 讀取中改為淺灰色 */
     input.status-loading + .slider { background-color: #ced4da; cursor: not-allowed; }
 
     /* --- 列表底部淡出效果 --- */
@@ -145,9 +148,9 @@
                     <button class="btn btn-theme fw-bold px-2" id="bentoApplyBtn" onclick="setMenu('bento')">套用</button>
                   </div>
                   
-                  <!-- 列表區 -->
+                  <!-- 列表區 (高度加長至 220px) -->
                   <div class="fade-bottom-wrapper">
-                    <div id="bentoFileListContainer" class="bg-white border rounded p-1" style="height: 175px; overflow-y: auto; overflow-x: hidden; padding-bottom: 25px !important;">
+                    <div id="bentoFileListContainer" class="bg-white border rounded p-1" style="height: 220px; overflow-y: auto; overflow-x: hidden; padding-bottom: 25px !important;">
                       <div class="text-muted small text-center py-2">讀取中...</div>
                     </div>
                   </div>
@@ -176,9 +179,9 @@
                     <button class="btn btn-theme fw-bold px-2" id="drinkApplyBtn" onclick="setMenu('drink')">套用</button>
                   </div>
                   
-                  <!-- 列表區 -->
+                  <!-- 列表區 (高度加長至 220px) -->
                   <div class="fade-bottom-wrapper">
-                    <div id="drinkFileListContainer" class="bg-white border rounded p-1" style="height: 175px; overflow-y: auto; overflow-x: hidden; padding-bottom: 25px !important;">
+                    <div id="drinkFileListContainer" class="bg-white border rounded p-1" style="height: 220px; overflow-y: auto; overflow-x: hidden; padding-bottom: 25px !important;">
                       <div class="text-muted small text-center py-2">讀取中...</div>
                     </div>
                   </div>
@@ -198,7 +201,7 @@
 
           <!-- 診次與職級設定 -->
           <div class="section-block">
-            <div class="section-header d-flex justify-content-between align-items-center mb-0" style="cursor: pointer;" data-bs-toggle="collapse" data-bs-target="#optionsCollapse" id="optionsToggleBtn">
+            <div class="section-header collapsible-header mb-0" data-bs-toggle="collapse" data-bs-target="#optionsCollapse" id="optionsToggleBtn">
               <span>診次與職級管理</span>
               <span style="font-size: 0.8em;">▼</span>
             </div>
@@ -411,13 +414,12 @@
       
       apiCall({ action: "setMenuUrl", menuType: type, url: url, shopName: shopName, password: currentPwd }, null, () => {
         
-        // 取得純店家名稱 (過濾掉時間與副檔名) 帶入搜尋格
-        let pureName = textName.replace(/^\[.*?\]/, '').replace(/_\d{8}_\d{4}\.jpg$/, '').replace(/_\d+\.jpg$/, '').replace(/\.jpg$/i, '');
-        document.getElementById(type + 'Input').value = pureName;
+        let cleanName = textName.replace(/^\[.*?\]/, '').replace(/\.[a-zA-Z0-9]+$/, '');
+        document.getElementById(type + 'Input').value = cleanName;
         
         const applyBtn = document.getElementById(type + 'ApplyBtn');
         applyBtn.innerText = "已套用";
-        applyBtn.className = "btn btn-theme fw-bold px-2"; // 維持粉色
+        applyBtn.className = "btn btn-theme fw-bold px-2";
         
         const container = document.getElementById(type + 'FileListContainer');
         container.querySelectorAll('.select-btn').forEach(btn => {
@@ -430,7 +432,7 @@
           }
         });
 
-        // 展開所有庫存列表
+        // 靜默處理，不跳出 alert
         container.querySelectorAll('.file-item').forEach(item => {
           item.style.display = 'flex';
         });
@@ -443,8 +445,14 @@
       
       if (fileInput.files.length > 0) {
         label.innerText = "已選：" + fileInput.files[0].name;
+        label.style.backgroundColor = '#198754'; 
+        label.style.color = '#ffffff';
+        label.style.borderColor = '#198754';
       } else {
         label.innerText = "選擇圖片";
+        label.style.backgroundColor = '#e9ecef'; 
+        label.style.color = '#212529';
+        label.style.borderColor = '#ced4da';
       }
     }
 
@@ -484,7 +492,7 @@
           
           apiCall(
             { action: "uploadOnly", menuType: type, filename: finalFilename, image: canvas.toDataURL('image/jpeg', 0.8), shopName: shopName, password: currentPwd }, 
-            "檔案已成功上傳至圖庫！", 
+            null, // 移除上傳成功對話框
             () => { 
               fileInput.value = ""; 
               nameInput.value = ""; 
