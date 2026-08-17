@@ -37,16 +37,23 @@
     /* 頂部橫幅 */
     .banner-header { background-color: #9b727a; color: white; height: 60px; margin-bottom: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); width: 100%; display: flex; align-items: center; padding: 0 15px; }
 
-    /* 深灰底白字的標題列 */
+    /* 柔和石板灰、統一高度的標題列 */
     .section-header { 
-      background-color: #343a40; 
+      background-color: #6c757d; /* 柔和的深灰色 */
       color: #ffffff; 
       border-radius: 6px; 
-      padding: 8px 12px; 
+      padding: 0 12px; 
+      height: 38px; /* 強制統一高度 */
+      display: flex;
+      align-items: center;
+      justify-content: center;
       font-size: 0.95rem; 
       font-weight: bold; 
       margin-bottom: 8px; 
-      text-align: center;
+    }
+    .section-header.collapsible-header {
+      justify-content: space-between;
+      cursor: pointer;
     }
 
     /* --- Toggle Switch 樣式 --- */
@@ -137,13 +144,14 @@
                 <!-- 1. 列表＋今日區框架 -->
                 <div class="p-2 border rounded bg-light d-flex flex-column">
                   
-                  <!-- 搜尋格與套用按鈕 -->
+                  <!-- 搜尋格與套用按鈕 (加入 onfocus="this.select()") -->
                   <div class="input-group input-group-sm mb-2 shadow-sm">
-                    <input type="text" class="form-control fw-bold custom-placeholder" id="bentoInput" placeholder="--搜尋今日餐點--" oninput="filterList(this.value, 'bento')">
+                    <input type="text" class="form-control fw-bold custom-placeholder" id="bentoInput" list="bentoDatalist" placeholder="--搜尋今日餐點--" oninput="filterList(this.value, 'bento')" onfocus="this.select()">
+                    <datalist id="bentoDatalist"></datalist>
                     <button class="btn btn-theme fw-bold px-2" id="bentoApplyBtn" onclick="setMenu('bento')">套用</button>
                   </div>
                   
-                  <!-- 列表區 (精準設定高度，約顯示 5 個檔案) -->
+                  <!-- 列表區 -->
                   <div class="fade-bottom-wrapper">
                     <div id="bentoFileListContainer" class="bg-white border rounded p-1" style="height: 175px; overflow-y: auto; overflow-x: hidden; padding-bottom: 25px !important;">
                       <div class="text-muted small text-center py-2">讀取中...</div>
@@ -154,7 +162,6 @@
                 <!-- 2. 新增餐點區 -->
                 <div class="p-2 border rounded bg-light">
                   <input type="text" class="form-control form-control-sm fw-bold mb-1 custom-placeholder" id="libBentoName" placeholder="(新增餐點)輸入店家名稱">
-                  <!-- 灰底按鈕 -->
                   <label for="libBentoFile" class="btn btn-secondary btn-sm w-100 mb-1 fw-bold text-truncate text-white" id="bentoFileLabel" style="font-size: 0.8rem;">選擇圖片</label>
                   <input type="file" id="libBentoFile" accept="image/*" style="display: none;" onchange="updateFileLabel('bento')">
                   <button class="btn btn-theme btn-sm fw-bold w-100" onclick="uploadToLibrary('bento')">上傳</button>
@@ -168,13 +175,14 @@
                 <!-- 1. 列表＋今日區框架 -->
                 <div class="p-2 border rounded bg-light d-flex flex-column">
                   
-                  <!-- 搜尋格與套用按鈕 -->
+                  <!-- 搜尋格與套用按鈕 (加入 onfocus="this.select()") -->
                   <div class="input-group input-group-sm mb-2 shadow-sm">
-                    <input type="text" class="form-control fw-bold custom-placeholder" id="drinkInput" placeholder="--搜尋今日飲料--" oninput="filterList(this.value, 'drink')">
+                    <input type="text" class="form-control fw-bold custom-placeholder" id="drinkInput" list="drinkDatalist" placeholder="--搜尋今日飲料--" oninput="filterList(this.value, 'drink')" onfocus="this.select()">
+                    <datalist id="drinkDatalist"></datalist>
                     <button class="btn btn-theme fw-bold px-2" id="drinkApplyBtn" onclick="setMenu('drink')">套用</button>
                   </div>
                   
-                  <!-- 列表區 (精準設定高度，約顯示 5 個檔案) -->
+                  <!-- 列表區 -->
                   <div class="fade-bottom-wrapper">
                     <div id="drinkFileListContainer" class="bg-white border rounded p-1" style="height: 175px; overflow-y: auto; overflow-x: hidden; padding-bottom: 25px !important;">
                       <div class="text-muted small text-center py-2">讀取中...</div>
@@ -185,7 +193,6 @@
                 <!-- 2. 新增飲料區 -->
                 <div class="p-2 border rounded bg-light">
                   <input type="text" class="form-control form-control-sm fw-bold mb-1 custom-placeholder" id="libDrinkName" placeholder="(新增飲料)輸入店家名稱">
-                  <!-- 灰底按鈕 -->
                   <label for="libDrinkFile" class="btn btn-secondary btn-sm w-100 mb-1 fw-bold text-truncate text-white" id="drinkFileLabel" style="font-size: 0.8rem;">選擇圖片</label>
                   <input type="file" id="libDrinkFile" accept="image/*" style="display: none;" onchange="updateFileLabel('drink')">
                   <button class="btn btn-theme btn-sm fw-bold w-100" onclick="uploadToLibrary('drink')">上傳</button>
@@ -197,7 +204,7 @@
 
           <!-- 診次與職級設定 -->
           <div class="section-block">
-            <div class="section-header d-flex justify-content-between align-items-center mb-0" style="cursor: pointer;" data-bs-toggle="collapse" data-bs-target="#optionsCollapse" id="optionsToggleBtn">
+            <div class="section-header collapsible-header mb-0" data-bs-toggle="collapse" data-bs-target="#optionsCollapse" id="optionsToggleBtn">
               <span>診次與職級管理</span>
               <span style="font-size: 0.8em;">▼</span>
             </div>
@@ -213,7 +220,7 @@
                       <div id="clinicList" class="bg-white border rounded p-1 mb-2 mt-1" style="height: 200px; overflow-y: auto; padding-bottom: 25px !important;"></div>
                     </div>
                     <div class="input-group input-group-sm">
-                      <input type="text" class="form-control fw-bold custom-placeholder" id="newClinicInput" placeholder="輸入">
+                      <input type="text" class="form-control fw-bold custom-placeholder" id="newClinicInput" placeholder="輸入" onfocus="this.select()">
                       <button class="btn btn-theme fw-bold" onclick="addOption('clinic')">新增</button>
                     </div>
                   </div>
@@ -225,7 +232,7 @@
                       <div id="rankList" class="bg-white border rounded p-1 mb-2 mt-1" style="height: 200px; overflow-y: auto; padding-bottom: 25px !important;"></div>
                     </div>
                     <div class="input-group input-group-sm">
-                      <input type="text" class="form-control fw-bold custom-placeholder" id="newRankInput" placeholder="輸入">
+                      <input type="text" class="form-control fw-bold custom-placeholder" id="newRankInput" placeholder="輸入" onfocus="this.select()">
                       <button class="btn btn-theme fw-bold" onclick="addOption('rank')">新增</button>
                     </div>
                   </div>
@@ -322,11 +329,9 @@
 
     // 動態搜尋過濾列表
     function filterList(keyword, type) {
-      // 只要打字搜尋，就將「已套用」按鈕恢復為「套用」
       const applyBtn = document.getElementById(type + 'ApplyBtn');
       if (applyBtn.innerText === "已套用") {
         applyBtn.innerText = "套用";
-        applyBtn.classList.replace('btn-success', 'btn-theme');
       }
 
       const container = document.getElementById(type + 'FileListContainer');
@@ -340,19 +345,19 @@
       });
     }
 
-    // 渲染單個圖庫列表項目
+    // 渲染單個圖庫列表項目 (粉色框線按鈕 + 隱藏前綴與副檔名)
     function createListItemHtml(f, menuType) {
-      // 取得完整檔名並去除 .jpg
-      let nameNoExt = f.name.replace(/\.[a-zA-Z0-9]+$/, '');
+      // 1. 去除 [餐點] / [飲料] 前綴，以及結尾的 .jpg (不論大小寫)
+      let cleanName = f.name.replace(/^\[.*?\]/, '').replace(/\.[a-zA-Z0-9]+$/, '');
       
-      // 擷取後面的時間戳記縮小並換行顯示
-      let formattedName = nameNoExt.replace(/(_\d{8}_\d{4})$/, '<br><span class="text-secondary fw-normal" style="font-size:0.75rem;">$1</span>');
+      // 2. 擷取後面的時間戳記縮小並換行顯示
+      let formattedName = cleanName.replace(/(_\d{8}_\d{4})$/, '<br><span class="text-secondary fw-normal" style="font-size:0.75rem;">$1</span>');
       
       return `
-        <div class="file-item align-items-start" data-name="${f.name}">
+        <div class="file-item align-items-start" data-name="${cleanName}">
           <div class="d-flex w-100 mt-1">
             <button class="btn btn-sm btn-outline-theme fw-bold p-0 px-2 me-1 flex-shrink-0 select-btn" data-id="${f.id}" style="font-size:0.75rem; height: 24px;" onclick="quickSetMenu('${menuType}', '${f.url}', '${f.name}', '${f.id}')">選擇</button>
-            <div class="file-name-text fw-bold flex-grow-1" title="${nameNoExt}">${formattedName}</div>
+            <div class="file-name-text fw-bold flex-grow-1" title="${cleanName}">${formattedName}</div>
             <span class="trash-btn flex-shrink-0 p-0 px-1" onclick="deleteMenuFile('${f.id}', '${f.name}')">${trashSvg}</span>
           </div>
         </div>`;
@@ -363,19 +368,29 @@
       apiCall({ action: "getDriveFiles", password: currentPwd }, null, (res) => {
         currentDriveFiles = res.files;
         
+        let bentoOptions = ''; let drinkOptions = ''; 
         let bentoListHtml = ''; let drinkListHtml = '';
         
         currentDriveFiles.forEach(f => {
+          // 清除前綴與副檔名，用於 datalist 建議選項
+          let cleanName = f.name.replace(/^\[.*?\]/, '').replace(/\.[a-zA-Z0-9]+$/, '');
+          const opt = `<option value="${cleanName}">`;
+
           if (f.name.startsWith('[餐點]')) {
+            bentoOptions += opt;
             bentoListHtml += createListItemHtml(f, 'bento');
           } else if (f.name.startsWith('[飲料]')) {
+            drinkOptions += opt;
             drinkListHtml += createListItemHtml(f, 'drink');
           } else { 
+            bentoOptions += opt; drinkOptions += opt; 
             bentoListHtml += createListItemHtml(f, 'bento');
             drinkListHtml += createListItemHtml(f, 'drink');
           }
         });
         
+        document.getElementById('bentoDatalist').innerHTML = bentoOptions; 
+        document.getElementById('drinkDatalist').innerHTML = drinkOptions;
         document.getElementById('bentoFileListContainer').innerHTML = bentoListHtml || '<div class="text-muted small text-center py-2">無資料</div>';
         document.getElementById('drinkFileListContainer').innerHTML = drinkListHtml || '<div class="text-muted small text-center py-2">無資料</div>';
       });
@@ -387,26 +402,32 @@
       const keyword = input.value.trim(); 
       if(!keyword) return alert("請先搜尋或選擇菜單！");
       
-      const fileObj = currentDriveFiles.find(f => f.name === keyword || f.name.includes(keyword));
+      // 搜尋時比對 "乾淨的名稱" (去除前綴與副檔名) 或是 "原名稱"
+      const fileObj = currentDriveFiles.find(f => {
+        let clean = f.name.replace(/^\[.*?\]/, '').replace(/\.[a-zA-Z0-9]+$/, '');
+        return clean === keyword || f.name.includes(keyword);
+      });
+
       if(!fileObj) return alert("找不到符合的檔案，請從下方清單選擇！");
       
       quickSetMenu(type, fileObj.url, fileObj.name, fileObj.id);
     }
 
-    // 從列表「選擇」一鍵套用與連動 UI 變化
+    // 從列表「選擇」一鍵套用與連動 UI 變化 (靜默套用，不跳 Alert)
     function quickSetMenu(type, url, textName, fileId) {
       const shopName = textName.replace(/^\[.*?\]/, '').replace(/_\d{8}_\d{4}\.jpg$/, '').replace(/_\d+\.jpg$/, '');
       showLoading("套用設定中..."); 
       
-      apiCall({ action: "setMenuUrl", menuType: type, url: url, shopName: shopName, password: currentPwd }, "✅ 今日菜單已成功套用！", () => {
+      apiCall({ action: "setMenuUrl", menuType: type, url: url, shopName: shopName, password: currentPwd }, null, () => {
         
-        // 1. 檔名帶入搜尋格
-        document.getElementById(type + 'Input').value = textName;
+        // 1. 乾淨的檔名帶入搜尋格
+        let cleanName = textName.replace(/^\[.*?\]/, '').replace(/\.[a-zA-Z0-9]+$/, '');
+        document.getElementById(type + 'Input').value = cleanName;
         
-        // 2. 套用按鈕改為「已套用」(綠底)
+        // 2. 套用按鈕改為「已套用」(維持乾燥玫瑰粉)
         const applyBtn = document.getElementById(type + 'ApplyBtn');
         applyBtn.innerText = "已套用";
-        applyBtn.classList.replace('btn-theme', 'btn-success');
+        applyBtn.className = "btn btn-theme fw-bold px-2";
         
         // 3. 變更列表按鈕狀態 (全部歸零為選擇，當前點擊的改為今日)
         const container = document.getElementById(type + 'FileListContainer');
@@ -486,7 +507,9 @@
     }
 
     function deleteMenuFile(fileId, fileName) {
-      if(!confirm(`確定要從圖庫中刪除「${fileName}」嗎？`)) return; 
+      // 刪除確認時也顯示乾淨的名稱
+      let cleanName = fileName.replace(/^\[.*?\]/, '').replace(/\.[a-zA-Z0-9]+$/, '');
+      if(!confirm(`確定要從圖庫中刪除「${cleanName}」嗎？`)) return; 
       showLoading("刪除檔案中...");
       apiCall({ action: "deleteFile", fileId: fileId, password: currentPwd }, null, () => loadDriveFiles());
     }
