@@ -69,8 +69,16 @@
         font-size: 0.9rem;
       }
 
-      /* 隱形陷阱：用來沒收手機鍵盤的 Next 行為 */
-      .dummy-trap { position: absolute; opacity: 0; height: 1px; width: 1px; padding: 0; border: none; z-index: -10; left: -9999px; }
+      /* 隱形陷阱：用來沒收手機鍵盤的 Next 行為，讓 iOS 能順利選取但看不見 */
+      .dummy-trap { 
+        position: absolute; 
+        opacity: 0; 
+        width: 1px; 
+        height: 1px; 
+        padding: 0; 
+        border: none; 
+        margin: 0;
+      }
     </style>
   </head>
   <body>
@@ -125,13 +133,12 @@
                 
                 <div class="row g-2">
                   <div class="col-8">
-                    <input type="text" class="form-control fw-bold" id="bentoName" placeholder="餐點" enterkeyhint="next" onkeydown="if(event.key==='Enter' || event.keyCode===13){event.preventDefault(); document.getElementById('bentoAmount').focus();}" onfocus="this.select()">
+                    <input type="text" class="form-control fw-bold" id="bentoName" placeholder="餐點" enterkeyhint="next" onfocus="this.select()">
                   </div>
                   <div class="col-4">
-                    <!-- 攔截Enter/Tab，觸發平滑置頂 -->
-                    <input type="text" inputmode="numeric" class="form-control fw-bold" id="bentoAmount" placeholder="金額" enterkeyhint="done" onkeydown="if(event.key==='Enter' || event.keyCode===13 || event.key==='Tab' || event.keyCode===9){event.preventDefault(); this.blur(); handleAmountBlur('bentoAmount');}" onfocus="this.select()">
-                    <!-- 隱形陷阱：沒收手機虛擬鍵盤的 Next 行為 -->
-                    <input type="text" class="dummy-trap" tabindex="-1" onfocus="this.blur(); handleAmountBlur('bentoAmount');">
+                    <!-- 綁定 onblur 觸發置頂，保留 dummy-trap 抓下一項 -->
+                    <input type="text" inputmode="numeric" class="form-control fw-bold" id="bentoAmount" placeholder="金額" enterkeyhint="done" onblur="onAmountBlur('bentoAmount')" onfocus="this.select()">
+                    <input type="text" class="dummy-trap" tabindex="0" inputmode="none" onfocus="this.blur();">
                   </div>
                 </div>
               </div>
@@ -146,12 +153,12 @@
                 
                 <div class="row g-2">
                   <div class="col-8">
-                    <input type="text" class="form-control fw-bold" id="drinkName" placeholder="飲料" enterkeyhint="next" onkeydown="if(event.key==='Enter' || event.keyCode===13){event.preventDefault(); document.getElementById('drinkAmount').focus();}" onfocus="this.select()">
+                    <input type="text" class="form-control fw-bold" id="drinkName" placeholder="飲料" enterkeyhint="next" onfocus="this.select()">
                   </div>
                   <div class="col-4">
-                    <!-- 攔截Enter/Tab，觸發平滑置頂 -->
-                    <input type="text" inputmode="numeric" class="form-control fw-bold" id="drinkAmount" placeholder="金額" enterkeyhint="done" onkeydown="if(event.key==='Enter' || event.keyCode===13 || event.key==='Tab' || event.keyCode===9){event.preventDefault(); this.blur(); handleAmountBlur('drinkAmount');}" onfocus="this.select()">
-                    <input type="text" class="dummy-trap" tabindex="-1" onfocus="this.blur(); handleAmountBlur('drinkAmount');">
+                    <!-- 綁定 onblur 觸發置頂，保留 dummy-trap 抓下一項 -->
+                    <input type="text" inputmode="numeric" class="form-control fw-bold" id="drinkAmount" placeholder="金額" enterkeyhint="done" onblur="onAmountBlur('drinkAmount')" onfocus="this.select()">
+                    <input type="text" class="dummy-trap" tabindex="0" inputmode="none" onfocus="this.blur();">
                   </div>
                 </div>
               </div>
@@ -224,25 +231,32 @@
         img.style.display = 'block';
       }
 
-      // --- 【重點更新】職級點選後：精準捲動「該被點擊的職級」到螢幕最上方 ---
+      // --- 職級點選後：精準捲動「該被點擊的職級」到螢幕最上方 ---
       function handleRankChange(radioId) {
         setTimeout(() => {
           const el = document.getElementById(radioId);
           if (el && el.nextElementSibling) {
-            // 抓取該職級的 Label 按鈕絕對位置，預留 15px 安全距離置頂
             const targetY = window.scrollY + el.nextElementSibling.getBoundingClientRect().top - 15;
             window.scrollTo({ top: Math.max(0, targetY), behavior: 'smooth' });
           }
         }, 350); 
       }
 
-      // --- 【重點更新】金額輸入完成：收起鍵盤並讓該金額列置頂 ---
-      function handleAmountBlur(inputId) {
-        // 等待 400 毫秒讓手機鍵盤完全收起，避免高度計算錯誤
+      // --- 【終極絕招】金額輸入完成：等待鍵盤收起，並讓該金額列置頂 ---
+      function onAmountBlur(inputId) {
+        // 等待 400 毫秒，讓手機鍵盤完全滑下，避免因為螢幕高度變化導致捲動算錯
         setTimeout(() => {
+          const active = document.activeElement;
+          
+          // 防呆：如果使用者不是按打勾/下一項，而是手動點了其他格子（例如飲料名稱格）
+          // 我們就不做任何捲動，以免畫面亂跳打架！
+          if (active && active.tagName === 'INPUT' && !active.classList.contains('dummy-trap')) {
+            return;
+          }
+          
+          // 確認鍵盤收起後，將該金額格的這列，平滑拉到螢幕最頂端 (預留 15px)
           const el = document.getElementById(inputId);
           if (el) {
-            // 抓取該金額格的絕對位置，置於螢幕上方 (預留 15px)
             const targetY = window.scrollY + el.getBoundingClientRect().top - 15;
             window.scrollTo({ top: Math.max(0, targetY), behavior: 'smooth' });
           }
@@ -301,7 +315,6 @@
 
             const rankContainer = document.getElementById('rankGroup'); rankContainer.innerHTML = '';
             response.data.ranks.forEach((r, idx) => {
-              // 傳遞唯一 ID 給 handleRankChange
               rankContainer.innerHTML += `<div class="col-4"><input type="radio" class="btn-check rank-radio" name="rank" id="r_${idx}" value="${r}" onchange="handleRankChange('r_${idx}')"><label class="btn btn-outline-dark-theme w-100 fw-bold rank-label-custom" for="r_${idx}">${r}</label></div>`;
             });
 
@@ -319,10 +332,10 @@
       window.onload = () => loadData();
 
       // ==========================================================
-      // 🚀 設定安全距離為 25px 進行測試
+      // 🚀 設定安全距離為 25px 進行測試 (點擊格子時依然有效)
       // ==========================================================
       document.addEventListener('focusin', function(e) {
-        if (e.target && e.target.tagName === 'INPUT') {
+        if (e.target && e.target.tagName === 'INPUT' && !e.target.classList.contains('dummy-trap')) {
           const isKeyboardAlreadyUp = window.visualViewport && (window.visualViewport.height < window.innerHeight * 0.85);
           const delayTime = isKeyboardAlreadyUp ? 10 : 350;
 
