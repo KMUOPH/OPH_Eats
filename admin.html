@@ -511,6 +511,13 @@
       if (!fileInput.files[0]) return alert("請選擇圖片！");
       
       const file = fileInput.files[0];
+
+      // 🛑 升級1：攔截瀏覽器無法直接壓縮的 HEIF/HEIC 格式
+      const fileNameLower = file.name.toLowerCase();
+      if (fileNameLower.endsWith('.heic') || fileNameLower.endsWith('.heif')) {
+        return alert("⚠️ 瀏覽器不支援直接上傳 HEIF/HEIC 格式！\n請先在電腦上將圖片轉為 JPG 或 PNG 後再上傳。");
+      }
+
       const prefix = type === 'bento' ? '[餐點]' : '[飲料]';
       const shopName = nameInput.value.trim();
       
@@ -522,6 +529,13 @@
       const reader = new FileReader();
       reader.onload = function(e) {
         const img = new Image();
+        
+        // 🛑 升級2：捕捉圖片解析失敗的錯誤，解除無限轉圈圈
+        img.onerror = function() {
+          hideLoading();
+          alert("❌ 圖片解析失敗！\n這可能是瀏覽器不支援的格式，或是檔案已損毀，請轉換為一般 JPG/PNG 後再試一次。");
+        };
+
         img.onload = function() {
           const canvas = document.createElement('canvas'); 
           let width = img.width, height = img.height; 
