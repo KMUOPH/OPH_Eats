@@ -27,8 +27,8 @@
       .btn-outline-dark-theme { color: #495057; border-color: #adb5bd; border-radius: 5px !important; }
       .btn-outline-dark-theme:hover { background-color: #e9ecef; color: #212529; }
       
-      /* 修改選取後的顏色為淺灰底深色字 */
-      .btn-check:checked + .btn-outline-dark-theme { background-color: #ced4da; color: #212529; border-color: #adb5bd; font-weight: bold; }
+      /* 將選取後的底色加深一階 (#adb5bd)，保持深色字，凸顯選取狀態 */
+      .btn-check:checked + .btn-outline-dark-theme { background-color: #adb5bd; color: #1a1e21; border-color: #868e96; font-weight: bold; }
       
       .form-control:focus {
         border-color: #86b7fe !important;
@@ -42,7 +42,6 @@
       
       .section-block { margin-bottom: 24px; }
       
-      /* 標題列改為：淺灰藍底 (#e2e8f0) 深色字 (#212529) */
       .section-header { 
         background-color: #e2e8f0; 
         color: #212529; 
@@ -114,7 +113,6 @@
 
               <div class="section-block">
                 <div class="section-header" id="bentoSectionTitle">餐點</div>
-                <!-- 菜單圖片與失敗重試區塊 -->
                 <img id="bentoMenuImg" class="menu-img" alt="餐點菜單" onerror="handleImgError('bento')">
                 <div id="bentoImgError" class="text-center p-3 mb-3 border rounded" style="background-color: #f8f9fa; display: none;">
                   <span class="text-secondary fw-bold small">圖片載入超時或失敗</span>
@@ -126,15 +124,14 @@
                     <input type="text" class="form-control fw-bold" id="bentoName" placeholder="餐點" enterkeyhint="next" onkeydown="if(event.key==='Enter' || event.keyCode===13){event.preventDefault(); document.getElementById('bentoAmount').focus();}" onfocus="this.select()">
                   </div>
                   <div class="col-4">
-                    <!-- 攔截 Enter 與 Tab，強制收起鍵盤並捲動到飲料區 -->
-                    <input type="text" inputmode="numeric" class="form-control fw-bold" id="bentoAmount" placeholder="金額" enterkeyhint="done" onkeydown="if(event.key==='Enter' || event.keyCode===13 || event.key==='Tab' || event.keyCode===9){event.preventDefault(); this.blur(); setTimeout(scrollToDrink, 150);}" onfocus="this.select()">
+                    <!-- 強制攔截打勾(Enter)與下一項(Tab)，沒收鍵盤並置中飲料區 -->
+                    <input type="text" inputmode="numeric" class="form-control fw-bold" id="bentoAmount" placeholder="金額" enterkeyhint="done" onkeydown="if(event.key==='Enter' || event.keyCode===13 || event.key==='Tab' || event.keyCode===9){event.preventDefault(); this.blur(); setTimeout(function(){ document.getElementById('drinkSectionTitle').scrollIntoView({behavior:'smooth', block:'center'}); }, 150);}" onfocus="this.select()">
                   </div>
                 </div>
               </div>
 
               <div class="section-block">
                 <div class="section-header" id="drinkSectionTitle">飲料</div>
-                <!-- 飲料圖片與失敗重試區塊 -->
                 <img id="drinkMenuImg" class="menu-img" alt="飲料菜單" onerror="handleImgError('drink')">
                 <div id="drinkImgError" class="text-center p-3 mb-3 border rounded" style="background-color: #f8f9fa; display: none;">
                   <span class="text-secondary fw-bold small">圖片載入超時或失敗</span>
@@ -146,8 +143,8 @@
                     <input type="text" class="form-control fw-bold" id="drinkName" placeholder="飲料" enterkeyhint="next" onkeydown="if(event.key==='Enter' || event.keyCode===13){event.preventDefault(); document.getElementById('drinkAmount').focus();}" onfocus="this.select()">
                   </div>
                   <div class="col-4">
-                    <!-- 攔截 Enter 與 Tab，強制收起鍵盤並捲動到備註區 -->
-                    <input type="text" inputmode="numeric" class="form-control fw-bold" id="drinkAmount" placeholder="金額" enterkeyhint="done" onkeydown="if(event.key==='Enter' || event.keyCode===13 || event.key==='Tab' || event.keyCode===9){event.preventDefault(); this.blur(); setTimeout(scrollToNotes, 150);}" onfocus="this.select()">
+                    <!-- 強制攔截打勾(Enter)與下一項(Tab)，沒收鍵盤並置中備註區 -->
+                    <input type="text" inputmode="numeric" class="form-control fw-bold" id="drinkAmount" placeholder="金額" enterkeyhint="done" onkeydown="if(event.key==='Enter' || event.keyCode===13 || event.key==='Tab' || event.keyCode===9){event.preventDefault(); this.blur(); setTimeout(function(){ document.getElementById('notes').scrollIntoView({behavior:'smooth', block:'center'}); }, 150);}" onfocus="this.select()">
                   </div>
                 </div>
               </div>
@@ -159,7 +156,8 @@
                   <button type="button" class="btn btn-outline-dark-theme fw-bold capsule-btn" onclick="addNote('兩筆都要')">兩筆都要</button>
                 </div>
                 <div class="input-group">
-                  <input type="text" class="form-control fw-bold" id="notes" placeholder="其他需求..." enterkeyhint="done" onkeydown="if(event.key==='Enter' || event.keyCode===13){event.preventDefault(); this.blur();}" onfocus="this.select()">
+                  <!-- 強制攔截打勾(Enter)，沒收鍵盤並置中送出按鈕 -->
+                  <input type="text" class="form-control fw-bold" id="notes" placeholder="其他需求..." enterkeyhint="done" onkeydown="if(event.key==='Enter' || event.keyCode===13){event.preventDefault(); this.blur(); setTimeout(function(){ document.getElementById('submitBtn').scrollIntoView({behavior:'smooth', block:'center'}); }, 150);}" onfocus="this.select()">
                   <button class="btn btn-clear" type="button" onclick="document.getElementById('notes').value='';" title="清除內容">✖</button>
                 </div>
               </div>
@@ -220,36 +218,14 @@
         img.style.display = 'block';
       }
 
-      // --- 職級點選後：延遲一下再平滑捲動到餐點格 ---
+      // --- 職級點選後：延遲一下，使用更穩定的 scrollIntoView 置中餐點區 ---
       function handleRankChange() {
         setTimeout(() => {
-          const bentoInput = document.getElementById('bentoName');
-          if (bentoInput) {
-            const rect = bentoInput.getBoundingClientRect();
-            const targetY = window.scrollY + rect.bottom - window.innerHeight + 30;
-            window.scrollTo({ top: Math.max(0, targetY), behavior: 'smooth' });
+          const bentoSection = document.getElementById('bentoSectionTitle');
+          if (bentoSection) {
+            bentoSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
           }
-        }, 350); // 350毫秒的視覺停留
-      }
-
-      // --- 平滑捲動到飲料格 ---
-      function scrollToDrink() {
-        const drinkInput = document.getElementById('drinkName');
-        if (drinkInput) {
-          const rect = drinkInput.getBoundingClientRect();
-          const targetY = window.scrollY + rect.bottom - window.innerHeight + 30;
-          window.scrollTo({ top: Math.max(0, targetY), behavior: 'smooth' });
-        }
-      }
-
-      // --- 平滑捲動到備註格 ---
-      function scrollToNotes() {
-        const notesInput = document.getElementById('notes');
-        if (notesInput) {
-          const rect = notesInput.getBoundingClientRect();
-          const targetY = window.scrollY + rect.bottom - window.innerHeight + 30;
-          window.scrollTo({ top: Math.max(0, targetY), behavior: 'smooth' });
-        }
+        }, 350); 
       }
 
       function loadData() {
@@ -304,7 +280,6 @@
 
             const rankContainer = document.getElementById('rankGroup'); rankContainer.innerHTML = '';
             response.data.ranks.forEach((r, idx) => {
-              // 綁定新的延遲捲動函式
               rankContainer.innerHTML += `<div class="col-4"><input type="radio" class="btn-check rank-radio" name="rank" id="r_${idx}" value="${r}" onchange="handleRankChange()"><label class="btn btn-outline-dark-theme w-100 fw-bold rank-label-custom" for="r_${idx}">${r}</label></div>`;
             });
 
@@ -322,7 +297,7 @@
       window.onload = () => loadData();
 
       // ==========================================================
-      // 🚀 設定安全距離為 25px 進行測試
+      // 🚀 設定安全距離為 25px 進行測試 (點擊格子時依然有效)
       // ==========================================================
       document.addEventListener('focusin', function(e) {
         if (e.target && e.target.tagName === 'INPUT') {
