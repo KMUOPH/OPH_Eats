@@ -169,7 +169,7 @@
                 <div class="p-2 border rounded bg-light">
                   <input type="text" class="form-control form-control-sm fw-bold mb-1 custom-placeholder" id="libBentoName" autocomplete="off" placeholder="(新增餐點)輸入店家名稱" onfocus="this.select()">
                   <label for="libBentoFile" class="btn w-100 mb-1 fw-bold text-truncate" id="bentoFileLabel" style="background-color: #e9ecef; color: #212529; border: 1px solid #ced4da; font-size: 0.8rem;">選擇圖片</label>
-                  <input type="file" id="libBentoFile" accept="image/*" style="display: none;" onchange="updateFileLabel('bento')">
+                  <input type="file" id="libBentoFile" accept="image/*, .heic, .heif" style="display: none;" onchange="updateFileLabel('bento')">
                   <button class="btn btn-theme btn-sm fw-bold w-100" onclick="uploadToLibrary('bento')">上傳</button>
                 </div>
               </div>
@@ -202,7 +202,7 @@
                 <div class="p-2 border rounded bg-light">
                   <input type="text" class="form-control form-control-sm fw-bold mb-1 custom-placeholder" id="libDrinkName" autocomplete="off" placeholder="(新增飲料)輸入店家名稱" onfocus="this.select()">
                   <label for="libDrinkFile" class="btn w-100 mb-1 fw-bold text-truncate" id="drinkFileLabel" style="background-color: #e9ecef; color: #212529; border: 1px solid #ced4da; font-size: 0.8rem;">選擇圖片</label>
-                  <input type="file" id="libDrinkFile" accept="image/*" style="display: none;" onchange="updateFileLabel('drink')">
+                  <input type="file" id="libDrinkFile" accept="image/*, .heic, .heif" style="display: none;" onchange="updateFileLabel('drink')">
                   <button class="btn btn-theme btn-sm fw-bold w-100" onclick="uploadToLibrary('drink')">上傳</button>
                 </div>
               </div>
@@ -226,9 +226,9 @@
                     <div class="fw-bold text-secondary small mb-0 text-center">診次</div>
                     <div id="clinicList" class="bg-white border rounded p-1 mb-2 mt-1 flex-grow-1"></div>
                     
-                    <div class="input-group input-group-sm mt-auto">
-                      <input type="text" class="form-control fw-bold custom-placeholder" id="newClinicInput" autocomplete="off" placeholder="輸入" onfocus="this.select()">
-                      <button class="btn btn-theme fw-bold" onclick="addOption('clinic')">新增</button>
+                    <div class="input-group input-group-sm mt-auto d-flex align-items-center">
+                      <input type="text" class="form-control fw-bold custom-placeholder m-0" style="height: 31px;" id="newClinicInput" autocomplete="off" placeholder="輸入" onfocus="this.select()">
+                      <button class="btn btn-theme fw-bold m-0" style="height: 31px;" onclick="addOption('clinic')">新增</button>
                     </div>
                   </div>
                   
@@ -237,9 +237,9 @@
                     <div class="fw-bold text-secondary small mb-0 text-center">職級</div>
                     <div id="rankList" class="bg-white border rounded p-1 mb-2 mt-1 flex-grow-1"></div>
                     
-                    <div class="input-group input-group-sm mt-auto">
-                      <input type="text" class="form-control fw-bold custom-placeholder" id="newRankInput" autocomplete="off" placeholder="輸入" onfocus="this.select()">
-                      <button class="btn btn-theme fw-bold" onclick="addOption('rank')">新增</button>
+                    <div class="input-group input-group-sm mt-auto d-flex align-items-center">
+                      <input type="text" class="form-control fw-bold custom-placeholder m-0" style="height: 31px;" id="newRankInput" autocomplete="off" placeholder="輸入" onfocus="this.select()">
+                      <button class="btn btn-theme fw-bold m-0" style="height: 31px;" onclick="addOption('rank')">新增</button>
                     </div>
                   </div>
                 </div>
@@ -255,6 +255,8 @@
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- 引入自動轉換蘋果 HEIF/HEIC 格式的神器 -->
+  <script src="https://cdn.jsdelivr.net/npm/heic2any@0.0.4/dist/heic2any.min.js"></script>
   <script>
     // ⚠️ 請確保這是您最新的 API 網址
     const GAS_API_URL = "https://script.google.com/macros/s/AKfycbwGOrIyoQ-XUBcn_nExeZuKkuQIvWx6aZhdYhB10qq6HW6uDxCa9tGUA_pwByVC7cSw/exec"; 
@@ -265,7 +267,6 @@
     let currentDriveFiles = [];
     let isSystemOpen = false;
 
-    // 核心新增：全域紀錄目前作用中的圖檔網址與店名，用來精準控制開關狀態
     let activeBentoUrl = "";
     let activeDrinkUrl = "";
     let activeBentoShopName = "";
@@ -327,7 +328,6 @@
       }
     }
 
-    // 更新：抓取資料庫目前的真實狀態，並同步到全域變數與畫面上
     function loadCurrentOptions() { 
       apiCall({ action: "getSystemData" }, null, (res) => { 
         clinicsList = res.data.clinics || []; 
@@ -342,7 +342,6 @@
         updateStatusUI();
         renderVerticalLists(); 
 
-        // 同步餐點搜尋格
         if (activeBentoShopName) {
           document.getElementById('bentoInput').value = activeBentoShopName;
           document.getElementById('bentoApplyBtn').innerText = "已套用";
@@ -351,7 +350,6 @@
           document.getElementById('bentoApplyBtn').innerText = "套用";
         }
 
-        // 同步飲料搜尋格
         if (activeDrinkShopName) {
           document.getElementById('drinkInput').value = activeDrinkShopName;
           document.getElementById('drinkApplyBtn').innerText = "已套用";
@@ -360,7 +358,6 @@
           document.getElementById('drinkApplyBtn').innerText = "套用";
         }
 
-        // 如果圖庫已經抓完，立刻重新渲染，讓開關準確亮起
         if (currentDriveFiles.length > 0) {
           renderDriveFiles();
         }
@@ -392,7 +389,6 @@
       });
     }
 
-    // 更新：帶入 activeUrl 參數，判斷這張圖是否為目前資料庫記錄的圖片，是的話就加上 checked
     function createListItemHtml(f, menuType, activeUrl) {
       let cleanName = f.name.replace(/^\[.*?\]/, '').replace(/\.[a-zA-Z0-9]+$/, '');
       let shopNameOnly = cleanName.replace(/_\d{8}_\d{4}$/, '');
@@ -421,11 +417,10 @@
       showLoading("讀取圖庫中...");
       apiCall({ action: "getDriveFiles", password: currentPwd }, null, (res) => {
         currentDriveFiles = res.files;
-        renderDriveFiles(); // 委派給專屬的渲染函式
+        renderDriveFiles();
       });
     }
 
-    // 專屬渲染函式：每次資料變動都能用最快的速度重新繪製正確的開關狀態
     function renderDriveFiles() {
       let bentoListHtml = ''; let drinkListHtml = '';
         
@@ -459,14 +454,12 @@
       quickSetMenu(type, fileObj.url, fileObj.name, fileObj.id);
     }
 
-    // 更新：套用後將最新的狀態存入全域變數，並觸發重新渲染，確保唯一選取態
     function quickSetMenu(type, url, textName, fileId) {
       const shopName = textName.replace(/^\[.*?\]/, '').replace(/_\d{8}_\d{4}\.jpg$/, '').replace(/_\d+\.jpg$/, '').replace(/\.jpg$/i, '');
       showLoading("套用設定中..."); 
       
       apiCall({ action: "setMenuUrl", menuType: type, url: url, shopName: shopName, password: currentPwd }, null, () => {
         
-        // 更新全域作用中變數
         if (type === 'bento') {
             activeBentoUrl = url;
             activeBentoShopName = shopName;
@@ -475,13 +468,11 @@
             activeDrinkShopName = shopName;
         }
 
-        // 同步輸入格文字與按鈕狀態
         document.getElementById(type + 'Input').value = shopName;
         const applyBtn = document.getElementById(type + 'ApplyBtn');
         applyBtn.innerText = "已套用";
         applyBtn.className = "btn btn-theme fw-bold px-2";
         
-        // 瞬間重新渲染整個列表，確保只有剛才選的那個燈亮著
         renderDriveFiles();
       });
     }
@@ -510,14 +501,10 @@
       if (!nameInput.value.trim()) return alert("請輸入店家名稱！");
       if (!fileInput.files[0]) return alert("請選擇圖片！");
       
-      const file = fileInput.files[0];
-
-      // 🛑 升級1：攔截瀏覽器無法直接壓縮的 HEIF/HEIC 格式
+      let file = fileInput.files[0];
       const fileNameLower = file.name.toLowerCase();
-      if (fileNameLower.endsWith('.heic') || fileNameLower.endsWith('.heif')) {
-        return alert("⚠️ 瀏覽器不支援直接上傳 HEIF/HEIC 格式！\n請先在電腦上將圖片轉為 JPG 或 PNG 後再上傳。");
-      }
-
+      const isHeic = fileNameLower.endsWith('.heic') || fileNameLower.endsWith('.heif');
+      
       const prefix = type === 'bento' ? '[餐點]' : '[飲料]';
       const shopName = nameInput.value.trim();
       
@@ -525,46 +512,71 @@
       const timeStr = `${now.getFullYear()}${String(now.getMonth()+1).padStart(2,'0')}${String(now.getDate()).padStart(2,'0')}_${String(now.getHours()).padStart(2,'0')}${String(now.getMinutes()).padStart(2,'0')}`;
       const finalFilename = `${prefix}${shopName}_${timeStr}.jpg`;
       
-      showLoading("照片壓縮與上傳中...");
-      const reader = new FileReader();
-      reader.onload = function(e) {
-        const img = new Image();
-        
-        // 🛑 升級2：捕捉圖片解析失敗的錯誤，解除無限轉圈圈
-        img.onerror = function() {
-          hideLoading();
-          alert("❌ 圖片解析失敗！\n這可能是瀏覽器不支援的格式，或是檔案已損毀，請轉換為一般 JPG/PNG 後再試一次。");
-        };
+      // 內嵌處理與上傳函式
+      const processAndUpload = (imageBlob) => {
+        showLoading("照片壓縮與上傳中...");
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const img = new Image();
+          
+          img.onerror = function() {
+            hideLoading();
+            alert("❌ 圖片解析失敗！\n檔案可能已損毀，請確認圖片是否正常。");
+          };
 
-        img.onload = function() {
-          const canvas = document.createElement('canvas'); 
-          let width = img.width, height = img.height; 
-          const MAX_SIZE = 1200;
-          
-          if (width > height && width > MAX_SIZE) { 
-            height *= MAX_SIZE / width; width = MAX_SIZE; 
-          } else if (height > MAX_SIZE) { 
-            width *= MAX_SIZE / height; height = MAX_SIZE; 
-          }
-          
-          canvas.width = width; 
-          canvas.height = height; 
-          canvas.getContext('2d').drawImage(img, 0, 0, width, height);
-          
-          apiCall(
-            { action: "uploadOnly", menuType: type, filename: finalFilename, image: canvas.toDataURL('image/jpeg', 0.8), shopName: shopName, password: currentPwd }, 
-            null, 
-            () => { 
-              fileInput.value = ""; 
-              nameInput.value = ""; 
-              updateFileLabel(type); 
-              loadDriveFiles(); 
+          img.onload = function() {
+            const canvas = document.createElement('canvas'); 
+            let width = img.width, height = img.height; 
+            const MAX_SIZE = 1200;
+            
+            if (width > height && width > MAX_SIZE) { 
+              height *= MAX_SIZE / width; width = MAX_SIZE; 
+            } else if (height > MAX_SIZE) { 
+              width *= MAX_SIZE / height; height = MAX_SIZE; 
             }
-          );
+            
+            canvas.width = width; 
+            canvas.height = height; 
+            canvas.getContext('2d').drawImage(img, 0, 0, width, height);
+            
+            apiCall(
+              { action: "uploadOnly", menuType: type, filename: finalFilename, image: canvas.toDataURL('image/jpeg', 0.8), shopName: shopName, password: currentPwd }, 
+              null, 
+              () => { 
+                fileInput.value = ""; 
+                nameInput.value = ""; 
+                updateFileLabel(type); 
+                loadDriveFiles(); 
+              }
+            );
+          }; 
+          img.src = e.target.result;
         }; 
-        img.src = e.target.result;
-      }; 
-      reader.readAsDataURL(file);
+        reader.readAsDataURL(imageBlob);
+      };
+
+      // 🛑 自動攔截 HEIF/HEIC 並在背景轉換為 JPEG
+      if (isHeic) {
+        showLoading("蘋果 HEIF/HEIC 格式自動轉換中...");
+        if (typeof heic2any !== 'undefined') {
+          heic2any({ blob: file, toType: "image/jpeg", quality: 0.8 })
+            .then((convertedBlob) => {
+              // 有些照片會回傳陣列 (例如原況照片)，只取第一張
+              let finalBlob = Array.isArray(convertedBlob) ? convertedBlob[0] : convertedBlob;
+              processAndUpload(finalBlob);
+            })
+            .catch((err) => {
+              hideLoading();
+              alert("❌ 蘋果格式轉換失敗：" + err.message + "\n請嘗試手動轉檔後再上傳。");
+            });
+        } else {
+          hideLoading();
+          alert("❌ 缺少轉檔套件，請重新整理網頁再試。");
+        }
+      } else {
+        // 一般格式直接執行
+        processAndUpload(file);
+      }
     }
 
     function deleteMenuFile(fileId, fileName) {
