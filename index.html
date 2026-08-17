@@ -185,6 +185,18 @@
 
       function addNote(text) { const n = document.getElementById('notes'); n.value = n.value ? n.value + "。" + text : text; }
 
+      // --- 新增：平滑捲動到餐點格 (不彈出鍵盤) ---
+      function scrollToBento() {
+        const bentoInput = document.getElementById('bentoName');
+        if (bentoInput) {
+          const rect = bentoInput.getBoundingClientRect();
+          // 計算位移量：讓餐點輸入格顯示在螢幕的下方 (預留 30px 安全邊距)
+          const targetY = window.scrollY + rect.bottom - window.innerHeight + 30;
+          // 使用平滑捲動，不使用 focus() 以免觸發鍵盤
+          window.scrollTo({ top: Math.max(0, targetY), behavior: 'smooth' });
+        }
+      }
+
       function loadData() {
         document.getElementById('loadingScreen').classList.remove('d-none');
         document.getElementById('mainContent').classList.add('d-none');
@@ -237,7 +249,8 @@
 
             const rankContainer = document.getElementById('rankGroup'); rankContainer.innerHTML = '';
             response.data.ranks.forEach((r, idx) => {
-              rankContainer.innerHTML += `<div class="col-4"><input type="radio" class="btn-check rank-radio" name="rank" id="r_${idx}" value="${r}" onchange="document.getElementById('bentoName').focus();"><label class="btn btn-outline-dark-theme w-100 fw-bold rank-label-custom" for="r_${idx}">${r}</label></div>`;
+              // 注意：這裡將 focus() 改為 scrollToBento()
+              rankContainer.innerHTML += `<div class="col-4"><input type="radio" class="btn-check rank-radio" name="rank" id="r_${idx}" value="${r}" onchange="scrollToBento()"><label class="btn btn-outline-dark-theme w-100 fw-bold rank-label-custom" for="r_${idx}">${r}</label></div>`;
             });
 
           } else { 
@@ -254,7 +267,7 @@
       window.onload = () => loadData();
 
       // ==========================================================
-      // 🚀 設定安全距離為 25px 進行測試
+      // 🚀 設定安全距離為 25px 進行測試 (點擊格子時依然有效)
       // ==========================================================
       document.addEventListener('focusin', function(e) {
         if (e.target && e.target.tagName === 'INPUT') {
