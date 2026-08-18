@@ -40,22 +40,20 @@
       
       .section-block { margin-bottom: 16px; }
       
-      /* 🔥 緞帶設計：貼齊左邊界、無左側圓角 */
+      /* 🔥 緞帶設計：修正斜角問題，改用內陰影取代下邊框 */
       .section-header { 
         color: #3a4f63; 
-        padding: 4px 8px 4px 16px; /* 增加左邊內距避免字太靠近邊緣 */
+        padding: 6px 8px 6px 16px; 
         font-size: 1.05rem; 
         font-weight: bold; 
         margin-bottom: 10px; 
-        margin-left: -16px; /* 🔥 完美貼齊手機左側邊緣 */
+        margin-left: -16px; /* 完美貼齊手機左側邊緣 */
         display: flex; 
         justify-content: space-between; 
         align-items: center; 
         border-left: 6px solid #536e86; 
-        border-bottom: 1px solid #f1f3f5;
+        box-shadow: inset 0 -1px 0 #f1f3f5; /* 用陰影畫線，完美避免斜角 */
         background: linear-gradient(to right, #f8f9fa, #ffffff);
-        border-top-left-radius: 0px; /* 取消左圓角 */
-        border-bottom-left-radius: 0px; /* 取消左圓角 */
         border-top-right-radius: 4px;
         border-bottom-right-radius: 4px;
       }
@@ -71,22 +69,15 @@
       .custom-placeholder::placeholder { color: #adb5bd !important; opacity: 1 !important; font-weight: normal !important; }
       .dummy-trap { position: absolute; opacity: 0; width: 1px; height: 1px; padding: 0; border: none; margin: 0; }
 
-      /* ================= 質感淺灰藍設計 ================= */
+      /* ================= 質感淺灰藍按鈕 (強制鎖死底色，拒絕泛白) ================= */
       .btn-top5 { 
-        background-color: #e2e8f0; 
-        border: 1px solid #cbd5e1; 
-        color: #343a40; 
-        transition: all 0.2s; 
-      }
-      @media (hover: hover) { .btn-top5:hover { background-color: #cbd5e1; } }
-      /* 🔥 徹底解決點擊泛白的問題，鎖定深色態 */
-      .btn-top5:active, .btn-top5:focus { 
-        background-color: #cbd5e1 !important; 
-        border-color: #cbd5e1 !important; 
+        background-color: #e2e8f0 !important; 
+        border: 1px solid #cbd5e1 !important; 
         color: #343a40 !important; 
-        box-shadow: none !important; 
-        transform: scale(0.98); 
+        transition: transform 0.1s; 
       }
+      .btn-top5:active { background-color: #cbd5e1 !important; transform: scale(0.98); }
+      .btn-top5:focus { outline: none !important; box-shadow: none !important; }
 
       .top5-container { display: flex; flex-wrap: nowrap; gap: 8px; padding: 10px 2px 6px 2px; width: 100%; }
       .top5-card {
@@ -129,7 +120,7 @@
       }
       .top5-name { font-size: 0.75rem; font-weight: bold; line-height: 1.2; width: 100%; }
 
-      /* ================= 客製化下拉選單 ================= */
+      /* ================= 客製化下拉選單 (實體捲軸 + 6.5行暗示) ================= */
       .custom-dropdown {
         position: absolute;
         top: 100%;
@@ -139,23 +130,28 @@
         border: 1px solid #dee2e6; 
         border-radius: 6px;
         z-index: 1000;
-        max-height: 280px; /* 🔥 加長至可顯示約 6.5 行 */
+        max-height: 275px; /* 🔥 精算高度，剛好顯示約 6.5 行 */
         overflow-y: scroll; /* 🔥 強制使用捲軸模式 */
+        -webkit-overflow-scrolling: touch; /* iOS 滑順捲動 */
         box-shadow: 0 8px 16px rgba(0,0,0,0.12); 
         margin-top: 4px;
       }
-      /* 🔥 繪製實體捲軸，明確暗示可滑動 */
-      .custom-dropdown::-webkit-scrollbar { width: 8px; }
-      .custom-dropdown::-webkit-scrollbar-track { background: #f8f9fa; border-left: 1px solid #e9ecef; border-radius: 0 6px 6px 0; }
-      .custom-dropdown::-webkit-scrollbar-thumb { background: #adb5bd; border-radius: 4px; }
+      /* 🔥 強制在手機端畫出實體捲軸 */
+      .custom-dropdown::-webkit-scrollbar { width: 5px; background: transparent; display: block; }
+      .custom-dropdown::-webkit-scrollbar-track { background: transparent; }
+      .custom-dropdown::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.25); border-radius: 10px; }
 
       .custom-dropdown div {
-        padding: 12px 12px;
+        padding: 0 12px;
+        height: 42px; /* 🔥 鎖死選項高度，方便精算可見行數 */
+        display: flex;
+        align-items: center;
         border-bottom: 1px solid #f1f3f5;
         font-size: 0.95rem;
         color: #212529;
         font-weight: bold;
         cursor: pointer;
+        box-sizing: border-box;
       }
       .custom-dropdown div:last-child { border-bottom: none; }
       .custom-dropdown div:active { background-color: #f8f9fa; }
@@ -204,9 +200,9 @@
               </div>
 
               <div class="section-block">
-                <button type="button" id="toggleListBtn" class="btn btn-top5 w-100 fw-bold mb-2 shadow-sm" onclick="this.blur(); toggleOrderList()">👀 查看今日點餐狀況 ▼</button>
-                <div id="todayOrderList" class="d-none border rounded p-1" style="background-color: #f8f9fa; border-color: #dee2e6 !important; max-height: 350px; overflow-y: auto;">
-                  <div class="text-center text-muted small py-2">目前尚無訂單</div>
+                <button type="button" id="toggleListBtn" class="btn btn-top5 w-100 fw-bold mb-2 shadow-sm" onclick="toggleOrderList()">👀 查看今日點餐狀況 ▼</button>
+                <div id="todayOrderList" class="d-none border border-secondary rounded p-0" style="background-color: #f8f9fa; border-color: #dee2e6 !important; max-height: 350px; overflow-y: auto; overflow-x: hidden;">
+                  <div class="text-center text-muted small py-3">目前尚無訂單</div>
                 </div>
               </div>
 
@@ -406,7 +402,8 @@
           let bgColor = bgColors[colorIdx % 2];
           colorIdx++;
 
-          listHtml += `<div style="background-color: ${bgColor}; padding: 6px 8px; border-radius: 6px; margin-bottom: 4px;">`;
+          // 🔥 移除間距與圓角，讓色塊無縫相連
+          listHtml += `<div style="background-color: ${bgColor}; padding: 8px 12px;">`;
           groupedOrders[clinicName].forEach(o => {
             listHtml += `
               <div style="display: grid; grid-template-columns: 20% 22% 29% 29%; gap: 4px; font-size: 0.85rem; padding: 4px 0; align-items: center; color: #495057; font-weight: bold; text-align: left;">
