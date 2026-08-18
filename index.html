@@ -23,7 +23,6 @@
       .btn-theme { background-color: #536e86; border-color: #536e86; color: white; }
       .btn-theme:hover, .btn-theme:focus { background-color: #40586e; border-color: #40586e; color: white; }
       
-      /* 🔥 統一查看按鈕與 TOP5 的顯眼顏色 */
       .btn-top5 { background-color: #63809c; border-color: #63809c; color: white; transition: all 0.2s; }
       .btn-top5:hover, .btn-top5:focus { background-color: #4f6880; color: white; }
 
@@ -31,6 +30,8 @@
       .btn-outline-dark-theme:hover { background-color: #e9ecef; color: #212529; }
       .btn-check:checked + .btn-outline-dark-theme { background-color: #ced4da; color: #212529; border-color: #adb5bd; font-weight: bold; }
       
+      /* 🔥 統一輸入框的邊框顏色 */
+      .form-control { border-color: #adb5bd !important; }
       .form-control:focus { border-color: #86b7fe !important; box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25) !important; }
       
       #loadingScreen, #closedScreen { text-align: center; padding: 40px 20px; }
@@ -39,7 +40,20 @@
       .banner-header { background-color: #536e86; color: white; height: 60px; margin-bottom: 16px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); width: 100%; display: flex; justify-content: space-between; align-items: center; padding-right: 15px; }
       
       .section-block { margin-bottom: 16px; }
-      .section-header { background-color: #e2e8f0; color: #212529; border-radius: 8px; padding: 8px 12px; font-size: 1rem; font-weight: bold; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
+      
+      /* 🔥 全新段落標題樣式 (左側粗線條) */
+      .section-header { 
+        color: #536e86; 
+        padding: 4px 8px; 
+        font-size: 1.1rem; 
+        font-weight: bold; 
+        margin-bottom: 10px; 
+        display: flex; 
+        justify-content: space-between; 
+        align-items: center; 
+        border-left: 5px solid #536e86;
+        border-bottom: 2px solid #f1f3f5;
+      }
       
       .clinic-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; }
       .clinic-grid label { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; padding: 6px 0; font-size: 0.95rem; margin: 0; }
@@ -53,15 +67,17 @@
       .custom-placeholder::placeholder { color: #adb5bd !important; opacity: 1 !important; font-weight: normal !important; }
       .dummy-trap { position: absolute; opacity: 0; width: 1px; height: 1px; padding: 0; border: none; margin: 0; }
 
-      /* ================= TOP 5 方塊化 CSS ================= */
-      .top5-container { display: flex; overflow-x: auto; gap: 12px; padding: 12px 4px 6px 4px; scrollbar-width: none; }
-      .top5-container::-webkit-scrollbar { display: none; }
+      /* ================= TOP 5 方塊化 CSS (自動換行) ================= */
+      .top5-container { 
+        display: flex; 
+        flex-wrap: wrap; /* 自動換行 */
+        gap: 10px; 
+        padding: 10px 6px 6px 6px; 
+      }
       .top5-card {
         position: relative;
-        flex: 0 0 auto;
-        min-width: 85px;
-        max-width: 100px;
-        background-color: #63809c; /* 呼應按鈕顏色 */
+        flex: 1 1 calc(30% - 10px); /* 讓方塊自動縮放填滿空間 */
+        background-color: #63809c; 
         color: white;
         border-radius: 8px;
         padding: 10px 6px;
@@ -72,12 +88,11 @@
       }
       .top5-card:active { transform: scale(0.95); }
       
-      /* 右上角數量圓標 */
       .top5-badge {
         position: absolute;
         top: -8px;
         right: -8px;
-        background-color: #dc3545; /* 顯眼紅色 */
+        background-color: #dc3545; 
         color: white;
         border-radius: 50%;
         width: 22px;
@@ -104,7 +119,6 @@
   </head>
   <body>
     
-    <!-- 自動提示的資料庫 -->
     <datalist id="bentoSuggestions"></datalist>
     <datalist id="drinkSuggestions"></datalist>
 
@@ -148,7 +162,6 @@
                 <input type="text" class="form-control fw-bold" id="name" placeholder="請輸入姓名" onfocus="this.select()">
               </div>
 
-              <!-- 查看今日點餐狀況按鈕 (換上顯眼顏色與下拉三角形) -->
               <div class="section-block">
                 <button type="button" id="toggleListBtn" class="btn btn-top5 w-100 fw-bold mb-2 shadow-sm" onclick="toggleOrderList()">👀 查看今日點餐狀況 ▼</button>
                 <div id="todayOrderList" class="d-none border rounded p-1" style="background-color: #f8f9fa; max-height: 350px; overflow-y: auto;">
@@ -170,7 +183,8 @@
                 
                 <div class="row g-2 mb-2">
                   <div class="col-5">
-                    <input type="text" class="form-control fw-bold custom-placeholder" id="bentoName" placeholder="餐點" list="bentoSuggestions" enterkeyhint="next" onfocus="this.select()">
+                    <!-- 🔥 加入 showPicker() 強制開啟 Datalist -->
+                    <input type="text" class="form-control fw-bold custom-placeholder" id="bentoName" placeholder="餐點" list="bentoSuggestions" enterkeyhint="next" onfocus="this.select(); try{this.showPicker();}catch(e){}">
                   </div>
                   <div class="col-4">
                     <input type="text" class="form-control fw-bold text-secondary custom-placeholder" id="bentoCustom" placeholder="客製項目" enterkeyhint="next" onfocus="this.select()">
@@ -196,7 +210,8 @@
                 
                 <div class="row g-2 mb-2">
                   <div class="col-5">
-                    <input type="text" class="form-control fw-bold custom-placeholder" id="drinkName" placeholder="飲料" list="drinkSuggestions" enterkeyhint="next" onfocus="this.select()">
+                    <!-- 🔥 加入 showPicker() 強制開啟 Datalist -->
+                    <input type="text" class="form-control fw-bold custom-placeholder" id="drinkName" placeholder="飲料" list="drinkSuggestions" enterkeyhint="next" onfocus="this.select(); try{this.showPicker();}catch(e){}">
                   </div>
                   <div class="col-4">
                     <input type="text" class="form-control fw-bold text-secondary custom-placeholder" id="drinkCustom" placeholder="客製項目" enterkeyhint="next" onfocus="this.select()">
@@ -270,7 +285,6 @@
         }
       }
 
-      // 按鈕圖示動態切換 ▼ / ▲
       function toggleOrderList() {
         const listDiv = document.getElementById('todayOrderList');
         const btn = document.getElementById('toggleListBtn');
@@ -291,7 +305,7 @@
         let drinkNames = [];
         let groupedOrders = {};
 
-        // 1. 群組化：以「診次」為單位分類
+        // 1. 依「診次」分類
         orders.forEach(o => {
           let bBase = o.bento ? o.bento.split('(')[0].split('（')[0].trim() : '';
           let dBase = o.drink ? o.drink.split('(')[0].split('（')[0].trim() : '';
@@ -304,9 +318,9 @@
           }
         });
 
-        // 2. 產出交替底色的清單 (移除標題列)
+        // 2. 清單繪製：移除內層底線
         let listHtml = '';
-        let bgColors = ['#ffffff', '#f1f3f5']; // 交替白色與淺灰
+        let bgColors = ['#ffffff', '#f1f3f5']; 
         let colorIdx = 0;
 
         for (let clinicName in groupedOrders) {
@@ -315,12 +329,12 @@
           let bgColor = bgColors[colorIdx % 2];
           colorIdx++;
 
-          // 外層：同診次的包裝區塊
           listHtml += `<div style="background-color: ${bgColor}; padding: 6px 8px; border-radius: 6px; margin-bottom: 4px;">`;
           
           groupedOrders[clinicName].forEach(o => {
+            // 🔥 拿掉 border-bottom 虛線設定
             listHtml += `
-              <div style="display: grid; grid-template-columns: 20% 22% 29% 29%; gap: 4px; font-size: 0.85rem; padding: 4px 0; align-items: center; color: #495057; font-weight: bold; text-align: left; border-bottom: 1px dashed rgba(0,0,0,0.05);">
+              <div style="display: grid; grid-template-columns: 20% 22% 29% 29%; gap: 4px; font-size: 0.85rem; padding: 4px 0; align-items: center; color: #495057; font-weight: bold; text-align: left;">
                 <div style="color: #63809c; text-align: center;">${clinicName}</div>
                 <div class="text-truncate" title="${o.rankName}">${o.rankName}</div>
                 <div class="text-truncate" title="${o.bBase}">${o.bBase}</div>
@@ -333,7 +347,7 @@
 
         if (listHtml) document.getElementById('todayOrderList').innerHTML = listHtml;
 
-        // 3. Datalist 自動提示 (修改 HTML 結構以適應各種手機瀏覽器)
+        // 3. Datalist 帶入
         let uniqueBentos = [...new Set(bentoNames)];
         let uniqueDrinks = [...new Set(drinkNames)];
         document.getElementById('bentoSuggestions').innerHTML = uniqueBentos.map(n => `<option value="${n}">${n}</option>`).join('');
@@ -344,7 +358,6 @@
         processLeaderboard(drinkNames, 'drink');
       }
 
-      // 🔥 TOP 5 繪製功能 (改為方塊化)
       function processLeaderboard(itemsArray, type) {
         if (!itemsArray || itemsArray.length === 0) return;
         let counts = {};
