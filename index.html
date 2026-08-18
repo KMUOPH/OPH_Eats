@@ -23,7 +23,6 @@
       .btn-theme { background-color: #536e86; border-color: #536e86; color: white; }
       .btn-theme:hover, .btn-theme:focus { background-color: #40586e; border-color: #40586e; color: white; }
       
-      /* 🔥 恢復標籤與按鈕的淺灰色外框 */
       .btn-outline-dark-theme { color: #212529; border-color: #adb5bd !important; border-width: 1px; border-radius: 5px !important; }
       .btn-check:checked + .btn-outline-dark-theme { background-color: #ced4da; color: #212529; border-color: #adb5bd !important; font-weight: bold; }
       
@@ -31,7 +30,6 @@
         .btn-outline-dark-theme:hover { background-color: #e9ecef; color: #212529; }
       }
       
-      /* 🔥 只有輸入框是深鐵灰邊框，引導輸入 */
       .form-control { border-color: #343a40 !important; border-width: 1px !important; }
       .form-control:focus { border-color: #86b7fe !important; box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25) !important; }
       
@@ -42,12 +40,24 @@
       
       .section-block { margin-bottom: 16px; }
       
+      /* 🔥 緞帶設計：貼齊左邊界、無左側圓角 */
       .section-header { 
-        color: #3a4f63; padding: 4px 8px 4px 12px; font-size: 1.05rem; font-weight: bold; 
-        margin-bottom: 10px; margin-left: -12px; display: flex; justify-content: space-between; align-items: center; 
-        border-left: 6px solid #536e86; border-bottom: 1px solid #f1f3f5;
+        color: #3a4f63; 
+        padding: 4px 8px 4px 16px; /* 增加左邊內距避免字太靠近邊緣 */
+        font-size: 1.05rem; 
+        font-weight: bold; 
+        margin-bottom: 10px; 
+        margin-left: -16px; /* 🔥 完美貼齊手機左側邊緣 */
+        display: flex; 
+        justify-content: space-between; 
+        align-items: center; 
+        border-left: 6px solid #536e86; 
+        border-bottom: 1px solid #f1f3f5;
         background: linear-gradient(to right, #f8f9fa, #ffffff);
-        border-top-left-radius: 4px; border-bottom-left-radius: 4px;
+        border-top-left-radius: 0px; /* 取消左圓角 */
+        border-bottom-left-radius: 0px; /* 取消左圓角 */
+        border-top-right-radius: 4px;
+        border-bottom-right-radius: 4px;
       }
       
       .clinic-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; }
@@ -61,21 +71,28 @@
       .custom-placeholder::placeholder { color: #adb5bd !important; opacity: 1 !important; font-weight: normal !important; }
       .dummy-trap { position: absolute; opacity: 0; width: 1px; height: 1px; padding: 0; border: none; margin: 0; }
 
-      /* ================= 質感淺灰藍設計 (查看訂單與 TOP 5) ================= */
+      /* ================= 質感淺灰藍設計 ================= */
       .btn-top5 { 
-        background-color: #e2e8f0; /* 🔥 明顯但柔和的淺灰藍 */
+        background-color: #e2e8f0; 
         border: 1px solid #cbd5e1; 
         color: #343a40; 
         transition: all 0.2s; 
       }
       @media (hover: hover) { .btn-top5:hover { background-color: #cbd5e1; } }
-      .btn-top5:active { background-color: #cbd5e1 !important; transform: scale(0.98); }
+      /* 🔥 徹底解決點擊泛白的問題，鎖定深色態 */
+      .btn-top5:active, .btn-top5:focus { 
+        background-color: #cbd5e1 !important; 
+        border-color: #cbd5e1 !important; 
+        color: #343a40 !important; 
+        box-shadow: none !important; 
+        transform: scale(0.98); 
+      }
 
       .top5-container { display: flex; flex-wrap: nowrap; gap: 8px; padding: 10px 2px 6px 2px; width: 100%; }
       .top5-card {
         position: relative;
         flex: 1 1 0; min-width: 0; 
-        background-color: #e2e8f0; /* 🔥 明顯但柔和的淺灰藍 */
+        background-color: #e2e8f0; 
         color: #343a40; 
         border: 1px solid #cbd5e1; 
         border-radius: 6px;
@@ -122,13 +139,15 @@
         border: 1px solid #dee2e6; 
         border-radius: 6px;
         z-index: 1000;
-        max-height: 195px; /* 🔥 精算高度，讓第5個選項只顯示上半截，強烈暗示可滑動 */
-        overflow-y: auto;
+        max-height: 280px; /* 🔥 加長至可顯示約 6.5 行 */
+        overflow-y: scroll; /* 🔥 強制使用捲軸模式 */
         box-shadow: 0 8px 16px rgba(0,0,0,0.12); 
         margin-top: 4px;
       }
-      .custom-dropdown::-webkit-scrollbar { width: 6px; }
-      .custom-dropdown::-webkit-scrollbar-thumb { background: #ced4da; border-radius: 3px; }
+      /* 🔥 繪製實體捲軸，明確暗示可滑動 */
+      .custom-dropdown::-webkit-scrollbar { width: 8px; }
+      .custom-dropdown::-webkit-scrollbar-track { background: #f8f9fa; border-left: 1px solid #e9ecef; border-radius: 0 6px 6px 0; }
+      .custom-dropdown::-webkit-scrollbar-thumb { background: #adb5bd; border-radius: 4px; }
 
       .custom-dropdown div {
         padding: 12px 12px;
