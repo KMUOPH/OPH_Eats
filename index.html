@@ -40,18 +40,18 @@
       
       .section-block { margin-bottom: 16px; }
       
-      /* 🔥 緞帶設計：加寬灰藍帶 (12px) */
+      /* 🔥 修正：真正加寬的 12px 緞帶 */
       .section-header { 
         color: #3a4f63; 
         padding: 6px 8px 6px 14px; 
         font-size: 1.05rem; 
         font-weight: bold; 
         margin-bottom: 10px; 
-        margin-left: -16px; /* 完美貼齊手機左側邊緣 */
+        margin-left: -16px; 
         display: flex; 
         justify-content: space-between; 
         align-items: center; 
-        border-left: 12px solid #536e86; /* 🔥 加寬的灰藍帶 */
+        border-left: 12px solid #536e86; /* 👉 這次真的是 12px 了！ */
         box-shadow: inset 0 -1px 0 #f1f3f5; 
         background: linear-gradient(to right, #f8f9fa, #ffffff);
         border-top-right-radius: 4px;
@@ -69,7 +69,6 @@
       .custom-placeholder::placeholder { color: #adb5bd !important; opacity: 1 !important; font-weight: normal !important; }
       .dummy-trap { position: absolute; opacity: 0; width: 1px; height: 1px; padding: 0; border: none; margin: 0; }
 
-      /* ================= 質感淺灰藍按鈕 (鎖死底色不泛白) ================= */
       .btn-top5 { 
         background-color: #e2e8f0 !important; 
         border: 1px solid #cbd5e1 !important; 
@@ -120,7 +119,6 @@
       }
       .top5-name { font-size: 0.75rem; font-weight: bold; line-height: 1.2; width: 100%; }
 
-      /* ================= 客製化下拉選單 (實體捲軸 + 6.5行暗示) ================= */
       .custom-dropdown {
         position: absolute;
         top: 100%;
@@ -170,6 +168,7 @@
       <div class="row justify-content-center">
         <div class="col-md-8 col-lg-6 px-3">
             
+          <!-- 回歸最單純穩定的全畫面轉圈圈 -->
           <div id="loadingScreen">
             <div class="spinner-border text-theme" role="status"></div>
             <h5 class="mt-3 text-secondary">連線中，請稍候...</h5>
@@ -290,13 +289,8 @@
 
       async function fetchWithRetry(url, options, retries = 2) {
         for (let i = 0; i <= retries; i++) {
-          try {
-            const res = await fetch(url, options);
-            return await res.json();
-          } catch (err) {
-            if (i === retries) throw err;
-            await new Promise(resolve => setTimeout(resolve, 1000));
-          }
+          try { const res = await fetch(url, options); return await res.json(); } 
+          catch (err) { if (i === retries) throw err; await new Promise(resolve => setTimeout(resolve, 1000)); }
         }
       }
 
@@ -319,8 +313,7 @@
           let currentSrc = img.src;
           if(currentSrc.includes('&retry=')) currentSrc = currentSrc.replace(/&retry=\d+/, '&retry=' + new Date().getTime());
           else currentSrc += '&retry=' + new Date().getTime();
-          img.style.display = 'none'; 
-          setTimeout(() => { img.src = currentSrc; img.style.display = 'block'; }, 50);
+          img.style.display = 'none'; setTimeout(() => { img.src = currentSrc; img.style.display = 'block'; }, 50);
         }
       }
 
@@ -328,11 +321,9 @@
         const listDiv = document.getElementById('todayOrderList');
         const btn = document.getElementById('toggleListBtn');
         if (listDiv.classList.contains('d-none')) {
-          listDiv.classList.remove('d-none');
-          btn.innerHTML = '👀 查看今日點餐狀況 ▲';
+          listDiv.classList.remove('d-none'); btn.innerHTML = '👀 查看今日點餐狀況 ▲';
         } else {
-          listDiv.classList.add('d-none');
-          btn.innerHTML = '👀 查看今日點餐狀況 ▼';
+          listDiv.classList.add('d-none'); btn.innerHTML = '👀 查看今日點餐狀況 ▼';
         }
       }
 
@@ -340,8 +331,7 @@
         closeAllDropdowns();
         const list = type === 'bento' ? globalBentoList : globalDrinkList;
         if (list.length === 0) return;
-        renderDropdown(type, list);
-        document.getElementById(type + 'Dropdown').classList.remove('d-none');
+        renderDropdown(type, list); document.getElementById(type + 'Dropdown').classList.remove('d-none');
       }
 
       function filterDropdown(type) {
@@ -349,12 +339,8 @@
         const list = type === 'bento' ? globalBentoList : globalDrinkList;
         const filtered = list.filter(item => item.toLowerCase().includes(inputVal));
         const dd = document.getElementById(type + 'Dropdown');
-        if (filtered.length === 0) {
-          dd.classList.add('d-none');
-        } else {
-          renderDropdown(type, filtered);
-          dd.classList.remove('d-none');
-        }
+        if (filtered.length === 0) dd.classList.add('d-none');
+        else { renderDropdown(type, filtered); dd.classList.remove('d-none'); }
       }
 
       function renderDropdown(type, items) {
@@ -367,40 +353,24 @@
         document.getElementById('drinkDropdown').classList.add('d-none');
       }
 
-      document.addEventListener('click', function(e) {
-        if (!e.target.closest('.position-relative')) {
-          closeAllDropdowns();
-        }
-      });
+      document.addEventListener('click', function(e) { if (!e.target.closest('.position-relative')) closeAllDropdowns(); });
 
       function processCurrentOrders(orders) {
         if (!orders || orders.length === 0) return;
-
-        let bentoNames = [];
-        let drinkNames = [];
-        let groupedOrders = {};
+        let bentoNames = []; let drinkNames = []; let groupedOrders = {};
 
         orders.forEach(o => {
           let bBase = o.bento ? o.bento.split('(')[0].split('（')[0].trim() : '';
           let dBase = o.drink ? o.drink.split('(')[0].split('（')[0].trim() : '';
-          if (bBase) bentoNames.push(bBase);
-          if (dBase) drinkNames.push(dBase);
-          
+          if (bBase) bentoNames.push(bBase); if (dBase) drinkNames.push(dBase);
           if (!groupedOrders[o.clinic]) groupedOrders[o.clinic] = [];
-          if (bBase || dBase) {
-            groupedOrders[o.clinic].push({ rankName: o.rankName, bBase, dBase });
-          }
+          if (bBase || dBase) groupedOrders[o.clinic].push({ rankName: o.rankName, bBase, dBase });
         });
 
-        let listHtml = '';
-        let bgColors = ['#ffffff', '#f1f3f5']; 
-        let colorIdx = 0;
-
+        let listHtml = ''; let bgColors = ['#ffffff', '#f1f3f5']; let colorIdx = 0;
         for (let clinicName in groupedOrders) {
           if (groupedOrders[clinicName].length === 0) continue;
-          let bgColor = bgColors[colorIdx % 2];
-          colorIdx++;
-
+          let bgColor = bgColors[colorIdx % 2]; colorIdx++;
           listHtml += `<div style="background-color: ${bgColor}; padding: 8px 12px;">`;
           groupedOrders[clinicName].forEach(o => {
             listHtml += `
@@ -409,53 +379,37 @@
                 <div class="text-truncate" title="${o.rankName}">${o.rankName}</div>
                 <div class="text-truncate" title="${o.bBase}">${o.bBase}</div>
                 <div class="text-truncate" title="${o.dBase}">${o.dBase}</div>
-              </div>
-            `;
+              </div>`;
           });
           listHtml += `</div>`;
         }
 
         if (listHtml) document.getElementById('todayOrderList').innerHTML = listHtml;
-
-        globalBentoList = [...new Set(bentoNames)];
-        globalDrinkList = [...new Set(drinkNames)];
-
-        processLeaderboard(bentoNames, 'bento');
-        processLeaderboard(drinkNames, 'drink');
+        globalBentoList = [...new Set(bentoNames)]; globalDrinkList = [...new Set(drinkNames)];
+        processLeaderboard(bentoNames, 'bento'); processLeaderboard(drinkNames, 'drink');
       }
 
       function formatTop5Name(name) {
         if (name.length <= 4) return name;
-        let splitIdx = 4; 
-        if (name.length === 5) splitIdx = 3; 
+        let splitIdx = 4; if (name.length === 5) splitIdx = 3; 
         return name.substring(0, splitIdx) + '<br>' + name.substring(splitIdx);
       }
 
       function processLeaderboard(itemsArray, type) {
         if (!itemsArray || itemsArray.length === 0) return;
-        let counts = {};
-        itemsArray.forEach(item => { counts[item] = (counts[item] || 0) + 1; });
-
+        let counts = {}; itemsArray.forEach(item => { counts[item] = (counts[item] || 0) + 1; });
         let sorted = Object.entries(counts).sort((a, b) => b[1] - a[1]).slice(0, 5);
         if (sorted.length === 0) return;
 
-        let html = `<div style="font-size: 0.8rem; font-weight: bold; color: #6c757d; margin: 0 0 4px 0;">🔥 TOP 5 (點擊帶入)</div>`;
-        html += `<div class="top5-container">`;
-
+        let html = `<div style="font-size: 0.8rem; font-weight: bold; color: #6c757d; margin: 0 0 4px 0;">🔥 TOP 5 (點擊帶入)</div><div class="top5-container">`;
         sorted.forEach((entry) => {
           let name = entry[0], count = entry[1];
           let formattedName = formatTop5Name(name); 
-          html += `
-            <div class="top5-card" onclick="fillName('${type}Name', '${name}')">
-              <div class="top5-badge">${count}</div>
-              <div class="top5-name">${formattedName}</div>
-            </div>`;
+          html += `<div class="top5-card" onclick="fillName('${type}Name', '${name}')"><div class="top5-badge">${count}</div><div class="top5-name">${formattedName}</div></div>`;
         });
-        
         html += `</div>`;
         const lbDiv = document.getElementById(type + 'Leaderboard'); 
-        lbDiv.innerHTML = html; 
-        lbDiv.style.display = 'block';
+        lbDiv.innerHTML = html; lbDiv.style.display = 'block';
       }
 
       function fillName(inputId, name) {
@@ -491,7 +445,6 @@
         if (e.target && e.target.tagName === 'INPUT' && !e.target.classList.contains('dummy-trap')) {
           const isKeyboardAlreadyUp = window.visualViewport && (window.visualViewport.height < window.innerHeight * 0.85);
           const delayTime = isKeyboardAlreadyUp ? 50 : 400;
-          
           setTimeout(() => {
             if (window.visualViewport) {
               const rect = e.target.getBoundingClientRect();
@@ -502,6 +455,7 @@
         }
       });
 
+      // 🔥 恢復純粹的 Loading 讀取
       function loadData() {
         document.getElementById('loadingScreen').classList.remove('d-none');
         document.getElementById('mainContent').classList.add('d-none');
@@ -552,7 +506,10 @@
               processCurrentOrders(response.data.currentOrders);
             }
 
-          } else { document.getElementById('closedScreen').classList.remove('d-none'); }
+          } else { 
+            document.getElementById('mainContent').classList.add('d-none');
+            document.getElementById('closedScreen').classList.remove('d-none'); 
+          }
         }).catch(err => {
           document.getElementById('loadingScreen').classList.add('d-none'); document.getElementById('closedScreen').classList.remove('d-none');
           document.getElementById('closedTitle').innerText = "⚠️ 系統連線失敗"; document.getElementById('closedDesc').innerHTML = `無法取得最新資料。<br><b>錯誤原因：</b>${err.message}`;
