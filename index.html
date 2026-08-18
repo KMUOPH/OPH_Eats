@@ -23,20 +23,23 @@
       .btn-theme { background-color: #536e86; border-color: #536e86; color: white; }
       .btn-theme:hover, .btn-theme:focus { background-color: #40586e; border-color: #40586e; color: white; }
       
-      /* 🔥 統一灰色系設計 (質感板岩灰) */
-      .btn-top5 { background-color: #6c757d; border-color: #6c757d; color: white; transition: all 0.2s; }
-      .btn-top5:hover, .btn-top5:focus { background-color: #5a6268; color: white; }
+      /* 🔥 調淡的淺岩灰色 (一致化) */
+      .btn-top5 { background-color: #868e96; border-color: #868e96; color: white; transition: all 0.2s; }
+      .btn-top5:hover { background-color: #737c85; color: white; }
+      .btn-top5:focus { background-color: #868e96; color: white; box-shadow: none; outline: none; } /* 點擊後不殘留深色 */
 
-      /* 所有圓角框線深鐵灰 #343a40 */
-      .btn-outline-dark-theme { color: #212529; border-color: #343a40 !important; border-width: 1px; border-radius: 5px !important; }
+      /* 🔥 恢復淺色按鈕外框 */
+      .btn-outline-dark-theme { color: #212529; border-color: #adb5bd !important; border-width: 1px; border-radius: 5px !important; }
       .btn-outline-dark-theme:hover { background-color: #e9ecef; color: #212529; }
-      .btn-check:checked + .btn-outline-dark-theme { background-color: #ced4da; color: #212529; border-color: #343a40 !important; font-weight: bold; }
+      .btn-check:checked + .btn-outline-dark-theme { background-color: #ced4da; color: #212529; border-color: #adb5bd !important; font-weight: bold; }
       
+      /* 🔥 只有輸入框保留深鐵灰，強烈引導輸入 */
       .form-control { border-color: #343a40 !important; border-width: 1px !important; }
       .form-control:focus { border-color: #86b7fe !important; box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25) !important; }
       
       #loadingScreen, #closedScreen { text-align: center; padding: 40px 20px; }
-      .menu-img { width: 100%; border-radius: 8px; margin-bottom: 10px; display: none; box-shadow: 0 2px 5px rgba(0,0,0,0.15); border: 1px solid #343a40; }
+      /* 🔥 恢復圖片淺色外框 */
+      .menu-img { width: 100%; border-radius: 8px; margin-bottom: 10px; display: none; box-shadow: 0 2px 5px rgba(0,0,0,0.15); border: 1px solid #e2e8f0; }
       
       .banner-header { background-color: #536e86; color: white; height: 60px; margin-bottom: 16px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); width: 100%; display: flex; justify-content: space-between; align-items: center; padding-right: 15px; }
       
@@ -59,12 +62,12 @@
       .custom-placeholder::placeholder { color: #adb5bd !important; opacity: 1 !important; font-weight: normal !important; }
       .dummy-trap { position: absolute; opacity: 0; width: 1px; height: 1px; padding: 0; border: none; margin: 0; }
 
-      /* ================= TOP 5 方塊化 (灰色系) ================= */
+      /* ================= TOP 5 方塊化 ================= */
       .top5-container { display: flex; flex-wrap: nowrap; gap: 6px; padding: 10px 2px 6px 2px; width: 100%; }
       .top5-card {
         position: relative;
         flex: 1 1 0; min-width: 0; 
-        background-color: #6c757d; /* 🔥 質感板岩灰 */
+        background-color: #868e96; /* 🔥 淺岩灰色 (與按鈕一致) */
         color: white;
         border-radius: 6px;
         padding: 4px 2px;
@@ -76,7 +79,7 @@
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        min-height: 48px;
+        min-height: 48px; 
       }
       .top5-card:active { transform: scale(0.95); }
       
@@ -84,7 +87,7 @@
         position: absolute;
         top: -6px;
         right: -6px;
-        background-color: #dc3545; /* 數量依然保持紅色警示，確保視覺辨識度 */
+        background-color: #dc3545; 
         color: white;
         border-radius: 50%;
         width: 18px;
@@ -98,7 +101,12 @@
         border: 2px solid #ffffff;
         z-index: 2;
       }
-      .top5-name { font-size: 0.75rem; font-weight: bold; line-height: 1.2; width: 100%; }
+      .top5-name {
+        font-size: 0.75rem; 
+        font-weight: bold;
+        line-height: 1.2;
+        width: 100%;
+      }
 
       /* ================= 客製化下拉選單 ================= */
       .custom-dropdown {
@@ -110,11 +118,15 @@
         border: 1px solid #343a40;
         border-radius: 4px;
         z-index: 1000;
-        max-height: 160px;
+        max-height: 165px; /* 🔥 精算高度，故意露出第4.5個項目暗示可以滑動 */
         overflow-y: auto;
         box-shadow: 0 4px 8px rgba(0,0,0,0.15);
         margin-top: 2px;
       }
+      /* 🔥 加上下拉清單的捲軸樣式，讓使用者更明確知道可捲動 */
+      .custom-dropdown::-webkit-scrollbar { width: 6px; }
+      .custom-dropdown::-webkit-scrollbar-thumb { background: #ced4da; border-radius: 3px; }
+
       .custom-dropdown div {
         padding: 8px 12px;
         border-bottom: 1px solid #f1f3f5;
@@ -169,9 +181,10 @@
                 <input type="text" class="form-control fw-bold" id="name" placeholder="請輸入姓名" onfocus="this.select()">
               </div>
 
-              <!-- 查看今日點餐狀況 (灰色系) -->
+              <!-- 查看今日點餐狀況 (淺岩灰色) -->
               <div class="section-block">
-                <button type="button" id="toggleListBtn" class="btn btn-top5 w-100 fw-bold mb-2 shadow-sm" onclick="toggleOrderList()">👀 查看今日點餐狀況 ▼</button>
+                <!-- 🔥 加入 this.blur() 讓按鈕點擊後解除沾黏深色狀態 -->
+                <button type="button" id="toggleListBtn" class="btn btn-top5 w-100 fw-bold mb-2 shadow-sm" onclick="this.blur(); toggleOrderList()">👀 查看今日點餐狀況 ▼</button>
                 <div id="todayOrderList" class="d-none border border-secondary rounded p-1" style="background-color: #f8f9fa; max-height: 350px; overflow-y: auto;">
                   <div class="text-center text-muted small py-2">目前尚無訂單</div>
                 </div>
@@ -191,7 +204,8 @@
                 
                 <div class="row g-2 mb-2">
                   <div class="col-5 position-relative">
-                    <input type="text" class="form-control fw-bold custom-placeholder" id="bentoName" placeholder="餐點" enterkeyhint="next" onfocus="this.select(); showDropdown('bento')" oninput="filterDropdown('bento')">
+                    <!-- 🔥 加上 onblur 讓跳下一格時自動收起清單 -->
+                    <input type="text" class="form-control fw-bold custom-placeholder" id="bentoName" placeholder="餐點" enterkeyhint="next" onfocus="this.select(); showDropdown('bento')" oninput="filterDropdown('bento')" onblur="setTimeout(closeAllDropdowns, 200)">
                     <div id="bentoDropdown" class="custom-dropdown d-none"></div>
                   </div>
                   <div class="col-4">
@@ -218,7 +232,8 @@
                 
                 <div class="row g-2 mb-2">
                   <div class="col-5 position-relative">
-                    <input type="text" class="form-control fw-bold custom-placeholder" id="drinkName" placeholder="飲料" enterkeyhint="next" onfocus="this.select(); showDropdown('drink')" oninput="filterDropdown('drink')">
+                    <!-- 🔥 加上 onblur 讓跳下一格時自動收起清單 -->
+                    <input type="text" class="form-control fw-bold custom-placeholder" id="drinkName" placeholder="飲料" enterkeyhint="next" onfocus="this.select(); showDropdown('drink')" oninput="filterDropdown('drink')" onblur="setTimeout(closeAllDropdowns, 200)">
                     <div id="drinkDropdown" class="custom-dropdown d-none"></div>
                   </div>
                   <div class="col-4">
@@ -340,6 +355,7 @@
         document.getElementById('drinkDropdown').classList.add('d-none');
       }
 
+      // 點擊空白處也會關閉下拉選單
       document.addEventListener('click', function(e) {
         if (!e.target.closest('.position-relative')) {
           closeAllDropdowns();
@@ -413,7 +429,7 @@
         let sorted = Object.entries(counts).sort((a, b) => b[1] - a[1]).slice(0, 5);
         if (sorted.length === 0) return;
 
-        let html = `<div style="font-size: 0.8rem; font-weight: bold; color: #6c757d; margin: 0 0 4px 0;">🔥 TOP 5 (點擊帶入)</div>`;
+        let html = `<div style="font-size: 0.8rem; font-weight: bold; color: #868e96; margin: 0 0 4px 0;">🔥 TOP 5 (點擊帶入)</div>`;
         html += `<div class="top5-container">`;
 
         sorted.forEach((entry) => {
@@ -449,7 +465,19 @@
         }, 350); 
       }
 
-      // 🔥 全新升級：自動預留清單空間的滑動引擎
+      function onAmountBlur(inputId) {
+        setTimeout(() => {
+          const active = document.activeElement;
+          if (active && active.tagName === 'INPUT' && !active.classList.contains('dummy-trap')) return;
+          const el = document.getElementById(inputId);
+          if (el) {
+            const targetY = window.scrollY + el.getBoundingClientRect().top - 15;
+            window.scrollTo({ top: Math.max(0, targetY), behavior: 'smooth' });
+          }
+        }, 400); 
+      }
+
+      // 自動推高輸入格引擎
       document.addEventListener('focusin', function(e) {
         if (e.target && e.target.tagName === 'INPUT' && !e.target.classList.contains('dummy-trap')) {
           const isKeyboardAlreadyUp = window.visualViewport && (window.visualViewport.height < window.innerHeight * 0.85);
@@ -458,7 +486,6 @@
           setTimeout(() => {
             if (window.visualViewport) {
               const rect = e.target.getBoundingClientRect();
-              // 將輸入框推至畫面前 25% 的位置，為下方的下拉清單預留出 75% 的巨大空間！
               const targetY = window.scrollY + rect.top - (window.visualViewport.height * 0.25);
               window.scrollTo({ top: Math.max(0, targetY), behavior: 'smooth' });
             }
