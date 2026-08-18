@@ -23,9 +23,12 @@
       .btn-theme { background-color: #536e86; border-color: #536e86; color: white; }
       .btn-theme:hover, .btn-theme:focus { background-color: #40586e; border-color: #40586e; color: white; }
       
+      /* 🔥 統一查看按鈕與 TOP5 的顯眼顏色 */
+      .btn-top5 { background-color: #63809c; border-color: #63809c; color: white; transition: all 0.2s; }
+      .btn-top5:hover, .btn-top5:focus { background-color: #4f6880; color: white; }
+
       .btn-outline-dark-theme { color: #495057; border-color: #adb5bd; border-radius: 5px !important; }
       .btn-outline-dark-theme:hover { background-color: #e9ecef; color: #212529; }
-      
       .btn-check:checked + .btn-outline-dark-theme { background-color: #ced4da; color: #212529; border-color: #adb5bd; font-weight: bold; }
       
       .form-control:focus { border-color: #86b7fe !important; box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25) !important; }
@@ -35,7 +38,6 @@
       
       .banner-header { background-color: #536e86; color: white; height: 60px; margin-bottom: 16px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); width: 100%; display: flex; justify-content: space-between; align-items: center; padding-right: 15px; }
       
-      /* 🔥 緊密間距設定 */
       .section-block { margin-bottom: 16px; }
       .section-header { background-color: #e2e8f0; color: #212529; border-radius: 8px; padding: 8px 12px; font-size: 1rem; font-weight: bold; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
       
@@ -49,15 +51,55 @@
       
       .capsule-btn { border-radius: 50px !important; padding: 6px 18px; font-size: 0.9rem; }
       .custom-placeholder::placeholder { color: #adb5bd !important; opacity: 1 !important; font-weight: normal !important; }
-
       .dummy-trap { position: absolute; opacity: 0; width: 1px; height: 1px; padding: 0; border: none; margin: 0; }
 
-      /* 排行榜長條圖 CSS */
-      .bar-row { display: flex; align-items: center; margin-bottom: 6px; cursor: pointer; }
-      .bar-row:active .bar-track { opacity: 0.7; }
-      .bar-label { flex: 0 0 45%; font-size: 0.85rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding-right: 8px; text-align: right; color: #495057; font-weight: bold; }
-      .bar-track { flex: 1; background-color: #f1f3f5; border-radius: 4px; height: 22px; overflow: hidden; border: 1px solid #e9ecef; }
-      .bar-fill { height: 100%; display: flex; align-items: center; padding-left: 6px; color: white; font-size: 0.75rem; font-weight: bold; transition: width 0.5s ease-out; }
+      /* ================= TOP 5 方塊化 CSS ================= */
+      .top5-container { display: flex; overflow-x: auto; gap: 12px; padding: 12px 4px 6px 4px; scrollbar-width: none; }
+      .top5-container::-webkit-scrollbar { display: none; }
+      .top5-card {
+        position: relative;
+        flex: 0 0 auto;
+        min-width: 85px;
+        max-width: 100px;
+        background-color: #63809c; /* 呼應按鈕顏色 */
+        color: white;
+        border-radius: 8px;
+        padding: 10px 6px;
+        cursor: pointer;
+        text-align: center;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+        transition: transform 0.1s;
+      }
+      .top5-card:active { transform: scale(0.95); }
+      
+      /* 右上角數量圓標 */
+      .top5-badge {
+        position: absolute;
+        top: -8px;
+        right: -8px;
+        background-color: #dc3545; /* 顯眼紅色 */
+        color: white;
+        border-radius: 50%;
+        width: 22px;
+        height: 22px;
+        font-size: 0.75rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        border: 2px solid #ffffff;
+      }
+      .top5-name {
+        font-size: 0.8rem;
+        font-weight: bold;
+        white-space: normal;
+        line-height: 1.25;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+      }
     </style>
   </head>
   <body>
@@ -106,10 +148,10 @@
                 <input type="text" class="form-control fw-bold" id="name" placeholder="請輸入姓名" onfocus="this.select()">
               </div>
 
-              <!-- 查看今日點餐狀況按鈕與清單 -->
+              <!-- 查看今日點餐狀況按鈕 (換上顯眼顏色與下拉三角形) -->
               <div class="section-block">
-                <button type="button" class="btn btn-outline-dark-theme w-100 fw-bold mb-2" onclick="toggleOrderList()">👀 查看今日點餐狀況</button>
-                <div id="todayOrderList" class="d-none border rounded p-2" style="background-color: #f8f9fa; max-height: 350px; overflow-y: auto;">
+                <button type="button" id="toggleListBtn" class="btn btn-top5 w-100 fw-bold mb-2 shadow-sm" onclick="toggleOrderList()">👀 查看今日點餐狀況 ▼</button>
+                <div id="todayOrderList" class="d-none border rounded p-1" style="background-color: #f8f9fa; max-height: 350px; overflow-y: auto;">
                   <div class="text-center text-muted small py-2">目前尚無訂單</div>
                 </div>
               </div>
@@ -212,7 +254,6 @@
       }
 
       function addNote(text) { const n = document.getElementById('notes'); n.value = n.value ? n.value + "。" + text : text; }
-
       function handleImgError(type) { document.getElementById(type + 'MenuImg').style.display = 'none'; document.getElementById(type + 'ImgError').style.display = 'block'; }
       function forceRetryImagesAll() { forceRetryImages('bento'); forceRetryImages('drink'); }
 
@@ -229,66 +270,81 @@
         }
       }
 
+      // 按鈕圖示動態切換 ▼ / ▲
       function toggleOrderList() {
         const listDiv = document.getElementById('todayOrderList');
-        if (listDiv.classList.contains('d-none')) listDiv.classList.remove('d-none');
-        else listDiv.classList.add('d-none');
+        const btn = document.getElementById('toggleListBtn');
+        if (listDiv.classList.contains('d-none')) {
+          listDiv.classList.remove('d-none');
+          btn.innerHTML = '👀 查看今日點餐狀況 ▲';
+        } else {
+          listDiv.classList.add('d-none');
+          btn.innerHTML = '👀 查看今日點餐狀況 ▼';
+        }
       }
 
-      // ================= 資料處理引擎 (處理四欄對齊清單、Datalist、排行榜) =================
+      // ================= 資料處理引擎 =================
       function processCurrentOrders(orders) {
         if (!orders || orders.length === 0) return;
 
         let bentoNames = [];
         let drinkNames = [];
-        
-        // 四欄標題列
-        let listHtml = `
-          <div style="display: grid; grid-template-columns: 18% 22% 30% 30%; gap: 4px; font-weight: bold; font-size: 0.8rem; color: #6c757d; border-bottom: 2px solid #dee2e6; padding-bottom: 6px; margin-bottom: 6px; text-align: left;">
-            <div style="text-align: center;">診次</div>
-            <div>職級(姓名)</div>
-            <div>餐點</div>
-            <div>飲料</div>
-          </div>
-        `;
+        let groupedOrders = {};
 
+        // 1. 群組化：以「診次」為單位分類
         orders.forEach(o => {
-          // 剝除括號客製化
           let bBase = o.bento ? o.bento.split('(')[0].split('（')[0].trim() : '';
           let dBase = o.drink ? o.drink.split('(')[0].split('（')[0].trim() : '';
-          
           if (bBase) bentoNames.push(bBase);
           if (dBase) drinkNames.push(dBase);
-
-          let clinicStr = o.clinic; // 移除縮寫
-          let rankNameStr = o.rankName;
-
+          
+          if (!groupedOrders[o.clinic]) groupedOrders[o.clinic] = [];
           if (bBase || dBase) {
-            // 四欄資料列
-            listHtml += `
-              <div style="display: grid; grid-template-columns: 18% 22% 30% 30%; gap: 4px; font-size: 0.85rem; border-bottom: 1px solid #e9ecef; padding: 6px 0; align-items: center; color: #495057; font-weight: bold; text-align: left;">
-                <div style="color: #536e86; text-align: center;">${clinicStr}</div>
-                <div class="text-truncate" title="${rankNameStr}">${rankNameStr}</div>
-                <div class="text-truncate" title="${bBase}">${bBase}</div>
-                <div class="text-truncate" title="${dBase}">${dBase}</div>
-              </div>
-            `;
+            groupedOrders[o.clinic].push({ rankName: o.rankName, bBase, dBase });
           }
         });
 
+        // 2. 產出交替底色的清單 (移除標題列)
+        let listHtml = '';
+        let bgColors = ['#ffffff', '#f1f3f5']; // 交替白色與淺灰
+        let colorIdx = 0;
+
+        for (let clinicName in groupedOrders) {
+          if (groupedOrders[clinicName].length === 0) continue;
+          
+          let bgColor = bgColors[colorIdx % 2];
+          colorIdx++;
+
+          // 外層：同診次的包裝區塊
+          listHtml += `<div style="background-color: ${bgColor}; padding: 6px 8px; border-radius: 6px; margin-bottom: 4px;">`;
+          
+          groupedOrders[clinicName].forEach(o => {
+            listHtml += `
+              <div style="display: grid; grid-template-columns: 20% 22% 29% 29%; gap: 4px; font-size: 0.85rem; padding: 4px 0; align-items: center; color: #495057; font-weight: bold; text-align: left; border-bottom: 1px dashed rgba(0,0,0,0.05);">
+                <div style="color: #63809c; text-align: center;">${clinicName}</div>
+                <div class="text-truncate" title="${o.rankName}">${o.rankName}</div>
+                <div class="text-truncate" title="${o.bBase}">${o.bBase}</div>
+                <div class="text-truncate" title="${o.dBase}">${o.dBase}</div>
+              </div>
+            `;
+          });
+          listHtml += `</div>`;
+        }
+
         if (listHtml) document.getElementById('todayOrderList').innerHTML = listHtml;
 
-        // Datalist 自動提示
+        // 3. Datalist 自動提示 (修改 HTML 結構以適應各種手機瀏覽器)
         let uniqueBentos = [...new Set(bentoNames)];
         let uniqueDrinks = [...new Set(drinkNames)];
-        document.getElementById('bentoSuggestions').innerHTML = uniqueBentos.map(n => `<option value="${n}">`).join('');
-        document.getElementById('drinkSuggestions').innerHTML = uniqueDrinks.map(n => `<option value="${n}">`).join('');
+        document.getElementById('bentoSuggestions').innerHTML = uniqueBentos.map(n => `<option value="${n}">${n}</option>`).join('');
+        document.getElementById('drinkSuggestions').innerHTML = uniqueDrinks.map(n => `<option value="${n}">${n}</option>`).join('');
 
-        // 畫排行榜
+        // 4. 畫 TOP 5
         processLeaderboard(bentoNames, 'bento');
         processLeaderboard(drinkNames, 'drink');
       }
 
+      // 🔥 TOP 5 繪製功能 (改為方塊化)
       function processLeaderboard(itemsArray, type) {
         if (!itemsArray || itemsArray.length === 0) return;
         let counts = {};
@@ -297,23 +353,22 @@
         let sorted = Object.entries(counts).sort((a, b) => b[1] - a[1]).slice(0, 5);
         if (sorted.length === 0) return;
 
-        let maxCount = sorted[0][1];
-        let html = `<div style="font-size: 0.8rem; font-weight: bold; color: #6c757d; margin: 0 0 6px 0;">🔥 今日熱門排行榜 (點擊直接帶入)</div>`;
-        let barColor = '#738fa7'; // 🔥 統一設定為藍灰色色塊
+        let html = `<div style="font-size: 0.8rem; font-weight: bold; color: #63809c; margin: 0 0 4px 0;">🔥 TOP 5 (點擊帶入)</div>`;
+        html += `<div class="top5-container">`;
 
-        sorted.forEach((entry, index) => {
+        sorted.forEach((entry) => {
           let name = entry[0], count = entry[1];
-          let percent = Math.max((count / maxCount) * 100, 15);
-          let rankIcon = index === 0 ? '🥇 ' : index === 1 ? '🥈 ' : index === 2 ? '🥉 ' : '';
           html += `
-            <div class="bar-row" onclick="fillName('${type}Name', '${name}')">
-              <div class="bar-label" title="${name}">${rankIcon}${name}</div>
-              <div class="bar-track">
-                <div class="bar-fill" style="width: ${percent}%; background-color: ${barColor};">${count}份</div>
-              </div>
+            <div class="top5-card" onclick="fillName('${type}Name', '${name}')">
+              <div class="top5-badge">${count}</div>
+              <div class="top5-name">${name}</div>
             </div>`;
         });
-        const lbDiv = document.getElementById(type + 'Leaderboard'); lbDiv.innerHTML = html; lbDiv.style.display = 'block';
+        
+        html += `</div>`;
+        const lbDiv = document.getElementById(type + 'Leaderboard'); 
+        lbDiv.innerHTML = html; 
+        lbDiv.style.display = 'block';
       }
 
       function fillName(inputId, name) {
@@ -391,7 +446,6 @@
               rankContainer.innerHTML += `<div class="col-4"><input type="radio" class="btn-check rank-radio" name="rank" id="r_${idx}" value="${r}" onchange="handleRankChange('r_${idx}')"><label class="btn btn-outline-dark-theme w-100 fw-bold rank-label-custom" for="r_${idx}">${r}</label></div>`;
             });
 
-            // 處理清單與排行榜
             if (response.data.currentOrders) {
               processCurrentOrders(response.data.currentOrders);
             }
