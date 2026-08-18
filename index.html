@@ -28,10 +28,7 @@
       
       .btn-check:checked + .btn-outline-dark-theme { background-color: #ced4da; color: #212529; border-color: #adb5bd; font-weight: bold; }
       
-      .form-control:focus {
-        border-color: #86b7fe !important;
-        box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25) !important;
-      }
+      .form-control:focus { border-color: #86b7fe !important; box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25) !important; }
       
       #loadingScreen, #closedScreen { text-align: center; padding: 40px 20px; }
       .menu-img { width: 100%; border-radius: 8px; margin-bottom: 12px; display: none; box-shadow: 0 2px 5px rgba(0,0,0,0.15); border: 1px solid #e2e8f0; }
@@ -40,18 +37,7 @@
       
       .section-block { margin-bottom: 24px; }
       
-      .section-header { 
-        background-color: #e2e8f0; 
-        color: #212529; 
-        border-radius: 8px; 
-        padding: 10px 15px; 
-        font-size: 1rem; 
-        font-weight: bold; 
-        margin-bottom: 12px; 
-        display: flex; 
-        justify-content: space-between;
-        align-items: center; 
-      }
+      .section-header { background-color: #e2e8f0; color: #212529; border-radius: 8px; padding: 10px 15px; font-size: 1rem; font-weight: bold; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
       
       .clinic-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; }
       .clinic-grid label { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; padding: 6px 0; font-size: 0.95rem; margin: 0; }
@@ -66,9 +52,9 @@
 
       .dummy-trap { position: absolute; opacity: 0; width: 1px; height: 1px; padding: 0; border: none; margin: 0; }
 
-      /* ================= 排行榜長條圖 CSS ================= */
+      /* 排行榜長條圖 CSS */
       .bar-row { display: flex; align-items: center; margin-bottom: 6px; cursor: pointer; }
-      .bar-row:active .bar-track { opacity: 0.7; } /* 點擊時的回饋 */
+      .bar-row:active .bar-track { opacity: 0.7; }
       .bar-label { flex: 0 0 45%; font-size: 0.85rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding-right: 8px; text-align: right; color: #495057; font-weight: bold; }
       .bar-track { flex: 1; background-color: #f1f3f5; border-radius: 4px; height: 22px; overflow: hidden; border: 1px solid #e9ecef; }
       .bar-fill { height: 100%; display: flex; align-items: center; padding-left: 6px; color: white; font-size: 0.75rem; font-weight: bold; transition: width 0.5s ease-out; }
@@ -76,6 +62,10 @@
   </head>
   <body>
     
+    <!-- 自動提示的資料庫 -->
+    <datalist id="bentoSuggestions"></datalist>
+    <datalist id="drinkSuggestions"></datalist>
+
     <div class="banner-header">
       <div class="d-flex align-items-center h-100 overflow-hidden ms-2">
         <img src="logo.jpg" alt="Logo" style="height: 46px; width: 46px; border-radius: 50%; object-fit: cover; box-shadow: 0 2px 4px rgba(0,0,0,0.2); margin-right: 12px;">
@@ -116,6 +106,14 @@
                 <input type="text" class="form-control fw-bold" id="name" placeholder="請輸入姓名" onfocus="this.select()">
               </div>
 
+              <!-- 🔥 新增：查看今日點餐狀況按鈕與清單 -->
+              <div class="section-block">
+                <button type="button" class="btn btn-outline-dark-theme w-100 fw-bold mb-2" onclick="toggleOrderList()">👀 查看今日點餐狀況</button>
+                <div id="todayOrderList" class="d-none border rounded p-2" style="background-color: #f8f9fa; max-height: 350px; overflow-y: auto;">
+                  <div class="text-center text-muted small py-2">目前尚無訂單</div>
+                </div>
+              </div>
+
               <!-- 餐點區塊 -->
               <div class="section-block" id="bentoSectionBlock">
                 <div class="section-header" id="bentoSectionTitle">
@@ -126,13 +124,11 @@
                   <span class="text-secondary fw-bold small">圖片載入超時，請點擊上方「🔄 圖片重整」</span>
                 </div>
                 
-                <!-- 🔥 排行榜長條圖顯示區 -->
                 <div id="bentoLeaderboard" class="mb-3" style="display: none;"></div>
                 
-                <!-- 5:4:3 同列輸入 -->
                 <div class="row g-2 mb-2">
                   <div class="col-5">
-                    <input type="text" class="form-control fw-bold custom-placeholder" id="bentoName" placeholder="餐點" enterkeyhint="next" onfocus="this.select()">
+                    <input type="text" class="form-control fw-bold custom-placeholder" id="bentoName" placeholder="餐點" list="bentoSuggestions" enterkeyhint="next" onfocus="this.select()">
                   </div>
                   <div class="col-4">
                     <input type="text" class="form-control fw-bold text-secondary custom-placeholder" id="bentoCustom" placeholder="客製項目" enterkeyhint="next" onfocus="this.select()">
@@ -154,13 +150,11 @@
                   <span class="text-secondary fw-bold small">圖片載入超時，請點擊上方「🔄 圖片重整」</span>
                 </div>
                 
-                <!-- 🔥 排行榜長條圖顯示區 -->
                 <div id="drinkLeaderboard" class="mb-3" style="display: none;"></div>
                 
-                <!-- 5:4:3 同列輸入 -->
                 <div class="row g-2 mb-2">
                   <div class="col-5">
-                    <input type="text" class="form-control fw-bold custom-placeholder" id="drinkName" placeholder="飲料" enterkeyhint="next" onfocus="this.select()">
+                    <input type="text" class="form-control fw-bold custom-placeholder" id="drinkName" placeholder="飲料" list="drinkSuggestions" enterkeyhint="next" onfocus="this.select()">
                   </div>
                   <div class="col-4">
                     <input type="text" class="form-control fw-bold text-secondary custom-placeholder" id="drinkCustom" placeholder="客製項目" enterkeyhint="next" onfocus="this.select()">
@@ -219,84 +213,108 @@
 
       function addNote(text) { const n = document.getElementById('notes'); n.value = n.value ? n.value + "。" + text : text; }
 
-      function handleImgError(type) {
-        document.getElementById(type + 'MenuImg').style.display = 'none';
-        document.getElementById(type + 'ImgError').style.display = 'block';
-      }
-
-      function forceRetryImagesAll() {
-        forceRetryImages('bento');
-        forceRetryImages('drink');
-      }
+      function handleImgError(type) { document.getElementById(type + 'MenuImg').style.display = 'none'; document.getElementById(type + 'ImgError').style.display = 'block'; }
+      function forceRetryImagesAll() { forceRetryImages('bento'); forceRetryImages('drink'); }
 
       function forceRetryImages(type) {
         const img = document.getElementById(type + 'MenuImg');
         const errorDiv = document.getElementById(type + 'ImgError');
-        
         if (img && img.src && img.src !== window.location.href) {
           if (errorDiv) errorDiv.style.display = 'none';
           let currentSrc = img.src;
-          if(currentSrc.includes('&retry=')) {
-            currentSrc = currentSrc.replace(/&retry=\d+/, '&retry=' + new Date().getTime());
-          } else {
-            currentSrc += '&retry=' + new Date().getTime();
-          }
+          if(currentSrc.includes('&retry=')) currentSrc = currentSrc.replace(/&retry=\d+/, '&retry=' + new Date().getTime());
+          else currentSrc += '&retry=' + new Date().getTime();
           img.style.display = 'none'; 
           setTimeout(() => { img.src = currentSrc; img.style.display = 'block'; }, 50);
         }
       }
 
-      // ================= 排行榜引擎 =================
-      function processLeaderboard(items, type) {
-        if (!items || items.length === 0) return;
+      function toggleOrderList() {
+        const listDiv = document.getElementById('todayOrderList');
+        if (listDiv.classList.contains('d-none')) listDiv.classList.remove('d-none');
+        else listDiv.classList.add('d-none');
+      }
 
-        let counts = {};
-        // 自動剝除括號、空白，精準統計基礎品名
-        items.forEach(item => {
-          let baseName = item.split('(')[0].split('（')[0].trim();
-          if (baseName) counts[baseName] = (counts[baseName] || 0) + 1;
+      // ================= 資料處理引擎 (處理清單、Datalist、排行榜) =================
+      function processCurrentOrders(orders) {
+        if (!orders || orders.length === 0) return;
+
+        let bentoNames = [];
+        let drinkNames = [];
+        let listHtml = '';
+
+        orders.forEach(o => {
+          // 1. 剝除括號客製化
+          let bBase = o.bento ? o.bento.split('(')[0].split('（')[0].trim() : '';
+          let dBase = o.drink ? o.drink.split('(')[0].split('（')[0].trim() : '';
+          
+          if (bBase) bentoNames.push(bBase);
+          if (dBase) drinkNames.push(dBase);
+
+          // 2. 構建極簡查看清單
+          let shortClinic = o.clinic.replace('診', '').replace('間', ''); 
+          let itemsHtml = '';
+          if (bBase) itemsHtml += `<span class="me-2">🍱 ${bBase}</span>`;
+          if (dBase) itemsHtml += `<span>🥤 ${dBase}</span>`;
+
+          if (itemsHtml) {
+            listHtml += `
+              <div class="d-flex align-items-center mb-2" style="font-size: 0.85rem; border-bottom: 1px solid #e9ecef; padding-bottom: 6px;">
+                <span style="font-weight: bold; color: #536e86; margin-right: 8px; flex-shrink: 0;">[ ${shortClinic} · ${o.rankName} ]</span>
+                <div class="text-truncate flex-grow-1" style="color: #495057; font-weight: bold;">
+                  ${itemsHtml}
+                </div>
+              </div>
+            `;
+          }
         });
 
-        // 排序並取 Top 5
+        if (listHtml) document.getElementById('todayOrderList').innerHTML = listHtml;
+
+        // 3. 填入 Datalist 自動提示
+        let uniqueBentos = [...new Set(bentoNames)];
+        let uniqueDrinks = [...new Set(drinkNames)];
+        document.getElementById('bentoSuggestions').innerHTML = uniqueBentos.map(n => `<option value="${n}">`).join('');
+        document.getElementById('drinkSuggestions').innerHTML = uniqueDrinks.map(n => `<option value="${n}">`).join('');
+
+        // 4. 畫排行榜
+        processLeaderboard(bentoNames, 'bento');
+        processLeaderboard(drinkNames, 'drink');
+      }
+
+      function processLeaderboard(itemsArray, type) {
+        if (!itemsArray || itemsArray.length === 0) return;
+        let counts = {};
+        itemsArray.forEach(item => { counts[item] = (counts[item] || 0) + 1; });
+
         let sorted = Object.entries(counts).sort((a, b) => b[1] - a[1]).slice(0, 5);
         if (sorted.length === 0) return;
 
         let maxCount = sorted[0][1];
         let html = `<div style="font-size: 0.8rem; font-weight: bold; color: #6c757d; margin: 8px 0 6px 0;">🔥 今日熱門排行榜 (點擊直接帶入)</div>`;
-        let barColor = type === 'bento' ? '#536e86' : '#738fa7'; // 主題色色塊
+        let barColor = type === 'bento' ? '#536e86' : '#738fa7'; 
 
         sorted.forEach((entry, index) => {
-          let name = entry[0];
-          let count = entry[1];
-          let percent = Math.max((count / maxCount) * 100, 15); // 保留至少15%寬度顯示數字
+          let name = entry[0], count = entry[1];
+          let percent = Math.max((count / maxCount) * 100, 15);
           let rankIcon = index === 0 ? '🥇 ' : index === 1 ? '🥈 ' : index === 2 ? '🥉 ' : '';
-
           html += `
             <div class="bar-row" onclick="fillName('${type}Name', '${name}')">
               <div class="bar-label" title="${name}">${rankIcon}${name}</div>
               <div class="bar-track">
                 <div class="bar-fill" style="width: ${percent}%; background-color: ${barColor};">${count}份</div>
               </div>
-            </div>
-          `;
+            </div>`;
         });
-
-        const lbDiv = document.getElementById(type + 'Leaderboard');
-        lbDiv.innerHTML = html;
-        lbDiv.style.display = 'block';
+        const lbDiv = document.getElementById(type + 'Leaderboard'); lbDiv.innerHTML = html; lbDiv.style.display = 'block';
       }
 
-      // 點擊排行榜，自動將文字帶入輸入框
       function fillName(inputId, name) {
-        const el = document.getElementById(inputId);
-        el.value = name;
-        
-        // 視覺回饋：背景閃爍一下
-        el.style.transition = 'background-color 0.2s';
-        el.style.backgroundColor = '#d1e7dd';
+        const el = document.getElementById(inputId); el.value = name;
+        el.style.transition = 'background-color 0.2s'; el.style.backgroundColor = '#d1e7dd';
         setTimeout(() => { el.style.backgroundColor = ''; }, 300);
       }
-      // ===========================================
+      // ==============================================================
 
       function handleRankChange(radioId) {
         setTimeout(() => {
@@ -324,8 +342,6 @@
         document.getElementById('loadingScreen').classList.remove('d-none');
         document.getElementById('mainContent').classList.add('d-none');
         document.getElementById('closedScreen').classList.add('d-none');
-        document.getElementById('closedTitle').innerText = "今日點餐已關閉";
-        document.getElementById('closedDesc').innerText = "目前不在開放點餐時間，請稍後再試或洽詢管理員。";
 
         fetchWithRetry(GAS_API_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action: "getSystemData" }) })
         .then(response => {
@@ -349,14 +365,10 @@
             let badgeHtml = (!isToday && response.data.menuDate) ? `<span class="badge" style="background-color: #8c2b32; font-size: 0.85rem; padding: 5px 10px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.4); box-shadow: 0 2px 4px rgba(0,0,0,0.2);">⚠️ 非今日菜單</span>` : '';
 
             const bTitle = document.getElementById('bentoSectionTitle');
-            if (response.data.bentoMenuUrl && response.data.menuDate) {
-              bTitle.innerHTML = `<span>${m}/${d} 週${w} ${response.data.bentoShopName}</span> ${badgeHtml}`;
-            }
+            if (response.data.bentoMenuUrl && response.data.menuDate) bTitle.innerHTML = `<span>${m}/${d} 週${w} ${response.data.bentoShopName}</span> ${badgeHtml}`;
             
             const dTitle = document.getElementById('drinkSectionTitle');
-            if (response.data.drinkMenuUrl && response.data.menuDate) {
-              dTitle.innerHTML = `<span>${m}/${d} 週${w} ${response.data.drinkShopName}</span> ${badgeHtml}`;
-            }
+            if (response.data.drinkMenuUrl && response.data.menuDate) dTitle.innerHTML = `<span>${m}/${d} 週${w} ${response.data.drinkShopName}</span> ${badgeHtml}`;
             
             if(response.data.bentoMenuUrl) { const bImg = document.getElementById('bentoMenuImg'); bImg.src = formatDriveImageUrl(response.data.bentoMenuUrl); bImg.style.display = 'block'; }
             if(response.data.drinkMenuUrl) { const dImg = document.getElementById('drinkMenuImg'); dImg.src = formatDriveImageUrl(response.data.drinkMenuUrl); dImg.style.display = 'block'; }
@@ -372,20 +384,15 @@
               rankContainer.innerHTML += `<div class="col-4"><input type="radio" class="btn-check rank-radio" name="rank" id="r_${idx}" value="${r}" onchange="handleRankChange('r_${idx}')"><label class="btn btn-outline-dark-theme w-100 fw-bold rank-label-custom" for="r_${idx}">${r}</label></div>`;
             });
 
-            // 啟動排行榜繪製
+            // 🔥 將抓下來的完整訂單丟進處理引擎
             if (response.data.currentOrders) {
-              processLeaderboard(response.data.currentOrders.bento, 'bento');
-              processLeaderboard(response.data.currentOrders.drink, 'drink');
+              processCurrentOrders(response.data.currentOrders);
             }
 
-          } else { 
-            document.getElementById('closedScreen').classList.remove('d-none'); 
-          }
+          } else { document.getElementById('closedScreen').classList.remove('d-none'); }
         }).catch(err => {
-          document.getElementById('loadingScreen').classList.add('d-none');
-          document.getElementById('closedScreen').classList.remove('d-none');
-          document.getElementById('closedTitle').innerText = "⚠️ 系統連線失敗";
-          document.getElementById('closedDesc').innerHTML = `無法取得最新資料。<br><b>錯誤原因：</b>${err.message}`;
+          document.getElementById('loadingScreen').classList.add('d-none'); document.getElementById('closedScreen').classList.remove('d-none');
+          document.getElementById('closedTitle').innerText = "⚠️ 系統連線失敗"; document.getElementById('closedDesc').innerHTML = `無法取得最新資料。<br><b>錯誤原因：</b>${err.message}`;
         });
       };
 
@@ -395,7 +402,6 @@
         if (e.target && e.target.tagName === 'INPUT' && !e.target.classList.contains('dummy-trap')) {
           const isKeyboardAlreadyUp = window.visualViewport && (window.visualViewport.height < window.innerHeight * 0.85);
           const delayTime = isKeyboardAlreadyUp ? 10 : 350;
-
           setTimeout(() => {
             if (window.visualViewport) {
               const rect = e.target.getBoundingClientRect();
@@ -412,8 +418,7 @@
           document.getElementById('rankDiv').classList.add('d-none'); 
           document.getElementById('nameDiv').classList.remove('d-none'); 
           document.getElementById('name').focus(); 
-        }
-        else { 
+        } else { 
           document.getElementById('rankDiv').classList.remove('d-none'); 
           document.getElementById('nameDiv').classList.add('d-none'); 
         }
@@ -452,7 +457,6 @@
         if (dName) msgLines.push(`${finalDrinkItem} $${dAmt}`);
         if (notes) msgLines.push(`${notes}`);
         
-        // 總額加總顯示在確認視窗最下方
         if (bAmt && dAmt) {
           const totalAmount = parseFloat(bAmt) + parseFloat(dAmt);
           msgLines.push(`------------------`);
@@ -477,9 +481,7 @@
           } else alert("錯誤：" + data.message);
         }).catch(error => {
           alert("送出訂單發生錯誤：" + error.message);
-        }).finally(() => { 
-          btn.disabled = false; btn.innerText = '送出訂單'; 
-        });
+        }).finally(() => { btn.disabled = false; btn.innerText = '送出訂單'; });
       }
     </script>
   </body>
