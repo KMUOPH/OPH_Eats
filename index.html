@@ -23,32 +23,40 @@
       .btn-theme { background-color: #536e86; border-color: #536e86; color: white; }
       .btn-theme:hover, .btn-theme:focus { background-color: #40586e; border-color: #40586e; color: white; }
       
-      /* 🔥 調淡的淺岩灰色 (一致化) */
-      .btn-top5 { background-color: #868e96; border-color: #868e96; color: white; transition: all 0.2s; }
-      .btn-top5:hover { background-color: #737c85; color: white; }
-      .btn-top5:focus { background-color: #868e96; color: white; box-shadow: none; outline: none; } /* 點擊後不殘留深色 */
-
-      /* 🔥 恢復淺色按鈕外框 */
-      .btn-outline-dark-theme { color: #212529; border-color: #adb5bd !important; border-width: 1px; border-radius: 5px !important; }
-      .btn-outline-dark-theme:hover { background-color: #e9ecef; color: #212529; }
-      .btn-check:checked + .btn-outline-dark-theme { background-color: #ced4da; color: #212529; border-color: #adb5bd !important; font-weight: bold; }
+      .btn-outline-dark-theme { color: #212529; border-color: #343a40 !important; border-width: 1px; border-radius: 5px !important; }
+      .btn-check:checked + .btn-outline-dark-theme { background-color: #ced4da; color: #212529; border-color: #343a40 !important; font-weight: bold; }
       
-      /* 🔥 只有輸入框保留深鐵灰，強烈引導輸入 */
+      /* 🔥 解決手機端 Hover 卡色問題 (只在支援滑鼠的裝置啟用 hover) */
+      @media (hover: hover) {
+        .btn-outline-dark-theme:hover { background-color: #e9ecef; color: #212529; }
+      }
+      
       .form-control { border-color: #343a40 !important; border-width: 1px !important; }
       .form-control:focus { border-color: #86b7fe !important; box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25) !important; }
       
       #loadingScreen, #closedScreen { text-align: center; padding: 40px 20px; }
-      /* 🔥 恢復圖片淺色外框 */
       .menu-img { width: 100%; border-radius: 8px; margin-bottom: 10px; display: none; box-shadow: 0 2px 5px rgba(0,0,0,0.15); border: 1px solid #e2e8f0; }
       
       .banner-header { background-color: #536e86; color: white; height: 60px; margin-bottom: 16px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); width: 100%; display: flex; justify-content: space-between; align-items: center; padding-right: 15px; }
       
       .section-block { margin-bottom: 16px; }
       
+      /* 🔥 全新層次感標題 (懸掛凸排 + 漸層底色) */
       .section-header { 
-        color: #536e86; padding: 4px 8px; font-size: 1.1rem; font-weight: bold; 
-        margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; 
-        border-left: 5px solid #536e86; border-bottom: 2px solid #f1f3f5;
+        color: #3a4f63; 
+        padding: 4px 8px 4px 12px; 
+        font-size: 1.05rem; 
+        font-weight: bold; 
+        margin-bottom: 10px; 
+        margin-left: -12px; /* 往左凸排 */
+        display: flex; 
+        justify-content: space-between; 
+        align-items: center; 
+        border-left: 6px solid #536e86; /* 粗邊框標籤感 */
+        border-bottom: 1px solid #f1f3f5;
+        background: linear-gradient(to right, #f8f9fa, #ffffff); /* 淡淡漸層營造立體感 */
+        border-top-left-radius: 4px;
+        border-bottom-left-radius: 4px;
       }
       
       .clinic-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; }
@@ -62,18 +70,28 @@
       .custom-placeholder::placeholder { color: #adb5bd !important; opacity: 1 !important; font-weight: normal !important; }
       .dummy-trap { position: absolute; opacity: 0; width: 1px; height: 1px; padding: 0; border: none; margin: 0; }
 
-      /* ================= TOP 5 方塊化 ================= */
-      .top5-container { display: flex; flex-wrap: nowrap; gap: 6px; padding: 10px 2px 6px 2px; width: 100%; }
+      /* ================= 淺底深字設計 (查看訂單與 TOP 5) ================= */
+      .btn-top5 { 
+        background-color: #f8f9fa; 
+        border: 1px solid #ced4da; 
+        color: #495057; 
+        transition: all 0.2s; 
+      }
+      @media (hover: hover) { .btn-top5:hover { background-color: #e9ecef; } }
+      .btn-top5:active { background-color: #e9ecef !important; transform: scale(0.98); }
+
+      .top5-container { display: flex; flex-wrap: nowrap; gap: 8px; padding: 10px 2px 6px 2px; width: 100%; }
       .top5-card {
         position: relative;
         flex: 1 1 0; min-width: 0; 
-        background-color: #868e96; /* 🔥 淺岩灰色 (與按鈕一致) */
-        color: white;
+        background-color: #ffffff; /* 淺底 */
+        color: #495057; /* 深字 */
+        border: 1px solid #dee2e6; /* 淡灰邊框 */
         border-radius: 6px;
         padding: 4px 2px;
         cursor: pointer;
         text-align: center;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05); /* 淡淡的陰影 */
         transition: transform 0.1s;
         display: flex;
         flex-direction: column;
@@ -81,7 +99,7 @@
         justify-content: center;
         min-height: 48px; 
       }
-      .top5-card:active { transform: scale(0.95); }
+      .top5-card:active { transform: scale(0.95); background-color: #f8f9fa; }
       
       .top5-badge {
         position: absolute;
@@ -108,27 +126,26 @@
         width: 100%;
       }
 
-      /* ================= 客製化下拉選單 ================= */
+      /* ================= 客製化下拉選單 (優化外觀與行數) ================= */
       .custom-dropdown {
         position: absolute;
         top: 100%;
         left: 0;
         right: 0;
         background: white;
-        border: 1px solid #343a40;
-        border-radius: 4px;
+        border: 1px solid #dee2e6; /* 🔥 改為極淡灰框 */
+        border-radius: 6px;
         z-index: 1000;
-        max-height: 165px; /* 🔥 精算高度，故意露出第4.5個項目暗示可以滑動 */
+        max-height: 220px; /* 🔥 加高！大約可顯示 5.5 行 */
         overflow-y: auto;
-        box-shadow: 0 4px 8px rgba(0,0,0,0.15);
-        margin-top: 2px;
+        box-shadow: 0 8px 16px rgba(0,0,0,0.12); /* 🔥 優雅的懸浮陰影 */
+        margin-top: 4px;
       }
-      /* 🔥 加上下拉清單的捲軸樣式，讓使用者更明確知道可捲動 */
       .custom-dropdown::-webkit-scrollbar { width: 6px; }
       .custom-dropdown::-webkit-scrollbar-thumb { background: #ced4da; border-radius: 3px; }
 
       .custom-dropdown div {
-        padding: 8px 12px;
+        padding: 10px 12px;
         border-bottom: 1px solid #f1f3f5;
         font-size: 0.95rem;
         color: #212529;
@@ -136,7 +153,7 @@
         cursor: pointer;
       }
       .custom-dropdown div:last-child { border-bottom: none; }
-      .custom-dropdown div:active { background-color: #d1e7dd; }
+      .custom-dropdown div:active { background-color: #f8f9fa; }
     </style>
   </head>
   <body>
@@ -181,11 +198,10 @@
                 <input type="text" class="form-control fw-bold" id="name" placeholder="請輸入姓名" onfocus="this.select()">
               </div>
 
-              <!-- 查看今日點餐狀況 (淺岩灰色) -->
+              <!-- 查看今日點餐狀況 (淺底深字) -->
               <div class="section-block">
-                <!-- 🔥 加入 this.blur() 讓按鈕點擊後解除沾黏深色狀態 -->
-                <button type="button" id="toggleListBtn" class="btn btn-top5 w-100 fw-bold mb-2 shadow-sm" onclick="this.blur(); toggleOrderList()">👀 查看今日點餐狀況 ▼</button>
-                <div id="todayOrderList" class="d-none border border-secondary rounded p-1" style="background-color: #f8f9fa; max-height: 350px; overflow-y: auto;">
+                <button type="button" id="toggleListBtn" class="btn btn-top5 w-100 fw-bold mb-2 shadow-sm" onclick="toggleOrderList()">👀 查看今日點餐狀況 ▼</button>
+                <div id="todayOrderList" class="d-none border border-light rounded p-1" style="background-color: #f8f9fa; max-height: 350px; overflow-y: auto;">
                   <div class="text-center text-muted small py-2">目前尚無訂單</div>
                 </div>
               </div>
@@ -204,7 +220,6 @@
                 
                 <div class="row g-2 mb-2">
                   <div class="col-5 position-relative">
-                    <!-- 🔥 加上 onblur 讓跳下一格時自動收起清單 -->
                     <input type="text" class="form-control fw-bold custom-placeholder" id="bentoName" placeholder="餐點" enterkeyhint="next" onfocus="this.select(); showDropdown('bento')" oninput="filterDropdown('bento')" onblur="setTimeout(closeAllDropdowns, 200)">
                     <div id="bentoDropdown" class="custom-dropdown d-none"></div>
                   </div>
@@ -232,7 +247,6 @@
                 
                 <div class="row g-2 mb-2">
                   <div class="col-5 position-relative">
-                    <!-- 🔥 加上 onblur 讓跳下一格時自動收起清單 -->
                     <input type="text" class="form-control fw-bold custom-placeholder" id="drinkName" placeholder="飲料" enterkeyhint="next" onfocus="this.select(); showDropdown('drink')" oninput="filterDropdown('drink')" onblur="setTimeout(closeAllDropdowns, 200)">
                     <div id="drinkDropdown" class="custom-dropdown d-none"></div>
                   </div>
@@ -323,7 +337,6 @@
         }
       }
 
-      // ================= 客製化下拉選單邏輯 =================
       function showDropdown(type) {
         closeAllDropdowns();
         const list = type === 'bento' ? globalBentoList : globalDrinkList;
@@ -355,13 +368,11 @@
         document.getElementById('drinkDropdown').classList.add('d-none');
       }
 
-      // 點擊空白處也會關閉下拉選單
       document.addEventListener('click', function(e) {
         if (!e.target.closest('.position-relative')) {
           closeAllDropdowns();
         }
       });
-      // ==============================================================
 
       function processCurrentOrders(orders) {
         if (!orders || orders.length === 0) return;
@@ -429,7 +440,7 @@
         let sorted = Object.entries(counts).sort((a, b) => b[1] - a[1]).slice(0, 5);
         if (sorted.length === 0) return;
 
-        let html = `<div style="font-size: 0.8rem; font-weight: bold; color: #868e96; margin: 0 0 4px 0;">🔥 TOP 5 (點擊帶入)</div>`;
+        let html = `<div style="font-size: 0.8rem; font-weight: bold; color: #6c757d; margin: 0 0 4px 0;">🔥 TOP 5 (點擊帶入)</div>`;
         html += `<div class="top5-container">`;
 
         sorted.forEach((entry) => {
@@ -477,7 +488,6 @@
         }, 400); 
       }
 
-      // 自動推高輸入格引擎
       document.addEventListener('focusin', function(e) {
         if (e.target && e.target.tagName === 'INPUT' && !e.target.classList.contains('dummy-trap')) {
           const isKeyboardAlreadyUp = window.visualViewport && (window.visualViewport.height < window.innerHeight * 0.85);
