@@ -23,14 +23,15 @@
       .btn-theme { background-color: #536e86; border-color: #536e86; color: white; }
       .btn-theme:hover, .btn-theme:focus { background-color: #40586e; border-color: #40586e; color: white; }
       
-      .btn-outline-dark-theme { color: #212529; border-color: #343a40 !important; border-width: 1px; border-radius: 5px !important; }
-      .btn-check:checked + .btn-outline-dark-theme { background-color: #ced4da; color: #212529; border-color: #343a40 !important; font-weight: bold; }
+      /* 🔥 恢復標籤與按鈕的淺灰色外框 */
+      .btn-outline-dark-theme { color: #212529; border-color: #adb5bd !important; border-width: 1px; border-radius: 5px !important; }
+      .btn-check:checked + .btn-outline-dark-theme { background-color: #ced4da; color: #212529; border-color: #adb5bd !important; font-weight: bold; }
       
-      /* 🔥 解決手機端 Hover 卡色問題 (只在支援滑鼠的裝置啟用 hover) */
       @media (hover: hover) {
         .btn-outline-dark-theme:hover { background-color: #e9ecef; color: #212529; }
       }
       
+      /* 🔥 只有輸入框是深鐵灰邊框，引導輸入 */
       .form-control { border-color: #343a40 !important; border-width: 1px !important; }
       .form-control:focus { border-color: #86b7fe !important; box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25) !important; }
       
@@ -41,22 +42,12 @@
       
       .section-block { margin-bottom: 16px; }
       
-      /* 🔥 全新層次感標題 (懸掛凸排 + 漸層底色) */
       .section-header { 
-        color: #3a4f63; 
-        padding: 4px 8px 4px 12px; 
-        font-size: 1.05rem; 
-        font-weight: bold; 
-        margin-bottom: 10px; 
-        margin-left: -12px; /* 往左凸排 */
-        display: flex; 
-        justify-content: space-between; 
-        align-items: center; 
-        border-left: 6px solid #536e86; /* 粗邊框標籤感 */
-        border-bottom: 1px solid #f1f3f5;
-        background: linear-gradient(to right, #f8f9fa, #ffffff); /* 淡淡漸層營造立體感 */
-        border-top-left-radius: 4px;
-        border-bottom-left-radius: 4px;
+        color: #3a4f63; padding: 4px 8px 4px 12px; font-size: 1.05rem; font-weight: bold; 
+        margin-bottom: 10px; margin-left: -12px; display: flex; justify-content: space-between; align-items: center; 
+        border-left: 6px solid #536e86; border-bottom: 1px solid #f1f3f5;
+        background: linear-gradient(to right, #f8f9fa, #ffffff);
+        border-top-left-radius: 4px; border-bottom-left-radius: 4px;
       }
       
       .clinic-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; }
@@ -64,34 +55,34 @@
       .rank-label-custom { padding: 8px 0 !important; font-size: 0.95rem !important; margin: 0; }
       
       .quick-notes::-webkit-scrollbar { display: none; }
-      .btn-clear { border-color: #343a40; color: #6c757d; }
+      .btn-clear { border-color: #adb5bd; color: #6c757d; }
       
       .capsule-btn { border-radius: 50px !important; padding: 6px 18px; font-size: 0.9rem; }
       .custom-placeholder::placeholder { color: #adb5bd !important; opacity: 1 !important; font-weight: normal !important; }
       .dummy-trap { position: absolute; opacity: 0; width: 1px; height: 1px; padding: 0; border: none; margin: 0; }
 
-      /* ================= 淺底深字設計 (查看訂單與 TOP 5) ================= */
+      /* ================= 質感淺灰藍設計 (查看訂單與 TOP 5) ================= */
       .btn-top5 { 
-        background-color: #f8f9fa; 
-        border: 1px solid #ced4da; 
-        color: #495057; 
+        background-color: #e2e8f0; /* 🔥 明顯但柔和的淺灰藍 */
+        border: 1px solid #cbd5e1; 
+        color: #343a40; 
         transition: all 0.2s; 
       }
-      @media (hover: hover) { .btn-top5:hover { background-color: #e9ecef; } }
-      .btn-top5:active { background-color: #e9ecef !important; transform: scale(0.98); }
+      @media (hover: hover) { .btn-top5:hover { background-color: #cbd5e1; } }
+      .btn-top5:active { background-color: #cbd5e1 !important; transform: scale(0.98); }
 
       .top5-container { display: flex; flex-wrap: nowrap; gap: 8px; padding: 10px 2px 6px 2px; width: 100%; }
       .top5-card {
         position: relative;
         flex: 1 1 0; min-width: 0; 
-        background-color: #ffffff; /* 淺底 */
-        color: #495057; /* 深字 */
-        border: 1px solid #dee2e6; /* 淡灰邊框 */
+        background-color: #e2e8f0; /* 🔥 明顯但柔和的淺灰藍 */
+        color: #343a40; 
+        border: 1px solid #cbd5e1; 
         border-radius: 6px;
         padding: 4px 2px;
         cursor: pointer;
         text-align: center;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.05); /* 淡淡的陰影 */
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05); 
         transition: transform 0.1s;
         display: flex;
         flex-direction: column;
@@ -99,7 +90,7 @@
         justify-content: center;
         min-height: 48px; 
       }
-      .top5-card:active { transform: scale(0.95); background-color: #f8f9fa; }
+      .top5-card:active { transform: scale(0.95); background-color: #cbd5e1; }
       
       .top5-badge {
         position: absolute;
@@ -119,33 +110,28 @@
         border: 2px solid #ffffff;
         z-index: 2;
       }
-      .top5-name {
-        font-size: 0.75rem; 
-        font-weight: bold;
-        line-height: 1.2;
-        width: 100%;
-      }
+      .top5-name { font-size: 0.75rem; font-weight: bold; line-height: 1.2; width: 100%; }
 
-      /* ================= 客製化下拉選單 (優化外觀與行數) ================= */
+      /* ================= 客製化下拉選單 ================= */
       .custom-dropdown {
         position: absolute;
         top: 100%;
         left: 0;
         right: 0;
         background: white;
-        border: 1px solid #dee2e6; /* 🔥 改為極淡灰框 */
+        border: 1px solid #dee2e6; 
         border-radius: 6px;
         z-index: 1000;
-        max-height: 220px; /* 🔥 加高！大約可顯示 5.5 行 */
+        max-height: 195px; /* 🔥 精算高度，讓第5個選項只顯示上半截，強烈暗示可滑動 */
         overflow-y: auto;
-        box-shadow: 0 8px 16px rgba(0,0,0,0.12); /* 🔥 優雅的懸浮陰影 */
+        box-shadow: 0 8px 16px rgba(0,0,0,0.12); 
         margin-top: 4px;
       }
       .custom-dropdown::-webkit-scrollbar { width: 6px; }
       .custom-dropdown::-webkit-scrollbar-thumb { background: #ced4da; border-radius: 3px; }
 
       .custom-dropdown div {
-        padding: 10px 12px;
+        padding: 12px 12px;
         border-bottom: 1px solid #f1f3f5;
         font-size: 0.95rem;
         color: #212529;
@@ -198,10 +184,9 @@
                 <input type="text" class="form-control fw-bold" id="name" placeholder="請輸入姓名" onfocus="this.select()">
               </div>
 
-              <!-- 查看今日點餐狀況 (淺底深字) -->
               <div class="section-block">
-                <button type="button" id="toggleListBtn" class="btn btn-top5 w-100 fw-bold mb-2 shadow-sm" onclick="toggleOrderList()">👀 查看今日點餐狀況 ▼</button>
-                <div id="todayOrderList" class="d-none border border-light rounded p-1" style="background-color: #f8f9fa; max-height: 350px; overflow-y: auto;">
+                <button type="button" id="toggleListBtn" class="btn btn-top5 w-100 fw-bold mb-2 shadow-sm" onclick="this.blur(); toggleOrderList()">👀 查看今日點餐狀況 ▼</button>
+                <div id="todayOrderList" class="d-none border rounded p-1" style="background-color: #f8f9fa; border-color: #dee2e6 !important; max-height: 350px; overflow-y: auto;">
                   <div class="text-center text-muted small py-2">目前尚無訂單</div>
                 </div>
               </div>
@@ -212,7 +197,7 @@
                   <span>餐點</span>
                 </div>
                 <img id="bentoMenuImg" class="menu-img" alt="餐點菜單" onerror="handleImgError('bento')">
-                <div id="bentoImgError" class="text-center p-3 mb-2 border border-secondary rounded" style="background-color: #f8f9fa; display: none;">
+                <div id="bentoImgError" class="text-center p-3 mb-2 border rounded" style="background-color: #f8f9fa; border-color: #dee2e6 !important; display: none;">
                   <span class="text-secondary fw-bold small">圖片載入超時，請點擊上方「🔄 圖片重整」</span>
                 </div>
                 
@@ -239,7 +224,7 @@
                   <span>飲料</span>
                 </div>
                 <img id="drinkMenuImg" class="menu-img" alt="飲料菜單" onerror="handleImgError('drink')">
-                <div id="drinkImgError" class="text-center p-3 mb-2 border border-secondary rounded" style="background-color: #f8f9fa; display: none;">
+                <div id="drinkImgError" class="text-center p-3 mb-2 border rounded" style="background-color: #f8f9fa; border-color: #dee2e6 !important; display: none;">
                   <span class="text-secondary fw-bold small">圖片載入超時，請點擊上方「🔄 圖片重整」</span>
                 </div>
                 
