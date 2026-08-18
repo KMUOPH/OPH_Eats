@@ -23,35 +23,29 @@
       .btn-theme { background-color: #536e86; border-color: #536e86; color: white; }
       .btn-theme:hover, .btn-theme:focus { background-color: #40586e; border-color: #40586e; color: white; }
       
-      /* 🔥 調淡後的淺灰霧藍色 */
-      .btn-top5 { background-color: #8ba4b8; border-color: #8ba4b8; color: white; transition: all 0.2s; }
-      .btn-top5:hover, .btn-top5:focus { background-color: #7994a9; color: white; }
+      /* 🔥 統一橘色系設計 (愛馬仕橘) */
+      .btn-top5 { background-color: #e67e22; border-color: #e67e22; color: white; transition: all 0.2s; }
+      .btn-top5:hover, .btn-top5:focus { background-color: #d35400; color: white; }
 
-      .btn-outline-dark-theme { color: #495057; border-color: #adb5bd; border-radius: 5px !important; }
+      /* 🔥 所有圓角框線全面加深 (深鐵灰 #343a40) */
+      .btn-outline-dark-theme { color: #212529; border-color: #343a40 !important; border-width: 1px; border-radius: 5px !important; }
       .btn-outline-dark-theme:hover { background-color: #e9ecef; color: #212529; }
-      .btn-check:checked + .btn-outline-dark-theme { background-color: #ced4da; color: #212529; border-color: #adb5bd; font-weight: bold; }
+      .btn-check:checked + .btn-outline-dark-theme { background-color: #ced4da; color: #212529; border-color: #343a40 !important; font-weight: bold; }
       
-      .form-control { border-color: #adb5bd !important; }
+      .form-control { border-color: #343a40 !important; border-width: 1px !important; }
       .form-control:focus { border-color: #86b7fe !important; box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25) !important; }
       
       #loadingScreen, #closedScreen { text-align: center; padding: 40px 20px; }
-      .menu-img { width: 100%; border-radius: 8px; margin-bottom: 10px; display: none; box-shadow: 0 2px 5px rgba(0,0,0,0.15); border: 1px solid #e2e8f0; }
+      .menu-img { width: 100%; border-radius: 8px; margin-bottom: 10px; display: none; box-shadow: 0 2px 5px rgba(0,0,0,0.15); border: 1px solid #343a40; }
       
       .banner-header { background-color: #536e86; color: white; height: 60px; margin-bottom: 16px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); width: 100%; display: flex; justify-content: space-between; align-items: center; padding-right: 15px; }
       
       .section-block { margin-bottom: 16px; }
       
       .section-header { 
-        color: #536e86; 
-        padding: 4px 8px; 
-        font-size: 1.1rem; 
-        font-weight: bold; 
-        margin-bottom: 10px; 
-        display: flex; 
-        justify-content: space-between; 
-        align-items: center; 
-        border-left: 5px solid #536e86;
-        border-bottom: 2px solid #f1f3f5;
+        color: #536e86; padding: 4px 8px; font-size: 1.1rem; font-weight: bold; 
+        margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; 
+        border-left: 5px solid #536e86; border-bottom: 2px solid #f1f3f5;
       }
       
       .clinic-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; }
@@ -59,36 +53,30 @@
       .rank-label-custom { padding: 8px 0 !important; font-size: 0.95rem !important; margin: 0; }
       
       .quick-notes::-webkit-scrollbar { display: none; }
-      .btn-clear { border-color: #ced4da; color: #6c757d; }
-      .btn-clear:hover { background-color: #e9ecef; color: #495057; }
+      .btn-clear { border-color: #343a40; color: #6c757d; }
       
       .capsule-btn { border-radius: 50px !important; padding: 6px 18px; font-size: 0.9rem; }
       .custom-placeholder::placeholder { color: #adb5bd !important; opacity: 1 !important; font-weight: normal !important; }
       .dummy-trap { position: absolute; opacity: 0; width: 1px; height: 1px; padding: 0; border: none; margin: 0; }
 
-      /* ================= TOP 5 單列自適應 CSS ================= */
-      .top5-container { 
-        display: flex; 
-        flex-wrap: nowrap; /* 🔥 強制單列不換行 */
-        gap: 6px; 
-        padding: 10px 2px 6px 2px; 
-        width: 100%;
-      }
+      /* ================= TOP 5 方塊化 (統一高度＋智慧換行) ================= */
+      .top5-container { display: flex; flex-wrap: nowrap; gap: 6px; padding: 10px 2px 6px 2px; width: 100%; }
       .top5-card {
         position: relative;
-        flex: 1 1 0; /* 🔥 均分寬度，允許縮小 */
-        min-width: 0; 
-        background-color: #8ba4b8; /* 🔥 調淡的顏色 */
+        flex: 1 1 0; min-width: 0; 
+        background-color: #e67e22; /* 橘色 */
         color: white;
         border-radius: 6px;
-        padding: 6px 2px;
+        padding: 4px 2px;
         cursor: pointer;
         text-align: center;
         box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         transition: transform 0.1s;
         display: flex;
+        flex-direction: column; /* 讓內容垂直排列 */
         align-items: center;
         justify-content: center;
+        min-height: 48px; /* 🔥 強制統一高度為兩行高 */
       }
       .top5-card:active { transform: scale(0.95); }
       
@@ -111,22 +99,40 @@
         z-index: 2;
       }
       .top5-name {
-        font-size: 0.75rem; /* 字體微調，適應窄空間 */
+        font-size: 0.75rem; 
         font-weight: bold;
-        white-space: normal;
         line-height: 1.2;
-        display: -webkit-box;
-        -webkit-line-clamp: 2; /* 🔥 最多兩行 */
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-        word-break: break-word;
+        width: 100%;
       }
+
+      /* ================= 客製化下拉選單 (專治 iPhone Safari) ================= */
+      .custom-dropdown {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: white;
+        border: 1px solid #343a40;
+        border-radius: 4px;
+        z-index: 1000;
+        max-height: 160px;
+        overflow-y: auto;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        margin-top: 2px;
+      }
+      .custom-dropdown div {
+        padding: 8px 12px;
+        border-bottom: 1px solid #f1f3f5;
+        font-size: 0.95rem;
+        color: #212529;
+        font-weight: bold;
+        cursor: pointer;
+      }
+      .custom-dropdown div:last-child { border-bottom: none; }
+      .custom-dropdown div:active { background-color: #d1e7dd; }
     </style>
   </head>
   <body>
-    
-    <datalist id="bentoSuggestions"></datalist>
-    <datalist id="drinkSuggestions"></datalist>
 
     <div class="banner-header">
       <div class="d-flex align-items-center h-100 overflow-hidden ms-2">
@@ -168,9 +174,10 @@
                 <input type="text" class="form-control fw-bold" id="name" placeholder="請輸入姓名" onfocus="this.select()">
               </div>
 
+              <!-- 查看今日點餐狀況 (深橘色按鈕) -->
               <div class="section-block">
                 <button type="button" id="toggleListBtn" class="btn btn-top5 w-100 fw-bold mb-2 shadow-sm" onclick="toggleOrderList()">👀 查看今日點餐狀況 ▼</button>
-                <div id="todayOrderList" class="d-none border rounded p-1" style="background-color: #f8f9fa; max-height: 350px; overflow-y: auto;">
+                <div id="todayOrderList" class="d-none border border-secondary rounded p-1" style="background-color: #f8f9fa; max-height: 350px; overflow-y: auto;">
                   <div class="text-center text-muted small py-2">目前尚無訂單</div>
                 </div>
               </div>
@@ -181,16 +188,17 @@
                   <span>餐點</span>
                 </div>
                 <img id="bentoMenuImg" class="menu-img" alt="餐點菜單" onerror="handleImgError('bento')">
-                <div id="bentoImgError" class="text-center p-3 mb-2 border rounded" style="background-color: #f8f9fa; display: none;">
+                <div id="bentoImgError" class="text-center p-3 mb-2 border border-secondary rounded" style="background-color: #f8f9fa; display: none;">
                   <span class="text-secondary fw-bold small">圖片載入超時，請點擊上方「🔄 圖片重整」</span>
                 </div>
                 
                 <div id="bentoLeaderboard" class="mb-2" style="display: none;"></div>
                 
                 <div class="row g-2 mb-2">
-                  <div class="col-5">
-                    <!-- 🔥 加入 onclick 強制彈出下拉選單 -->
-                    <input type="text" class="form-control fw-bold custom-placeholder" id="bentoName" placeholder="餐點" list="bentoSuggestions" enterkeyhint="next" onfocus="this.select(); try{this.showPicker();}catch(e){}" onclick="try{this.showPicker();}catch(e){}">
+                  <!-- 🔥 替換為自製的絕對顯示下拉選單 -->
+                  <div class="col-5 position-relative">
+                    <input type="text" class="form-control fw-bold custom-placeholder" id="bentoName" placeholder="餐點" enterkeyhint="next" onfocus="this.select(); showDropdown('bento')" oninput="filterDropdown('bento')">
+                    <div id="bentoDropdown" class="custom-dropdown d-none"></div>
                   </div>
                   <div class="col-4">
                     <input type="text" class="form-control fw-bold text-secondary custom-placeholder" id="bentoCustom" placeholder="客製項目" enterkeyhint="next" onfocus="this.select()">
@@ -208,16 +216,17 @@
                   <span>飲料</span>
                 </div>
                 <img id="drinkMenuImg" class="menu-img" alt="飲料菜單" onerror="handleImgError('drink')">
-                <div id="drinkImgError" class="text-center p-3 mb-2 border rounded" style="background-color: #f8f9fa; display: none;">
+                <div id="drinkImgError" class="text-center p-3 mb-2 border border-secondary rounded" style="background-color: #f8f9fa; display: none;">
                   <span class="text-secondary fw-bold small">圖片載入超時，請點擊上方「🔄 圖片重整」</span>
                 </div>
                 
                 <div id="drinkLeaderboard" class="mb-2" style="display: none;"></div>
                 
                 <div class="row g-2 mb-2">
-                  <div class="col-5">
-                    <!-- 🔥 加入 onclick 強制彈出下拉選單 -->
-                    <input type="text" class="form-control fw-bold custom-placeholder" id="drinkName" placeholder="飲料" list="drinkSuggestions" enterkeyhint="next" onfocus="this.select(); try{this.showPicker();}catch(e){}" onclick="try{this.showPicker();}catch(e){}">
+                  <!-- 🔥 替換為自製的絕對顯示下拉選單 -->
+                  <div class="col-5 position-relative">
+                    <input type="text" class="form-control fw-bold custom-placeholder" id="drinkName" placeholder="飲料" enterkeyhint="next" onfocus="this.select(); showDropdown('drink')" oninput="filterDropdown('drink')">
+                    <div id="drinkDropdown" class="custom-dropdown d-none"></div>
                   </div>
                   <div class="col-4">
                     <input type="text" class="form-control fw-bold text-secondary custom-placeholder" id="drinkCustom" placeholder="客製項目" enterkeyhint="next" onfocus="this.select()">
@@ -254,6 +263,10 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
       const GAS_API_URL = "https://script.google.com/macros/s/AKfycbwGOrIyoQ-XUBcn_nExeZuKkuQIvWx6aZhdYhB10qq6HW6uDxCa9tGUA_pwByVC7cSw/exec";
+
+      // 全域變數儲存今日品項清單
+      let globalBentoList = [];
+      let globalDrinkList = [];
 
       async function fetchWithRetry(url, options, retries = 2) {
         for (let i = 0; i <= retries; i++) {
@@ -303,6 +316,47 @@
         }
       }
 
+      // ================= 客製化下拉選單邏輯 (取代 Datalist) =================
+      function showDropdown(type) {
+        closeAllDropdowns();
+        const list = type === 'bento' ? globalBentoList : globalDrinkList;
+        if (list.length === 0) return;
+        renderDropdown(type, list);
+        document.getElementById(type + 'Dropdown').classList.remove('d-none');
+      }
+
+      function filterDropdown(type) {
+        const inputVal = document.getElementById(type + 'Name').value.toLowerCase();
+        const list = type === 'bento' ? globalBentoList : globalDrinkList;
+        const filtered = list.filter(item => item.toLowerCase().includes(inputVal));
+        const dd = document.getElementById(type + 'Dropdown');
+        if (filtered.length === 0) {
+          dd.classList.add('d-none');
+        } else {
+          renderDropdown(type, filtered);
+          dd.classList.remove('d-none');
+        }
+      }
+
+      function renderDropdown(type, items) {
+        const dd = document.getElementById(type + 'Dropdown');
+        // 使用 onmousedown 避免 input 的 onblur 提早觸發關閉
+        dd.innerHTML = items.map(item => `<div onmousedown="event.preventDefault(); fillName('${type}Name', '${item}')">${item}</div>`).join('');
+      }
+
+      function closeAllDropdowns() {
+        document.getElementById('bentoDropdown').classList.add('d-none');
+        document.getElementById('drinkDropdown').classList.add('d-none');
+      }
+
+      // 點擊空白處關閉下拉選單
+      document.addEventListener('click', function(e) {
+        if (!e.target.closest('.position-relative')) {
+          closeAllDropdowns();
+        }
+      });
+      // ==============================================================
+
       // ================= 資料處理引擎 =================
       function processCurrentOrders(orders) {
         if (!orders || orders.length === 0) return;
@@ -333,11 +387,10 @@
           colorIdx++;
 
           listHtml += `<div style="background-color: ${bgColor}; padding: 6px 8px; border-radius: 6px; margin-bottom: 4px;">`;
-          
           groupedOrders[clinicName].forEach(o => {
             listHtml += `
               <div style="display: grid; grid-template-columns: 20% 22% 29% 29%; gap: 4px; font-size: 0.85rem; padding: 4px 0; align-items: center; color: #495057; font-weight: bold; text-align: left;">
-                <div style="color: #63809c; text-align: center;">${clinicName}</div>
+                <div style="color: #e67e22; text-align: center;">${clinicName}</div>
                 <div class="text-truncate" title="${o.rankName}">${o.rankName}</div>
                 <div class="text-truncate" title="${o.bBase}">${o.bBase}</div>
                 <div class="text-truncate" title="${o.dBase}">${o.dBase}</div>
@@ -349,13 +402,20 @@
 
         if (listHtml) document.getElementById('todayOrderList').innerHTML = listHtml;
 
-        let uniqueBentos = [...new Set(bentoNames)];
-        let uniqueDrinks = [...new Set(drinkNames)];
-        document.getElementById('bentoSuggestions').innerHTML = uniqueBentos.map(n => `<option value="${n}">${n}</option>`).join('');
-        document.getElementById('drinkSuggestions').innerHTML = uniqueDrinks.map(n => `<option value="${n}">${n}</option>`).join('');
+        // 將清單存入全域變數，供自製下拉選單使用
+        globalBentoList = [...new Set(bentoNames)];
+        globalDrinkList = [...new Set(drinkNames)];
 
         processLeaderboard(bentoNames, 'bento');
         processLeaderboard(drinkNames, 'drink');
+      }
+
+      // 🔥 智慧換行器 (4字不換；5字在第3字換；6字以上在第4字換)
+      function formatTop5Name(name) {
+        if (name.length <= 4) return name;
+        let splitIdx = 4; // 預設超過6字在第4字切
+        if (name.length === 5) splitIdx = 3; // 5個字的話在第3字切
+        return name.substring(0, splitIdx) + '<br>' + name.substring(splitIdx);
       }
 
       function processLeaderboard(itemsArray, type) {
@@ -366,15 +426,16 @@
         let sorted = Object.entries(counts).sort((a, b) => b[1] - a[1]).slice(0, 5);
         if (sorted.length === 0) return;
 
-        let html = `<div style="font-size: 0.8rem; font-weight: bold; color: #8ba4b8; margin: 0 0 4px 0;">🔥 TOP 5 (點擊帶入)</div>`;
+        let html = `<div style="font-size: 0.8rem; font-weight: bold; color: #e67e22; margin: 0 0 4px 0;">🔥 TOP 5 (點擊帶入)</div>`;
         html += `<div class="top5-container">`;
 
         sorted.forEach((entry) => {
           let name = entry[0], count = entry[1];
+          let formattedName = formatTop5Name(name); // 套用智慧換行
           html += `
             <div class="top5-card" onclick="fillName('${type}Name', '${name}')">
               <div class="top5-badge">${count}</div>
-              <div class="top5-name">${name}</div>
+              <div class="top5-name">${formattedName}</div>
             </div>`;
         });
         
@@ -388,7 +449,9 @@
         const el = document.getElementById(inputId); el.value = name;
         el.style.transition = 'background-color 0.2s'; el.style.backgroundColor = '#d1e7dd';
         setTimeout(() => { el.style.backgroundColor = ''; }, 300);
+        closeAllDropdowns(); // 選完自動收起清單
       }
+      // ==============================================================
 
       function handleRankChange(radioId) {
         setTimeout(() => {
