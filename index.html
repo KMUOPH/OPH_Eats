@@ -40,7 +40,6 @@
       
       .section-block { margin-bottom: 16px; }
       
-      /* 🔥 修正：真正加寬的 12px 緞帶 */
       .section-header { 
         color: #3a4f63; 
         padding: 6px 8px 6px 14px; 
@@ -51,7 +50,7 @@
         display: flex; 
         justify-content: space-between; 
         align-items: center; 
-        border-left: 12px solid #536e86; /* 👉 這次真的是 12px 了！ */
+        border-left: 12px solid #536e86; 
         box-shadow: inset 0 -1px 0 #f1f3f5; 
         background: linear-gradient(to right, #f8f9fa, #ffffff);
         border-top-right-radius: 4px;
@@ -168,10 +167,10 @@
       <div class="row justify-content-center">
         <div class="col-md-8 col-lg-6 px-3">
             
-          <!-- 回歸最單純穩定的全畫面轉圈圈 -->
           <div id="loadingScreen">
             <div class="spinner-border text-theme" role="status"></div>
-            <h5 class="mt-3 text-secondary">連線中，請稍候...</h5>
+            <!-- 🔥 1. 更新載入中文字 -->
+            <h5 class="mt-3 text-secondary">資料載入中，請耐心等候...</h5>
           </div>
 
           <div id="closedScreen" class="d-none">
@@ -385,7 +384,11 @@
         }
 
         if (listHtml) document.getElementById('todayOrderList').innerHTML = listHtml;
-        globalBentoList = [...new Set(bentoNames)]; globalDrinkList = [...new Set(drinkNames)];
+        
+        // 🔥 2. 將萃取出的品項陣列加上 localeCompare 筆畫排序
+        globalBentoList = [...new Set(bentoNames)].sort((a, b) => a.localeCompare(b, 'zh-TW')); 
+        globalDrinkList = [...new Set(drinkNames)].sort((a, b) => a.localeCompare(b, 'zh-TW'));
+
         processLeaderboard(bentoNames, 'bento'); processLeaderboard(drinkNames, 'drink');
       }
 
@@ -455,7 +458,6 @@
         }
       });
 
-      // 🔥 恢復純粹的 Loading 讀取
       function loadData() {
         document.getElementById('loadingScreen').classList.remove('d-none');
         document.getElementById('mainContent').classList.add('d-none');
