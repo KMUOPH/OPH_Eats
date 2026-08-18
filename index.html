@@ -31,13 +31,13 @@
       .form-control:focus { border-color: #86b7fe !important; box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25) !important; }
       
       #loadingScreen, #closedScreen { text-align: center; padding: 40px 20px; }
-      .menu-img { width: 100%; border-radius: 8px; margin-bottom: 12px; display: none; box-shadow: 0 2px 5px rgba(0,0,0,0.15); border: 1px solid #e2e8f0; }
+      .menu-img { width: 100%; border-radius: 8px; margin-bottom: 10px; display: none; box-shadow: 0 2px 5px rgba(0,0,0,0.15); border: 1px solid #e2e8f0; }
       
-      .banner-header { background-color: #536e86; color: white; height: 60px; margin-bottom: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); width: 100%; display: flex; justify-content: space-between; align-items: center; padding-right: 15px; }
+      .banner-header { background-color: #536e86; color: white; height: 60px; margin-bottom: 16px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); width: 100%; display: flex; justify-content: space-between; align-items: center; padding-right: 15px; }
       
-      .section-block { margin-bottom: 24px; }
-      
-      .section-header { background-color: #e2e8f0; color: #212529; border-radius: 8px; padding: 10px 15px; font-size: 1rem; font-weight: bold; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
+      /* 🔥 緊密間距設定 */
+      .section-block { margin-bottom: 16px; }
+      .section-header { background-color: #e2e8f0; color: #212529; border-radius: 8px; padding: 8px 12px; font-size: 1rem; font-weight: bold; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
       
       .clinic-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; }
       .clinic-grid label { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; padding: 6px 0; font-size: 0.95rem; margin: 0; }
@@ -106,7 +106,7 @@
                 <input type="text" class="form-control fw-bold" id="name" placeholder="請輸入姓名" onfocus="this.select()">
               </div>
 
-              <!-- 🔥 新增：查看今日點餐狀況按鈕與清單 -->
+              <!-- 查看今日點餐狀況按鈕與清單 -->
               <div class="section-block">
                 <button type="button" class="btn btn-outline-dark-theme w-100 fw-bold mb-2" onclick="toggleOrderList()">👀 查看今日點餐狀況</button>
                 <div id="todayOrderList" class="d-none border rounded p-2" style="background-color: #f8f9fa; max-height: 350px; overflow-y: auto;">
@@ -120,11 +120,11 @@
                   <span>餐點</span>
                 </div>
                 <img id="bentoMenuImg" class="menu-img" alt="餐點菜單" onerror="handleImgError('bento')">
-                <div id="bentoImgError" class="text-center p-3 mb-3 border rounded" style="background-color: #f8f9fa; display: none;">
+                <div id="bentoImgError" class="text-center p-3 mb-2 border rounded" style="background-color: #f8f9fa; display: none;">
                   <span class="text-secondary fw-bold small">圖片載入超時，請點擊上方「🔄 圖片重整」</span>
                 </div>
                 
-                <div id="bentoLeaderboard" class="mb-3" style="display: none;"></div>
+                <div id="bentoLeaderboard" class="mb-2" style="display: none;"></div>
                 
                 <div class="row g-2 mb-2">
                   <div class="col-5">
@@ -146,11 +146,11 @@
                   <span>飲料</span>
                 </div>
                 <img id="drinkMenuImg" class="menu-img" alt="飲料菜單" onerror="handleImgError('drink')">
-                <div id="drinkImgError" class="text-center p-3 mb-3 border rounded" style="background-color: #f8f9fa; display: none;">
+                <div id="drinkImgError" class="text-center p-3 mb-2 border rounded" style="background-color: #f8f9fa; display: none;">
                   <span class="text-secondary fw-bold small">圖片載入超時，請點擊上方「🔄 圖片重整」</span>
                 </div>
                 
-                <div id="drinkLeaderboard" class="mb-3" style="display: none;"></div>
+                <div id="drinkLeaderboard" class="mb-2" style="display: none;"></div>
                 
                 <div class="row g-2 mb-2">
                   <div class="col-5">
@@ -235,35 +235,42 @@
         else listDiv.classList.add('d-none');
       }
 
-      // ================= 資料處理引擎 (處理清單、Datalist、排行榜) =================
+      // ================= 資料處理引擎 (處理四欄對齊清單、Datalist、排行榜) =================
       function processCurrentOrders(orders) {
         if (!orders || orders.length === 0) return;
 
         let bentoNames = [];
         let drinkNames = [];
-        let listHtml = '';
+        
+        // 四欄標題列
+        let listHtml = `
+          <div style="display: grid; grid-template-columns: 18% 22% 30% 30%; gap: 4px; font-weight: bold; font-size: 0.8rem; color: #6c757d; border-bottom: 2px solid #dee2e6; padding-bottom: 6px; margin-bottom: 6px; text-align: left;">
+            <div style="text-align: center;">診次</div>
+            <div>職級(姓名)</div>
+            <div>餐點</div>
+            <div>飲料</div>
+          </div>
+        `;
 
         orders.forEach(o => {
-          // 1. 剝除括號客製化
+          // 剝除括號客製化
           let bBase = o.bento ? o.bento.split('(')[0].split('（')[0].trim() : '';
           let dBase = o.drink ? o.drink.split('(')[0].split('（')[0].trim() : '';
           
           if (bBase) bentoNames.push(bBase);
           if (dBase) drinkNames.push(dBase);
 
-          // 2. 構建極簡查看清單
-          let shortClinic = o.clinic.replace('診', '').replace('間', ''); 
-          let itemsHtml = '';
-          if (bBase) itemsHtml += `<span class="me-2">🍱 ${bBase}</span>`;
-          if (dBase) itemsHtml += `<span>🥤 ${dBase}</span>`;
+          let clinicStr = o.clinic; // 移除縮寫
+          let rankNameStr = o.rankName;
 
-          if (itemsHtml) {
+          if (bBase || dBase) {
+            // 四欄資料列
             listHtml += `
-              <div class="d-flex align-items-center mb-2" style="font-size: 0.85rem; border-bottom: 1px solid #e9ecef; padding-bottom: 6px;">
-                <span style="font-weight: bold; color: #536e86; margin-right: 8px; flex-shrink: 0;">[ ${shortClinic} · ${o.rankName} ]</span>
-                <div class="text-truncate flex-grow-1" style="color: #495057; font-weight: bold;">
-                  ${itemsHtml}
-                </div>
+              <div style="display: grid; grid-template-columns: 18% 22% 30% 30%; gap: 4px; font-size: 0.85rem; border-bottom: 1px solid #e9ecef; padding: 6px 0; align-items: center; color: #495057; font-weight: bold; text-align: left;">
+                <div style="color: #536e86; text-align: center;">${clinicStr}</div>
+                <div class="text-truncate" title="${rankNameStr}">${rankNameStr}</div>
+                <div class="text-truncate" title="${bBase}">${bBase}</div>
+                <div class="text-truncate" title="${dBase}">${dBase}</div>
               </div>
             `;
           }
@@ -271,13 +278,13 @@
 
         if (listHtml) document.getElementById('todayOrderList').innerHTML = listHtml;
 
-        // 3. 填入 Datalist 自動提示
+        // Datalist 自動提示
         let uniqueBentos = [...new Set(bentoNames)];
         let uniqueDrinks = [...new Set(drinkNames)];
         document.getElementById('bentoSuggestions').innerHTML = uniqueBentos.map(n => `<option value="${n}">`).join('');
         document.getElementById('drinkSuggestions').innerHTML = uniqueDrinks.map(n => `<option value="${n}">`).join('');
 
-        // 4. 畫排行榜
+        // 畫排行榜
         processLeaderboard(bentoNames, 'bento');
         processLeaderboard(drinkNames, 'drink');
       }
@@ -291,8 +298,8 @@
         if (sorted.length === 0) return;
 
         let maxCount = sorted[0][1];
-        let html = `<div style="font-size: 0.8rem; font-weight: bold; color: #6c757d; margin: 8px 0 6px 0;">🔥 今日熱門排行榜 (點擊直接帶入)</div>`;
-        let barColor = type === 'bento' ? '#536e86' : '#738fa7'; 
+        let html = `<div style="font-size: 0.8rem; font-weight: bold; color: #6c757d; margin: 0 0 6px 0;">🔥 今日熱門排行榜 (點擊直接帶入)</div>`;
+        let barColor = '#738fa7'; // 🔥 統一設定為藍灰色色塊
 
         sorted.forEach((entry, index) => {
           let name = entry[0], count = entry[1];
@@ -384,7 +391,7 @@
               rankContainer.innerHTML += `<div class="col-4"><input type="radio" class="btn-check rank-radio" name="rank" id="r_${idx}" value="${r}" onchange="handleRankChange('r_${idx}')"><label class="btn btn-outline-dark-theme w-100 fw-bold rank-label-custom" for="r_${idx}">${r}</label></div>`;
             });
 
-            // 🔥 將抓下來的完整訂單丟進處理引擎
+            // 處理清單與排行榜
             if (response.data.currentOrders) {
               processCurrentOrders(response.data.currentOrders);
             }
