@@ -23,11 +23,11 @@
       .btn-theme { background-color: #536e86; border-color: #536e86; color: white; }
       .btn-theme:hover, .btn-theme:focus { background-color: #40586e; border-color: #40586e; color: white; }
       
-      /* 🔥 統一橘色系設計 (愛馬仕橘) */
-      .btn-top5 { background-color: #e67e22; border-color: #e67e22; color: white; transition: all 0.2s; }
-      .btn-top5:hover, .btn-top5:focus { background-color: #d35400; color: white; }
+      /* 🔥 統一灰色系設計 (質感板岩灰) */
+      .btn-top5 { background-color: #6c757d; border-color: #6c757d; color: white; transition: all 0.2s; }
+      .btn-top5:hover, .btn-top5:focus { background-color: #5a6268; color: white; }
 
-      /* 🔥 所有圓角框線全面加深 (深鐵灰 #343a40) */
+      /* 所有圓角框線深鐵灰 #343a40 */
       .btn-outline-dark-theme { color: #212529; border-color: #343a40 !important; border-width: 1px; border-radius: 5px !important; }
       .btn-outline-dark-theme:hover { background-color: #e9ecef; color: #212529; }
       .btn-check:checked + .btn-outline-dark-theme { background-color: #ced4da; color: #212529; border-color: #343a40 !important; font-weight: bold; }
@@ -59,12 +59,12 @@
       .custom-placeholder::placeholder { color: #adb5bd !important; opacity: 1 !important; font-weight: normal !important; }
       .dummy-trap { position: absolute; opacity: 0; width: 1px; height: 1px; padding: 0; border: none; margin: 0; }
 
-      /* ================= TOP 5 方塊化 (統一高度＋智慧換行) ================= */
+      /* ================= TOP 5 方塊化 (灰色系) ================= */
       .top5-container { display: flex; flex-wrap: nowrap; gap: 6px; padding: 10px 2px 6px 2px; width: 100%; }
       .top5-card {
         position: relative;
         flex: 1 1 0; min-width: 0; 
-        background-color: #e67e22; /* 橘色 */
+        background-color: #6c757d; /* 🔥 質感板岩灰 */
         color: white;
         border-radius: 6px;
         padding: 4px 2px;
@@ -73,10 +73,10 @@
         box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         transition: transform 0.1s;
         display: flex;
-        flex-direction: column; /* 讓內容垂直排列 */
+        flex-direction: column;
         align-items: center;
         justify-content: center;
-        min-height: 48px; /* 🔥 強制統一高度為兩行高 */
+        min-height: 48px;
       }
       .top5-card:active { transform: scale(0.95); }
       
@@ -84,7 +84,7 @@
         position: absolute;
         top: -6px;
         right: -6px;
-        background-color: #dc3545; 
+        background-color: #dc3545; /* 數量依然保持紅色警示，確保視覺辨識度 */
         color: white;
         border-radius: 50%;
         width: 18px;
@@ -98,14 +98,9 @@
         border: 2px solid #ffffff;
         z-index: 2;
       }
-      .top5-name {
-        font-size: 0.75rem; 
-        font-weight: bold;
-        line-height: 1.2;
-        width: 100%;
-      }
+      .top5-name { font-size: 0.75rem; font-weight: bold; line-height: 1.2; width: 100%; }
 
-      /* ================= 客製化下拉選單 (專治 iPhone Safari) ================= */
+      /* ================= 客製化下拉選單 ================= */
       .custom-dropdown {
         position: absolute;
         top: 100%;
@@ -174,7 +169,7 @@
                 <input type="text" class="form-control fw-bold" id="name" placeholder="請輸入姓名" onfocus="this.select()">
               </div>
 
-              <!-- 查看今日點餐狀況 (深橘色按鈕) -->
+              <!-- 查看今日點餐狀況 (灰色系) -->
               <div class="section-block">
                 <button type="button" id="toggleListBtn" class="btn btn-top5 w-100 fw-bold mb-2 shadow-sm" onclick="toggleOrderList()">👀 查看今日點餐狀況 ▼</button>
                 <div id="todayOrderList" class="d-none border border-secondary rounded p-1" style="background-color: #f8f9fa; max-height: 350px; overflow-y: auto;">
@@ -195,7 +190,6 @@
                 <div id="bentoLeaderboard" class="mb-2" style="display: none;"></div>
                 
                 <div class="row g-2 mb-2">
-                  <!-- 🔥 替換為自製的絕對顯示下拉選單 -->
                   <div class="col-5 position-relative">
                     <input type="text" class="form-control fw-bold custom-placeholder" id="bentoName" placeholder="餐點" enterkeyhint="next" onfocus="this.select(); showDropdown('bento')" oninput="filterDropdown('bento')">
                     <div id="bentoDropdown" class="custom-dropdown d-none"></div>
@@ -223,7 +217,6 @@
                 <div id="drinkLeaderboard" class="mb-2" style="display: none;"></div>
                 
                 <div class="row g-2 mb-2">
-                  <!-- 🔥 替換為自製的絕對顯示下拉選單 -->
                   <div class="col-5 position-relative">
                     <input type="text" class="form-control fw-bold custom-placeholder" id="drinkName" placeholder="飲料" enterkeyhint="next" onfocus="this.select(); showDropdown('drink')" oninput="filterDropdown('drink')">
                     <div id="drinkDropdown" class="custom-dropdown d-none"></div>
@@ -264,7 +257,6 @@
     <script>
       const GAS_API_URL = "https://script.google.com/macros/s/AKfycbwGOrIyoQ-XUBcn_nExeZuKkuQIvWx6aZhdYhB10qq6HW6uDxCa9tGUA_pwByVC7cSw/exec";
 
-      // 全域變數儲存今日品項清單
       let globalBentoList = [];
       let globalDrinkList = [];
 
@@ -316,7 +308,7 @@
         }
       }
 
-      // ================= 客製化下拉選單邏輯 (取代 Datalist) =================
+      // ================= 客製化下拉選單邏輯 =================
       function showDropdown(type) {
         closeAllDropdowns();
         const list = type === 'bento' ? globalBentoList : globalDrinkList;
@@ -340,7 +332,6 @@
 
       function renderDropdown(type, items) {
         const dd = document.getElementById(type + 'Dropdown');
-        // 使用 onmousedown 避免 input 的 onblur 提早觸發關閉
         dd.innerHTML = items.map(item => `<div onmousedown="event.preventDefault(); fillName('${type}Name', '${item}')">${item}</div>`).join('');
       }
 
@@ -349,7 +340,6 @@
         document.getElementById('drinkDropdown').classList.add('d-none');
       }
 
-      // 點擊空白處關閉下拉選單
       document.addEventListener('click', function(e) {
         if (!e.target.closest('.position-relative')) {
           closeAllDropdowns();
@@ -357,7 +347,6 @@
       });
       // ==============================================================
 
-      // ================= 資料處理引擎 =================
       function processCurrentOrders(orders) {
         if (!orders || orders.length === 0) return;
 
@@ -390,7 +379,7 @@
           groupedOrders[clinicName].forEach(o => {
             listHtml += `
               <div style="display: grid; grid-template-columns: 20% 22% 29% 29%; gap: 4px; font-size: 0.85rem; padding: 4px 0; align-items: center; color: #495057; font-weight: bold; text-align: left;">
-                <div style="color: #e67e22; text-align: center;">${clinicName}</div>
+                <div style="color: #6c757d; text-align: center;">${clinicName}</div>
                 <div class="text-truncate" title="${o.rankName}">${o.rankName}</div>
                 <div class="text-truncate" title="${o.bBase}">${o.bBase}</div>
                 <div class="text-truncate" title="${o.dBase}">${o.dBase}</div>
@@ -402,7 +391,6 @@
 
         if (listHtml) document.getElementById('todayOrderList').innerHTML = listHtml;
 
-        // 將清單存入全域變數，供自製下拉選單使用
         globalBentoList = [...new Set(bentoNames)];
         globalDrinkList = [...new Set(drinkNames)];
 
@@ -410,11 +398,10 @@
         processLeaderboard(drinkNames, 'drink');
       }
 
-      // 🔥 智慧換行器 (4字不換；5字在第3字換；6字以上在第4字換)
       function formatTop5Name(name) {
         if (name.length <= 4) return name;
-        let splitIdx = 4; // 預設超過6字在第4字切
-        if (name.length === 5) splitIdx = 3; // 5個字的話在第3字切
+        let splitIdx = 4; 
+        if (name.length === 5) splitIdx = 3; 
         return name.substring(0, splitIdx) + '<br>' + name.substring(splitIdx);
       }
 
@@ -426,12 +413,12 @@
         let sorted = Object.entries(counts).sort((a, b) => b[1] - a[1]).slice(0, 5);
         if (sorted.length === 0) return;
 
-        let html = `<div style="font-size: 0.8rem; font-weight: bold; color: #e67e22; margin: 0 0 4px 0;">🔥 TOP 5 (點擊帶入)</div>`;
+        let html = `<div style="font-size: 0.8rem; font-weight: bold; color: #6c757d; margin: 0 0 4px 0;">🔥 TOP 5 (點擊帶入)</div>`;
         html += `<div class="top5-container">`;
 
         sorted.forEach((entry) => {
           let name = entry[0], count = entry[1];
-          let formattedName = formatTop5Name(name); // 套用智慧換行
+          let formattedName = formatTop5Name(name); 
           html += `
             <div class="top5-card" onclick="fillName('${type}Name', '${name}')">
               <div class="top5-badge">${count}</div>
@@ -449,9 +436,8 @@
         const el = document.getElementById(inputId); el.value = name;
         el.style.transition = 'background-color 0.2s'; el.style.backgroundColor = '#d1e7dd';
         setTimeout(() => { el.style.backgroundColor = ''; }, 300);
-        closeAllDropdowns(); // 選完自動收起清單
+        closeAllDropdowns(); 
       }
-      // ==============================================================
 
       function handleRankChange(radioId) {
         setTimeout(() => {
@@ -463,17 +449,22 @@
         }, 350); 
       }
 
-      function onAmountBlur(inputId) {
-        setTimeout(() => {
-          const active = document.activeElement;
-          if (active && active.tagName === 'INPUT' && !active.classList.contains('dummy-trap')) return;
-          const el = document.getElementById(inputId);
-          if (el) {
-            const targetY = window.scrollY + el.getBoundingClientRect().top - 15;
-            window.scrollTo({ top: Math.max(0, targetY), behavior: 'smooth' });
-          }
-        }, 400); 
-      }
+      // 🔥 全新升級：自動預留清單空間的滑動引擎
+      document.addEventListener('focusin', function(e) {
+        if (e.target && e.target.tagName === 'INPUT' && !e.target.classList.contains('dummy-trap')) {
+          const isKeyboardAlreadyUp = window.visualViewport && (window.visualViewport.height < window.innerHeight * 0.85);
+          const delayTime = isKeyboardAlreadyUp ? 50 : 400;
+          
+          setTimeout(() => {
+            if (window.visualViewport) {
+              const rect = e.target.getBoundingClientRect();
+              // 將輸入框推至畫面前 25% 的位置，為下方的下拉清單預留出 75% 的巨大空間！
+              const targetY = window.scrollY + rect.top - (window.visualViewport.height * 0.25);
+              window.scrollTo({ top: Math.max(0, targetY), behavior: 'smooth' });
+            }
+          }, delayTime);
+        }
+      });
 
       function loadData() {
         document.getElementById('loadingScreen').classList.remove('d-none');
@@ -533,20 +524,6 @@
       };
 
       window.onload = () => loadData();
-
-      document.addEventListener('focusin', function(e) {
-        if (e.target && e.target.tagName === 'INPUT' && !e.target.classList.contains('dummy-trap')) {
-          const isKeyboardAlreadyUp = window.visualViewport && (window.visualViewport.height < window.innerHeight * 0.85);
-          const delayTime = isKeyboardAlreadyUp ? 10 : 350;
-          setTimeout(() => {
-            if (window.visualViewport) {
-              const rect = e.target.getBoundingClientRect();
-              const targetY = window.scrollY + rect.bottom - window.visualViewport.height + 25;
-              window.scrollTo({ top: Math.max(0, targetY), behavior: 'auto' });
-            }
-          }, delayTime);
-        }
-      });
 
       function toggleRankName() {
         const c = document.querySelector('input[name="clinic"]:checked');
