@@ -23,14 +23,14 @@
       .btn-theme { background-color: #536e86; border-color: #536e86; color: white; }
       .btn-theme:hover, .btn-theme:focus { background-color: #40586e; border-color: #40586e; color: white; }
       
-      .btn-top5 { background-color: #63809c; border-color: #63809c; color: white; transition: all 0.2s; }
-      .btn-top5:hover, .btn-top5:focus { background-color: #4f6880; color: white; }
+      /* 🔥 調淡後的淺灰霧藍色 */
+      .btn-top5 { background-color: #8ba4b8; border-color: #8ba4b8; color: white; transition: all 0.2s; }
+      .btn-top5:hover, .btn-top5:focus { background-color: #7994a9; color: white; }
 
       .btn-outline-dark-theme { color: #495057; border-color: #adb5bd; border-radius: 5px !important; }
       .btn-outline-dark-theme:hover { background-color: #e9ecef; color: #212529; }
       .btn-check:checked + .btn-outline-dark-theme { background-color: #ced4da; color: #212529; border-color: #adb5bd; font-weight: bold; }
       
-      /* 🔥 統一輸入框的邊框顏色 */
       .form-control { border-color: #adb5bd !important; }
       .form-control:focus { border-color: #86b7fe !important; box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25) !important; }
       
@@ -41,7 +41,6 @@
       
       .section-block { margin-bottom: 16px; }
       
-      /* 🔥 全新段落標題樣式 (左側粗線條) */
       .section-header { 
         color: #536e86; 
         padding: 4px 8px; 
@@ -67,53 +66,60 @@
       .custom-placeholder::placeholder { color: #adb5bd !important; opacity: 1 !important; font-weight: normal !important; }
       .dummy-trap { position: absolute; opacity: 0; width: 1px; height: 1px; padding: 0; border: none; margin: 0; }
 
-      /* ================= TOP 5 方塊化 CSS (自動換行) ================= */
+      /* ================= TOP 5 單列自適應 CSS ================= */
       .top5-container { 
         display: flex; 
-        flex-wrap: wrap; /* 自動換行 */
-        gap: 10px; 
-        padding: 10px 6px 6px 6px; 
+        flex-wrap: nowrap; /* 🔥 強制單列不換行 */
+        gap: 6px; 
+        padding: 10px 2px 6px 2px; 
+        width: 100%;
       }
       .top5-card {
         position: relative;
-        flex: 1 1 calc(30% - 10px); /* 讓方塊自動縮放填滿空間 */
-        background-color: #63809c; 
+        flex: 1 1 0; /* 🔥 均分寬度，允許縮小 */
+        min-width: 0; 
+        background-color: #8ba4b8; /* 🔥 調淡的顏色 */
         color: white;
-        border-radius: 8px;
-        padding: 10px 6px;
+        border-radius: 6px;
+        padding: 6px 2px;
         cursor: pointer;
         text-align: center;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         transition: transform 0.1s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
       }
       .top5-card:active { transform: scale(0.95); }
       
       .top5-badge {
         position: absolute;
-        top: -8px;
-        right: -8px;
+        top: -6px;
+        right: -6px;
         background-color: #dc3545; 
         color: white;
         border-radius: 50%;
-        width: 22px;
-        height: 22px;
-        font-size: 0.75rem;
+        width: 18px;
+        height: 18px;
+        font-size: 0.65rem;
         display: flex;
         align-items: center;
         justify-content: center;
         font-weight: bold;
         box-shadow: 0 2px 4px rgba(0,0,0,0.2);
         border: 2px solid #ffffff;
+        z-index: 2;
       }
       .top5-name {
-        font-size: 0.8rem;
+        font-size: 0.75rem; /* 字體微調，適應窄空間 */
         font-weight: bold;
         white-space: normal;
-        line-height: 1.25;
+        line-height: 1.2;
         display: -webkit-box;
-        -webkit-line-clamp: 2;
+        -webkit-line-clamp: 2; /* 🔥 最多兩行 */
         -webkit-box-orient: vertical;
         overflow: hidden;
+        word-break: break-word;
       }
     </style>
   </head>
@@ -183,8 +189,8 @@
                 
                 <div class="row g-2 mb-2">
                   <div class="col-5">
-                    <!-- 🔥 加入 showPicker() 強制開啟 Datalist -->
-                    <input type="text" class="form-control fw-bold custom-placeholder" id="bentoName" placeholder="餐點" list="bentoSuggestions" enterkeyhint="next" onfocus="this.select(); try{this.showPicker();}catch(e){}">
+                    <!-- 🔥 加入 onclick 強制彈出下拉選單 -->
+                    <input type="text" class="form-control fw-bold custom-placeholder" id="bentoName" placeholder="餐點" list="bentoSuggestions" enterkeyhint="next" onfocus="this.select(); try{this.showPicker();}catch(e){}" onclick="try{this.showPicker();}catch(e){}">
                   </div>
                   <div class="col-4">
                     <input type="text" class="form-control fw-bold text-secondary custom-placeholder" id="bentoCustom" placeholder="客製項目" enterkeyhint="next" onfocus="this.select()">
@@ -210,8 +216,8 @@
                 
                 <div class="row g-2 mb-2">
                   <div class="col-5">
-                    <!-- 🔥 加入 showPicker() 強制開啟 Datalist -->
-                    <input type="text" class="form-control fw-bold custom-placeholder" id="drinkName" placeholder="飲料" list="drinkSuggestions" enterkeyhint="next" onfocus="this.select(); try{this.showPicker();}catch(e){}">
+                    <!-- 🔥 加入 onclick 強制彈出下拉選單 -->
+                    <input type="text" class="form-control fw-bold custom-placeholder" id="drinkName" placeholder="飲料" list="drinkSuggestions" enterkeyhint="next" onfocus="this.select(); try{this.showPicker();}catch(e){}" onclick="try{this.showPicker();}catch(e){}">
                   </div>
                   <div class="col-4">
                     <input type="text" class="form-control fw-bold text-secondary custom-placeholder" id="drinkCustom" placeholder="客製項目" enterkeyhint="next" onfocus="this.select()">
@@ -305,7 +311,6 @@
         let drinkNames = [];
         let groupedOrders = {};
 
-        // 1. 依「診次」分類
         orders.forEach(o => {
           let bBase = o.bento ? o.bento.split('(')[0].split('（')[0].trim() : '';
           let dBase = o.drink ? o.drink.split('(')[0].split('（')[0].trim() : '';
@@ -318,21 +323,18 @@
           }
         });
 
-        // 2. 清單繪製：移除內層底線
         let listHtml = '';
         let bgColors = ['#ffffff', '#f1f3f5']; 
         let colorIdx = 0;
 
         for (let clinicName in groupedOrders) {
           if (groupedOrders[clinicName].length === 0) continue;
-          
           let bgColor = bgColors[colorIdx % 2];
           colorIdx++;
 
           listHtml += `<div style="background-color: ${bgColor}; padding: 6px 8px; border-radius: 6px; margin-bottom: 4px;">`;
           
           groupedOrders[clinicName].forEach(o => {
-            // 🔥 拿掉 border-bottom 虛線設定
             listHtml += `
               <div style="display: grid; grid-template-columns: 20% 22% 29% 29%; gap: 4px; font-size: 0.85rem; padding: 4px 0; align-items: center; color: #495057; font-weight: bold; text-align: left;">
                 <div style="color: #63809c; text-align: center;">${clinicName}</div>
@@ -347,13 +349,11 @@
 
         if (listHtml) document.getElementById('todayOrderList').innerHTML = listHtml;
 
-        // 3. Datalist 帶入
         let uniqueBentos = [...new Set(bentoNames)];
         let uniqueDrinks = [...new Set(drinkNames)];
         document.getElementById('bentoSuggestions').innerHTML = uniqueBentos.map(n => `<option value="${n}">${n}</option>`).join('');
         document.getElementById('drinkSuggestions').innerHTML = uniqueDrinks.map(n => `<option value="${n}">${n}</option>`).join('');
 
-        // 4. 畫 TOP 5
         processLeaderboard(bentoNames, 'bento');
         processLeaderboard(drinkNames, 'drink');
       }
@@ -366,7 +366,7 @@
         let sorted = Object.entries(counts).sort((a, b) => b[1] - a[1]).slice(0, 5);
         if (sorted.length === 0) return;
 
-        let html = `<div style="font-size: 0.8rem; font-weight: bold; color: #63809c; margin: 0 0 4px 0;">🔥 TOP 5 (點擊帶入)</div>`;
+        let html = `<div style="font-size: 0.8rem; font-weight: bold; color: #8ba4b8; margin: 0 0 4px 0;">🔥 TOP 5 (點擊帶入)</div>`;
         html += `<div class="top5-container">`;
 
         sorted.forEach((entry) => {
@@ -389,7 +389,6 @@
         el.style.transition = 'background-color 0.2s'; el.style.backgroundColor = '#d1e7dd';
         setTimeout(() => { el.style.backgroundColor = ''; }, 300);
       }
-      // ==============================================================
 
       function handleRankChange(radioId) {
         setTimeout(() => {
