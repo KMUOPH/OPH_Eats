@@ -52,7 +52,7 @@
         font-weight: bold; 
         margin-bottom: 12px; 
         display: flex; 
-        justify-content: space-between; /* 讓標籤能自動靠右對齊 */
+        justify-content: space-between;
         align-items: center; 
       }
       
@@ -72,7 +72,9 @@
         font-size: 0.9rem;
       }
 
-      /* 隱形陷阱：用來沒收手機鍵盤的 Next 行為 */
+      /* 輸入格預設提示文字調淡，且取消粗體 */
+      .custom-placeholder::placeholder { color: #adb5bd !important; opacity: 1 !important; font-weight: normal !important; }
+
       .dummy-trap { 
         position: absolute; 
         opacity: 0; 
@@ -91,7 +93,7 @@
         <img src="logo.jpg" alt="Logo" style="height: 46px; width: 46px; border-radius: 50%; object-fit: cover; box-shadow: 0 2px 4px rgba(0,0,0,0.2); margin-right: 12px;">
         <h3 class="mb-0 fw-bold text-truncate" style="font-size: 1.25rem;">OPH Eats 眼科訂餐</h3>
       </div>
-      <!-- 圖片重整按鈕移回全局右上角 -->
+      <!-- 圖片重整按鈕 -->
       <button type="button" class="btn btn-sm text-white flex-shrink-0" style="background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.5); border-radius: 15px; padding: 4px 10px; font-size: 0.85rem; font-weight: bold;" onclick="forceRetryImagesAll()">🔄 圖片重整</button>
     </div>
 
@@ -137,18 +139,16 @@
                   <span class="text-secondary fw-bold small">圖片載入超時，請點擊上方「🔄 圖片重整」</span>
                 </div>
                 
+                <!-- 將餐點/客製項目/金額 塞在同一列 (5:4:3) -->
                 <div class="row g-2 mb-2">
-                  <div class="col-12">
-                    <input type="text" class="form-control fw-bold" id="bentoName" placeholder="餐點" enterkeyhint="next" onfocus="this.select()">
-                  </div>
-                </div>
-                <div class="row g-2">
-                  <div class="col-8">
-                    <!-- 新增客製項目 -->
-                    <input type="text" class="form-control fw-bold text-secondary" id="bentoCustom" placeholder="客製項目" enterkeyhint="next" onfocus="this.select()">
+                  <div class="col-5">
+                    <input type="text" class="form-control fw-bold custom-placeholder" id="bentoName" placeholder="餐點" enterkeyhint="next" onfocus="this.select()">
                   </div>
                   <div class="col-4">
-                    <input type="text" inputmode="numeric" class="form-control fw-bold" id="bentoAmount" placeholder="金額" enterkeyhint="done" oninput="calculateTotal()" onblur="onAmountBlur('bentoAmount')" onfocus="this.select()">
+                    <input type="text" class="form-control fw-bold text-secondary custom-placeholder" id="bentoCustom" placeholder="客製項目" enterkeyhint="next" onfocus="this.select()">
+                  </div>
+                  <div class="col-3 position-relative">
+                    <input type="text" inputmode="numeric" class="form-control fw-bold custom-placeholder" id="bentoAmount" placeholder="金額" enterkeyhint="done" onblur="onAmountBlur('bentoAmount')" onfocus="this.select()">
                     <input type="text" class="dummy-trap" tabindex="0" inputmode="none" onfocus="this.blur();">
                   </div>
                 </div>
@@ -164,18 +164,16 @@
                   <span class="text-secondary fw-bold small">圖片載入超時，請點擊上方「🔄 圖片重整」</span>
                 </div>
                 
+                <!-- 將飲料/客製項目/金額 塞在同一列 (5:4:3) -->
                 <div class="row g-2 mb-2">
-                  <div class="col-12">
-                    <input type="text" class="form-control fw-bold" id="drinkName" placeholder="飲料" enterkeyhint="next" onfocus="this.select()">
-                  </div>
-                </div>
-                <div class="row g-2">
-                  <div class="col-8">
-                    <!-- 新增客製項目 -->
-                    <input type="text" class="form-control fw-bold text-secondary" id="drinkCustom" placeholder="客製項目" enterkeyhint="next" onfocus="this.select()">
+                  <div class="col-5">
+                    <input type="text" class="form-control fw-bold custom-placeholder" id="drinkName" placeholder="飲料" enterkeyhint="next" onfocus="this.select()">
                   </div>
                   <div class="col-4">
-                    <input type="text" inputmode="numeric" class="form-control fw-bold" id="drinkAmount" placeholder="金額" enterkeyhint="done" oninput="calculateTotal()" onblur="onAmountBlur('drinkAmount')" onfocus="this.select()">
+                    <input type="text" class="form-control fw-bold text-secondary custom-placeholder" id="drinkCustom" placeholder="客製項目" enterkeyhint="next" onfocus="this.select()">
+                  </div>
+                  <div class="col-3 position-relative">
+                    <input type="text" inputmode="numeric" class="form-control fw-bold custom-placeholder" id="drinkAmount" placeholder="金額" enterkeyhint="done" onblur="onAmountBlur('drinkAmount')" onfocus="this.select()">
                     <input type="text" class="dummy-trap" tabindex="0" inputmode="none" onfocus="this.blur();">
                   </div>
                 </div>
@@ -188,13 +186,12 @@
                   <button type="button" class="btn btn-outline-dark-theme fw-bold capsule-btn" onclick="addNote('兩筆都要')">兩筆都要</button>
                 </div>
                 <div class="input-group">
-                  <input type="text" class="form-control fw-bold" id="notes" placeholder="其他需求..." enterkeyhint="done" onkeydown="if(event.key==='Enter' || event.keyCode===13){event.preventDefault(); this.blur(); setTimeout(function(){ document.getElementById('submitBtn').scrollIntoView({behavior:'smooth', block:'center'}); }, 400);}" onfocus="this.select()">
+                  <input type="text" class="form-control fw-bold custom-placeholder" id="notes" placeholder="其他需求..." enterkeyhint="done" onkeydown="if(event.key==='Enter' || event.keyCode===13){event.preventDefault(); this.blur(); setTimeout(function(){ document.getElementById('submitBtn').scrollIntoView({behavior:'smooth', block:'center'}); }, 400);}" onfocus="this.select()">
                   <button class="btn btn-clear" type="button" onclick="document.getElementById('notes').value='';" title="清除內容">✖</button>
                 </div>
               </div>
 
               <div class="d-grid mt-2 mb-4">
-                <div id="totalDisplay" class="text-center fw-bold mb-2" style="font-size: 1.15rem; color: #9b727a; display: none;"></div>
                 <button type="button" class="btn btn-theme btn-lg fw-bold shadow-sm" id="submitBtn" onclick="submitOrder()">送出訂單</button>
               </div>
             </form>
@@ -229,27 +226,11 @@
 
       function addNote(text) { const n = document.getElementById('notes'); n.value = n.value ? n.value + "。" + text : text; }
 
-      function calculateTotal() {
-        const bAmt = parseInt(document.getElementById('bentoAmount').value, 10) || 0;
-        const dAmt = parseInt(document.getElementById('drinkAmount').value, 10) || 0;
-        const total = bAmt + dAmt;
-        const display = document.getElementById('totalDisplay');
-        
-        if (total > 0) {
-          display.innerText = `總共 $${total}`;
-          display.style.display = 'block';
-        } else {
-          display.innerText = '';
-          display.style.display = 'none';
-        }
-      }
-
       function handleImgError(type) {
         document.getElementById(type + 'MenuImg').style.display = 'none';
         document.getElementById(type + 'ImgError').style.display = 'block';
       }
 
-      // 新增：同時重整餐點與飲料，且保留已輸入資料
       function forceRetryImagesAll() {
         forceRetryImages('bento');
         forceRetryImages('drink');
@@ -327,8 +308,8 @@
               isToday = (response.data.menuDate === todayStr);
             }
 
-            // ⚠️ 非今日標籤移至標題列內
             let badgeHtml = (!isToday && response.data.menuDate) ? `<span class="badge" style="background-color: #8c2b32; font-size: 0.85rem; padding: 5px 10px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.4); box-shadow: 0 2px 4px rgba(0,0,0,0.2);">⚠️ 非今日菜單</span>` : '';
+            document.getElementById('dateStatusBadge').innerHTML = badgeHtml;
 
             const bTitle = document.getElementById('bentoSectionTitle');
             if (response.data.bentoMenuUrl && response.data.menuDate) {
@@ -419,6 +400,7 @@
         const bName = document.getElementById('bentoName').value.trim(); 
         const bCustom = document.getElementById('bentoCustom').value.trim(); 
         const bAmt = document.getElementById('bentoAmount').value.trim();
+        
         const dName = document.getElementById('drinkName').value.trim(); 
         const dCustom = document.getElementById('drinkCustom').value.trim(); 
         const dAmt = document.getElementById('drinkAmount').value.trim();
@@ -470,7 +452,6 @@
           if(data.success) { 
             alert(data.message); 
             document.getElementById('orderForm').reset(); 
-            document.getElementById('totalDisplay').style.display = 'none'; 
             document.querySelectorAll('.btn-check').forEach(radio => radio.checked = false); 
             toggleRankName(); 
             window.scrollTo({ top: 0, behavior: 'smooth' });
