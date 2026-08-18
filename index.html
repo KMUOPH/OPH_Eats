@@ -14,7 +14,6 @@
     
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
-      /* 強制關閉任何內建的平滑捲動，保證瞬間跳轉 */
       html, body { scroll-behavior: auto !important; }
       body { background-color: #ffffff; padding: 0; padding-bottom: 30px; font-family: "微軟正黑體", sans-serif; }
       
@@ -27,7 +26,6 @@
       .btn-outline-dark-theme { color: #495057; border-color: #adb5bd; border-radius: 5px !important; }
       .btn-outline-dark-theme:hover { background-color: #e9ecef; color: #212529; }
       
-      /* 修改選取後的顏色為淺灰底深色字 */
       .btn-check:checked + .btn-outline-dark-theme { background-color: #ced4da; color: #212529; border-color: #adb5bd; font-weight: bold; }
       
       .form-control:focus {
@@ -42,7 +40,6 @@
       
       .section-block { margin-bottom: 24px; }
       
-      /* 標題列：淺灰藍底 (#e2e8f0) 深色字 (#212529) */
       .section-header { 
         background-color: #e2e8f0; 
         color: #212529; 
@@ -56,8 +53,6 @@
         align-items: center; 
       }
       
-      .not-today-header { background-color: #8c2b32 !important; color: #ffffff !important; }
-      
       .clinic-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; }
       .clinic-grid label { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; padding: 6px 0; font-size: 0.95rem; margin: 0; }
       .rank-label-custom { padding: 8px 0 !important; font-size: 0.95rem !important; margin: 0; }
@@ -66,24 +61,17 @@
       .btn-clear { border-color: #ced4da; color: #6c757d; }
       .btn-clear:hover { background-color: #e9ecef; color: #495057; }
       
-      .capsule-btn {
-        border-radius: 50px !important;
-        padding: 6px 18px;
-        font-size: 0.9rem;
-      }
-
-      /* 輸入格預設提示文字調淡，且取消粗體 */
+      .capsule-btn { border-radius: 50px !important; padding: 6px 18px; font-size: 0.9rem; }
       .custom-placeholder::placeholder { color: #adb5bd !important; opacity: 1 !important; font-weight: normal !important; }
 
-      .dummy-trap { 
-        position: absolute; 
-        opacity: 0; 
-        width: 1px; 
-        height: 1px; 
-        padding: 0; 
-        border: none; 
-        margin: 0;
-      }
+      .dummy-trap { position: absolute; opacity: 0; width: 1px; height: 1px; padding: 0; border: none; margin: 0; }
+
+      /* ================= 排行榜長條圖 CSS ================= */
+      .bar-row { display: flex; align-items: center; margin-bottom: 6px; cursor: pointer; }
+      .bar-row:active .bar-track { opacity: 0.7; } /* 點擊時的回饋 */
+      .bar-label { flex: 0 0 45%; font-size: 0.85rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding-right: 8px; text-align: right; color: #495057; font-weight: bold; }
+      .bar-track { flex: 1; background-color: #f1f3f5; border-radius: 4px; height: 22px; overflow: hidden; border: 1px solid #e9ecef; }
+      .bar-fill { height: 100%; display: flex; align-items: center; padding-left: 6px; color: white; font-size: 0.75rem; font-weight: bold; transition: width 0.5s ease-out; }
     </style>
   </head>
   <body>
@@ -93,7 +81,6 @@
         <img src="logo.jpg" alt="Logo" style="height: 46px; width: 46px; border-radius: 50%; object-fit: cover; box-shadow: 0 2px 4px rgba(0,0,0,0.2); margin-right: 12px;">
         <h3 class="mb-0 fw-bold text-truncate" style="font-size: 1.25rem;">OPH Eats 眼科訂餐</h3>
       </div>
-      <!-- 圖片重整按鈕 -->
       <button type="button" class="btn btn-sm text-white flex-shrink-0" style="background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.5); border-radius: 15px; padding: 4px 10px; font-size: 0.85rem; font-weight: bold;" onclick="forceRetryImagesAll()">🔄 圖片重整</button>
     </div>
 
@@ -139,7 +126,10 @@
                   <span class="text-secondary fw-bold small">圖片載入超時，請點擊上方「🔄 圖片重整」</span>
                 </div>
                 
-                <!-- 將餐點/客製項目/金額 塞在同一列 (5:4:3) -->
+                <!-- 🔥 排行榜長條圖顯示區 -->
+                <div id="bentoLeaderboard" class="mb-3" style="display: none;"></div>
+                
+                <!-- 5:4:3 同列輸入 -->
                 <div class="row g-2 mb-2">
                   <div class="col-5">
                     <input type="text" class="form-control fw-bold custom-placeholder" id="bentoName" placeholder="餐點" enterkeyhint="next" onfocus="this.select()">
@@ -164,7 +154,10 @@
                   <span class="text-secondary fw-bold small">圖片載入超時，請點擊上方「🔄 圖片重整」</span>
                 </div>
                 
-                <!-- 將飲料/客製項目/金額 塞在同一列 (5:4:3) -->
+                <!-- 🔥 排行榜長條圖顯示區 -->
+                <div id="drinkLeaderboard" class="mb-3" style="display: none;"></div>
+                
+                <!-- 5:4:3 同列輸入 -->
                 <div class="row g-2 mb-2">
                   <div class="col-5">
                     <input type="text" class="form-control fw-bold custom-placeholder" id="drinkName" placeholder="飲料" enterkeyhint="next" onfocus="this.select()">
@@ -242,21 +235,68 @@
         
         if (img && img.src && img.src !== window.location.href) {
           if (errorDiv) errorDiv.style.display = 'none';
-          
           let currentSrc = img.src;
           if(currentSrc.includes('&retry=')) {
             currentSrc = currentSrc.replace(/&retry=\d+/, '&retry=' + new Date().getTime());
           } else {
             currentSrc += '&retry=' + new Date().getTime();
           }
-          
           img.style.display = 'none'; 
-          setTimeout(() => {
-            img.src = currentSrc;
-            img.style.display = 'block'; 
-          }, 50);
+          setTimeout(() => { img.src = currentSrc; img.style.display = 'block'; }, 50);
         }
       }
+
+      // ================= 排行榜引擎 =================
+      function processLeaderboard(items, type) {
+        if (!items || items.length === 0) return;
+
+        let counts = {};
+        // 自動剝除括號、空白，精準統計基礎品名
+        items.forEach(item => {
+          let baseName = item.split('(')[0].split('（')[0].trim();
+          if (baseName) counts[baseName] = (counts[baseName] || 0) + 1;
+        });
+
+        // 排序並取 Top 5
+        let sorted = Object.entries(counts).sort((a, b) => b[1] - a[1]).slice(0, 5);
+        if (sorted.length === 0) return;
+
+        let maxCount = sorted[0][1];
+        let html = `<div style="font-size: 0.8rem; font-weight: bold; color: #6c757d; margin: 8px 0 6px 0;">🔥 今日熱門排行榜 (點擊直接帶入)</div>`;
+        let barColor = type === 'bento' ? '#536e86' : '#738fa7'; // 主題色色塊
+
+        sorted.forEach((entry, index) => {
+          let name = entry[0];
+          let count = entry[1];
+          let percent = Math.max((count / maxCount) * 100, 15); // 保留至少15%寬度顯示數字
+          let rankIcon = index === 0 ? '🥇 ' : index === 1 ? '🥈 ' : index === 2 ? '🥉 ' : '';
+
+          html += `
+            <div class="bar-row" onclick="fillName('${type}Name', '${name}')">
+              <div class="bar-label" title="${name}">${rankIcon}${name}</div>
+              <div class="bar-track">
+                <div class="bar-fill" style="width: ${percent}%; background-color: ${barColor};">${count}份</div>
+              </div>
+            </div>
+          `;
+        });
+
+        const lbDiv = document.getElementById(type + 'Leaderboard');
+        lbDiv.innerHTML = html;
+        lbDiv.style.display = 'block';
+      }
+
+      // 點擊排行榜，自動將文字帶入輸入框
+      function fillName(inputId, name) {
+        const el = document.getElementById(inputId);
+        el.value = name;
+        
+        // 視覺回饋：背景閃爍一下
+        el.style.transition = 'background-color 0.2s';
+        el.style.backgroundColor = '#d1e7dd';
+        setTimeout(() => { el.style.backgroundColor = ''; }, 300);
+      }
+      // ===========================================
 
       function handleRankChange(radioId) {
         setTimeout(() => {
@@ -271,9 +311,7 @@
       function onAmountBlur(inputId) {
         setTimeout(() => {
           const active = document.activeElement;
-          if (active && active.tagName === 'INPUT' && !active.classList.contains('dummy-trap')) {
-            return;
-          }
+          if (active && active.tagName === 'INPUT' && !active.classList.contains('dummy-trap')) return;
           const el = document.getElementById(inputId);
           if (el) {
             const targetY = window.scrollY + el.getBoundingClientRect().top - 15;
@@ -334,6 +372,12 @@
               rankContainer.innerHTML += `<div class="col-4"><input type="radio" class="btn-check rank-radio" name="rank" id="r_${idx}" value="${r}" onchange="handleRankChange('r_${idx}')"><label class="btn btn-outline-dark-theme w-100 fw-bold rank-label-custom" for="r_${idx}">${r}</label></div>`;
             });
 
+            // 啟動排行榜繪製
+            if (response.data.currentOrders) {
+              processLeaderboard(response.data.currentOrders.bento, 'bento');
+              processLeaderboard(response.data.currentOrders.drink, 'drink');
+            }
+
           } else { 
             document.getElementById('closedScreen').classList.remove('d-none'); 
           }
@@ -341,7 +385,7 @@
           document.getElementById('loadingScreen').classList.add('d-none');
           document.getElementById('closedScreen').classList.remove('d-none');
           document.getElementById('closedTitle').innerText = "⚠️ 系統連線失敗";
-          document.getElementById('closedDesc').innerHTML = `無法取得最新資料。<br><b>錯誤原因：</b>${err.message}<br><br><span style="color:#8c2b32; font-weight:bold;">💡 若出現 Unexpected token 代表 Google API 驗證失敗。請維護者確保 Apps Script 已發布為新版本且權限設為「所有人」。</span>`;
+          document.getElementById('closedDesc').innerHTML = `無法取得最新資料。<br><b>錯誤原因：</b>${err.message}`;
         });
       };
 
@@ -380,21 +424,9 @@
         const rank = document.querySelector('input[name="rank"]:checked') ? document.querySelector('input[name="rank"]:checked').value : "";
         const name = document.getElementById('name').value.trim();
         
-        if(!clinic) {
-          alert("請選擇診次！");
-          document.getElementById('clinicGroup').scrollIntoView({ behavior: 'smooth', block: 'center' });
-          return;
-        }
-        if(clinic === "非診間" && !name) {
-          alert("請填寫姓名！");
-          document.getElementById('name').focus();
-          return;
-        }
-        if(clinic !== "非診間" && !rank) {
-          alert("請選擇職級！");
-          document.getElementById('rankGroup').scrollIntoView({ behavior: 'smooth', block: 'center' });
-          return;
-        }
+        if(!clinic) { alert("請選擇診次！"); document.getElementById('clinicGroup').scrollIntoView({ behavior: 'smooth', block: 'center' }); return; }
+        if(clinic === "非診間" && !name) { alert("請填寫姓名！"); document.getElementById('name').focus(); return; }
+        if(clinic !== "非診間" && !rank) { alert("請選擇職級！"); document.getElementById('rankGroup').scrollIntoView({ behavior: 'smooth', block: 'center' }); return; }
 
         const bName = document.getElementById('bentoName').value.trim(); 
         const bCustom = document.getElementById('bentoCustom').value.trim(); 
@@ -404,20 +436,11 @@
         const dCustom = document.getElementById('drinkCustom').value.trim(); 
         const dAmt = document.getElementById('drinkAmount').value.trim();
         
-        if (bName && !bAmt) {
-          alert("請輸入餐點的金額！");
-          document.getElementById('bentoAmount').focus();
-          return;
-        }
-        if (dName && !dAmt) {
-          alert("請輸入飲料的金額！");
-          document.getElementById('drinkAmount').focus();
-          return;
-        }
+        if (bName && !bAmt) { alert("請輸入餐點的金額！"); document.getElementById('bentoAmount').focus(); return; }
+        if (dName && !dAmt) { alert("請輸入飲料的金額！"); document.getElementById('drinkAmount').focus(); return; }
         
         const notes = document.getElementById('notes').value.trim();
         
-        // 合併品名與客製項目：如「塔香牛肉拌飯 (小的)」
         const finalBentoItem = bName + (bCustom ? ` (${bCustom})` : "");
         const finalDrinkItem = dName + (dCustom ? ` (${dCustom})` : "");
 
@@ -429,7 +452,7 @@
         if (dName) msgLines.push(`${finalDrinkItem} $${dAmt}`);
         if (notes) msgLines.push(`${notes}`);
         
-        // 只有餐點跟飲料「都有金額」時，才在對話框最底下加總
+        // 總額加總顯示在確認視窗最下方
         if (bAmt && dAmt) {
           const totalAmount = parseFloat(bAmt) + parseFloat(dAmt);
           msgLines.push(`------------------`);
@@ -437,10 +460,7 @@
         }
         
         msgLines.push(`\n👉 確定要送出嗎？`);
-        
-        const confirmMsg = msgLines.join('\n');
-
-        if (!confirm(confirmMsg)) return;
+        if (!confirm(msgLines.join('\n'))) return;
 
         const btn = document.getElementById('submitBtn'); btn.disabled = true; btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> 處理中...';
 
