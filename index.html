@@ -32,7 +32,6 @@
       .menu-img { width: 100%; border-radius: 8px; margin-bottom: 10px; display: none; box-shadow: 0 2px 5px rgba(0,0,0,0.15); border: 1px solid #e2e8f0; }
       .banner-header { background-color: #536e86; color: white; height: 60px; margin-bottom: 16px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); width: 100%; display: flex; justify-content: space-between; align-items: center; padding-right: 15px; }
       
-      /* 頂部同步狀態條 */
       #syncLoader { background-color: #fff8e1; color: #664d03; font-size: 0.85rem; padding: 6px 0; text-align: center; font-weight: bold; margin-bottom: 16px; border-radius: 4px; border: 1px solid #ffecb5; transition: opacity 0.3s; }
 
       .section-block { margin-bottom: 16px; }
@@ -58,8 +57,8 @@
       .btn-top5:focus { outline: none !important; box-shadow: none !important; }
 
       .top5-container { display: flex; flex-wrap: nowrap; gap: 8px; padding: 10px 2px 6px 2px; width: 100%; }
-      .top5-card { position: relative; flex: 1 1 0; min-width: 0; background-color: #e2e8f0; color: #343a40; border: 1px solid #cbd5e1; border-radius: 6px; padding: 4px 2px; cursor: pointer; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.05); transition: transform 0.1s; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 48px; }
-      .top5-card:active { transform: scale(0.95); background-color: #cbd5e1; }
+      /* 🔥 移除了 cursor: pointer 與 active 的縮放動畫，純展示 */
+      .top5-card { position: relative; flex: 1 1 0; min-width: 0; background-color: #e2e8f0; color: #343a40; border: 1px solid #cbd5e1; border-radius: 6px; padding: 4px 2px; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.05); display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 48px; }
       
       .top5-badge { position: absolute; top: -6px; right: -6px; background-color: #dc3545; color: white; border-radius: 50%; width: 18px; height: 18px; font-size: 0.65rem; display: flex; align-items: center; justify-content: center; font-weight: bold; box-shadow: 0 2px 4px rgba(0,0,0,0.2); border: 2px solid #ffffff; z-index: 2; }
       .top5-name { font-size: 0.75rem; font-weight: bold; line-height: 1.2; width: 100%; }
@@ -93,7 +92,6 @@
       <div class="row justify-content-center">
         <div class="col-md-8 col-lg-6 px-3">
             
-          <!-- 🔥 頂部提示載入條 (取代全螢幕轉圈圈) -->
           <div id="syncLoader">
             <span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true" style="color: #856404;"></span> 正在同步最新選單與排行榜...
           </div>
@@ -103,7 +101,6 @@
             <p class="text-secondary" id="closedDesc">目前不在開放點餐時間，請稍後再試或洽詢管理員。</p>
           </div>
           
-          <!-- 🔥 漸進式載入：一開始就顯示外框，讓使用者可以直接打字 -->
           <div id="mainContent">
             <form id="orderForm">
               
@@ -144,28 +141,27 @@
                 <div id="bentoLeaderboard" class="mb-2" style="display: none;"></div>
                 
                 <div id="bentoRowsContainer">
-                  <!-- 🔥 全新比例調整：壓縮單價與數量，釋放給品名 -->
+                  <!-- 🔥 比例大精修：客製變寬、單價與數量壓縮 -->
                   <div class="d-flex align-items-center mb-2 bento-row gap-1">
                     <div class="position-relative" style="flex: 1 1 0;">
                       <input type="text" class="form-control fw-bold custom-placeholder bento-name px-1" placeholder="餐點" enterkeyhint="next" onfocus="this.select(); showDropdown('bento', this)" oninput="filterDropdown('bento', this)" onblur="setTimeout(closeAllDropdowns, 200)">
                       <div class="custom-dropdown d-none"></div>
                     </div>
-                    <div style="flex: 0 1 70px;">
-                      <input type="text" class="form-control fw-bold text-secondary custom-placeholder bento-custom px-1" placeholder="客製" enterkeyhint="next" onfocus="this.select()">
+                    <!-- 🔥 移除客製化格子的淡色設定 (text-secondary) -->
+                    <div style="flex: 0 1 85px;">
+                      <input type="text" class="form-control fw-bold custom-placeholder bento-custom px-1" placeholder="客製" enterkeyhint="next" onfocus="this.select()">
                     </div>
-                    <!-- 單價極度壓縮至 65px -->
-                    <div class="position-relative" style="flex: 0 0 65px;">
+                    <div class="position-relative" style="flex: 0 0 54px;">
                       <input type="text" inputmode="numeric" class="form-control fw-bold custom-placeholder bento-price px-1 text-center" placeholder="單價" enterkeyhint="done" onblur="onAmountBlur(this)" onfocus="this.select()">
                       <input type="text" class="dummy-trap" tabindex="0" inputmode="none" onfocus="this.blur();">
                     </div>
-                    <!-- 數量極度壓縮至 50px -->
-                    <div style="flex: 0 0 50px;">
-                      <select class="form-select fw-bold px-0 bento-qty" style="text-align: center; background-position: right 0.1rem center; background-size: 8px 10px;">
+                    <div style="flex: 0 0 44px;">
+                      <!-- 🔥 修正數量的內距與置中對齊，讓數字不再貼緊左邊 -->
+                      <select class="form-select fw-bold bento-qty" style="padding: 4px 10px 4px 4px !important; text-align: center; text-align-last: center; background-position: right 2px center; background-size: 8px 10px;">
                         <option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option>
                       </select>
                     </div>
-                    <div style="flex: 0 0 24px;">
-                      <!-- 🔥 仿製的酒紅色中空垃圾桶 SVG -->
+                    <div style="flex: 0 0 22px; text-align: right;">
                       <button type="button" class="row-remove-btn" onclick="removeRow(this, 'bento')">
                         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#b55c61" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                           <polyline points="3 6 5 6 21 6"></polyline>
@@ -196,20 +192,19 @@
                       <input type="text" class="form-control fw-bold custom-placeholder drink-name px-1" placeholder="飲料" enterkeyhint="next" onfocus="this.select(); showDropdown('drink', this)" oninput="filterDropdown('drink', this)" onblur="setTimeout(closeAllDropdowns, 200)">
                       <div class="custom-dropdown d-none"></div>
                     </div>
-                    <div style="flex: 0 1 70px;">
-                      <input type="text" class="form-control fw-bold text-secondary custom-placeholder drink-custom px-1" placeholder="客製" enterkeyhint="next" onfocus="this.select()">
+                    <div style="flex: 0 1 85px;">
+                      <input type="text" class="form-control fw-bold custom-placeholder drink-custom px-1" placeholder="客製" enterkeyhint="next" onfocus="this.select()">
                     </div>
-                    <div class="position-relative" style="flex: 0 0 65px;">
+                    <div class="position-relative" style="flex: 0 0 54px;">
                       <input type="text" inputmode="numeric" class="form-control fw-bold custom-placeholder drink-price px-1 text-center" placeholder="單價" enterkeyhint="done" onblur="onAmountBlur(this)" onfocus="this.select()">
                       <input type="text" class="dummy-trap" tabindex="0" inputmode="none" onfocus="this.blur();">
                     </div>
-                    <div style="flex: 0 0 50px;">
-                      <select class="form-select fw-bold px-0 drink-qty" style="text-align: center; background-position: right 0.1rem center; background-size: 8px 10px;">
+                    <div style="flex: 0 0 44px;">
+                      <select class="form-select fw-bold drink-qty" style="padding: 4px 10px 4px 4px !important; text-align: center; text-align-last: center; background-position: right 2px center; background-size: 8px 10px;">
                         <option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option>
                       </select>
                     </div>
-                    <div style="flex: 0 0 24px;">
-                      <!-- 🔥 仿製的酒紅色中空垃圾桶 SVG -->
+                    <div style="flex: 0 0 22px; text-align: right;">
                       <button type="button" class="row-remove-btn" onclick="removeRow(this, 'drink')">
                         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#b55c61" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                           <polyline points="3 6 5 6 21 6"></polyline>
@@ -237,7 +232,6 @@
               </div>
 
               <div class="d-grid mt-2 mb-4">
-                <!-- 一開始先鎖定按鈕，防止同步未完成就送出 -->
                 <button type="button" class="btn btn-theme btn-lg fw-bold shadow-sm" id="submitBtn" onclick="submitOrder()" disabled>系統準備中...</button>
               </div>
             </form>
@@ -415,11 +409,13 @@
         let sorted = Object.entries(counts).sort((a, b) => b[1] - a[1]).slice(0, 5);
         if (sorted.length === 0) return;
 
-        let html = `<div style="font-size: 0.8rem; font-weight: bold; color: #6c757d; margin: 0 0 4px 0;">🔥 TOP 5 (點擊帶入)</div><div class="top5-container">`;
+        // 🔥 將標題改為單純顯示，移除 (點擊帶入)
+        let html = `<div style="font-size: 0.8rem; font-weight: bold; color: #6c757d; margin: 0 0 4px 0;">🔥 TOP 5 排行榜</div><div class="top5-container">`;
         sorted.forEach((entry) => {
           let name = entry[0], count = entry[1];
           let formattedName = formatTop5Name(name); 
-          html += `<div class="top5-card" onclick="fillName(document.querySelector('.${type}-name').parentNode, '${name}')"><div class="top5-badge">${count}</div><div class="top5-name">${formattedName}</div></div>`;
+          // 🔥 移除 onclick 事件
+          html += `<div class="top5-card"><div class="top5-badge">${count}</div><div class="top5-name">${formattedName}</div></div>`;
         });
         html += `</div>`;
         const lbDiv = document.getElementById(type + 'Leaderboard'); 
@@ -447,17 +443,13 @@
         }
       });
 
-      // 🔥 漸進式載入：無 LocalStorage，立即顯示框架，後端同步完成再補資料
       function loadData() {
-        // 第一時間先去跟 Google 拿資料
         fetchWithRetry(GAS_API_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action: "getSystemData" }) })
         .then(response => {
-          // 資料回來了，隱藏頂部的小同步條
           document.getElementById('syncLoader').classList.add('d-none');
           isSystemReady = true;
 
           if(response.success && response.data.isOpen) {
-            // 解鎖送出按鈕
             const submitBtn = document.getElementById('submitBtn');
             submitBtn.disabled = false;
             submitBtn.innerText = '送出訂單';
@@ -480,7 +472,6 @@
             if(response.data.bentoMenuUrl) { const bImg = document.getElementById('bentoMenuImg'); bImg.src = formatDriveImageUrl(response.data.bentoMenuUrl); bImg.style.display = 'block'; }
             if(response.data.drinkMenuUrl) { const dImg = document.getElementById('drinkMenuImg'); dImg.src = formatDriveImageUrl(response.data.drinkMenuUrl); dImg.style.display = 'block'; }
 
-            // 把按鈕畫上去，取代掉 "資料載入中..." 文字
             const clinicContainer = document.getElementById('clinicGroup'); clinicContainer.innerHTML = '';
             response.data.clinics.forEach((c, idx) => {
               const spanClass = (c === '非診間') ? 'style="grid-column: span 2;"' : '';
