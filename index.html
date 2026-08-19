@@ -32,12 +32,9 @@
       .menu-img { width: 100%; border-radius: 8px; margin-bottom: 10px; display: none; box-shadow: 0 2px 5px rgba(0,0,0,0.15); border: 1px solid #e2e8f0; }
       .banner-header { background-color: #536e86; color: white; height: 60px; margin-bottom: 16px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); width: 100%; display: flex; justify-content: space-between; align-items: center; padding-right: 15px; }
       
-      /* 🔥 頂部提示載入條 (骨架屏使用) */
       #miniLoader { background-color: #e2e8f0; color: #3a4f63; font-size: 0.85rem; padding: 6px 0; text-align: center; font-weight: bold; margin-bottom: 16px; border-radius: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
 
       .section-block { margin-bottom: 16px; }
-      
-      /* 🔥 標題加深：莫蘭迪灰藍漸層 */
       .section-header { 
         color: #1e3a5f; padding: 6px 8px 6px 14px; font-size: 1.05rem; font-weight: bold; 
         margin-bottom: 10px; margin-left: -16px; display: flex; justify-content: space-between; align-items: center; 
@@ -75,10 +72,11 @@
       .custom-dropdown div:last-child { border-bottom: none; }
       .custom-dropdown div:active { background-color: #f8f9fa; }
 
-      /* 🔥 動態加點按鈕 */
       .btn-add-row { background: #f8f9fa; border: 1px dashed #adb5bd; border-radius: 6px; font-size: 0.85rem; padding: 6px 12px; color: #495057; font-weight: bold; width: 100%; margin-top: 4px; }
       .btn-add-row:active { background: #e9ecef; }
-      .row-remove-btn { color: #dc3545; background: none; border: none; font-size: 1.2rem; line-height: 1; padding: 0 4px; font-weight: bold; }
+      
+      /* 🔥 垃圾桶按鈕樣式 */
+      .row-remove-btn { color: #dc3545; background: none; border: none; font-size: 1.1rem; line-height: 1; padding: 0; margin-top: 2px; }
     </style>
   </head>
   <body>
@@ -100,7 +98,6 @@
             <h5 class="mt-3 text-secondary">首次啟動中，請稍候...</h5>
           </div>
 
-          <!-- 🔥 微型背景載入提示 (骨架屏模式下顯示) -->
           <div id="miniLoader" class="d-none">
             <span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true" style="color: #536e86;"></span> 正在同步今日菜單與排行榜...
           </div>
@@ -135,7 +132,7 @@
                 </div>
               </div>
 
-              <!-- 餐點區塊 (動態增列設計) -->
+              <!-- 餐點區塊 -->
               <div class="section-block" id="bentoSectionBlock">
                 <div class="section-header" id="bentoSectionTitle"><span>餐點</span></div>
                 <img id="bentoMenuImg" class="menu-img" alt="餐點菜單" onerror="handleImgError('bento')">
@@ -146,25 +143,27 @@
                 <div id="bentoLeaderboard" class="mb-2" style="display: none;"></div>
                 
                 <div id="bentoRowsContainer">
-                  <!-- 基礎第一列 (品名4 : 客製3 : 數量2 : 單價3) -->
-                  <div class="row g-1 mb-2 align-items-center bento-row">
-                    <div class="col-4 position-relative">
-                      <input type="text" class="form-control fw-bold custom-placeholder bento-name" placeholder="餐點" enterkeyhint="next" onfocus="this.select(); showDropdown('bento', this)" oninput="filterDropdown('bento', this)" onblur="setTimeout(closeAllDropdowns, 200)">
+                  <!-- 🔥 全新優化的輸入列：使用自訂 Flex 比例，確保各種手機畫面都能完美對齊 -->
+                  <div class="d-flex align-items-center mb-2 bento-row gap-1">
+                    <div class="position-relative" style="flex: 3.5;">
+                      <input type="text" class="form-control fw-bold custom-placeholder bento-name px-1" placeholder="餐點" enterkeyhint="next" onfocus="this.select(); showDropdown('bento', this)" oninput="filterDropdown('bento', this)" onblur="setTimeout(closeAllDropdowns, 200)">
                       <div class="custom-dropdown d-none"></div>
                     </div>
-                    <div class="col-3">
-                      <input type="text" class="form-control fw-bold text-secondary custom-placeholder bento-custom" placeholder="客製" enterkeyhint="next" onfocus="this.select()">
+                    <div style="flex: 2.5;">
+                      <input type="text" class="form-control fw-bold custom-placeholder bento-custom px-1" placeholder="客製" enterkeyhint="next" onfocus="this.select()">
                     </div>
-                    <div class="col-2">
-                      <select class="form-select fw-bold px-1 bento-qty" style="text-align: center; padding-right: 15px; background-position: right 2px center;">
-                        <option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option>
+                    <div class="position-relative" style="flex: 2.5;">
+                      <input type="text" inputmode="numeric" class="form-control fw-bold custom-placeholder bento-price px-1" placeholder="單價" enterkeyhint="done" onblur="onAmountBlur(this)" onfocus="this.select()">
+                      <input type="text" class="dummy-trap" tabindex="0" inputmode="none" onfocus="this.blur();">
+                    </div>
+                    <div style="flex: 1.8;">
+                      <select class="form-select fw-bold px-1 bento-qty" style="text-align: center; padding-right: 12px; background-position: right 0.15rem center; background-size: 8px 10px;">
+                        <option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option>
                       </select>
                     </div>
-                    <div class="col-3 position-relative d-flex align-items-center">
-                      <input type="text" inputmode="numeric" class="form-control fw-bold custom-placeholder bento-price" placeholder="單價" enterkeyhint="done" onblur="onAmountBlur(this)" onfocus="this.select()">
-                      <input type="text" class="dummy-trap" tabindex="0" inputmode="none" onfocus="this.blur();">
-                      <!-- 佔位用，對齊刪除鈕空間 -->
-                      <div style="width: 24px;"></div>
+                    <div style="flex: 0 0 22px; text-align: right;">
+                      <!-- 🔥 紅色垃圾桶 -->
+                      <button type="button" class="row-remove-btn" onclick="removeRow(this, 'bento')">🗑️</button>
                     </div>
                   </div>
                 </div>
@@ -182,23 +181,26 @@
                 <div id="drinkLeaderboard" class="mb-2" style="display: none;"></div>
                 
                 <div id="drinkRowsContainer">
-                  <div class="row g-1 mb-2 align-items-center drink-row">
-                    <div class="col-4 position-relative">
-                      <input type="text" class="form-control fw-bold custom-placeholder drink-name" placeholder="飲料" enterkeyhint="next" onfocus="this.select(); showDropdown('drink', this)" oninput="filterDropdown('drink', this)" onblur="setTimeout(closeAllDropdowns, 200)">
+                  <div class="d-flex align-items-center mb-2 drink-row gap-1">
+                    <div class="position-relative" style="flex: 3.5;">
+                      <input type="text" class="form-control fw-bold custom-placeholder drink-name px-1" placeholder="飲料" enterkeyhint="next" onfocus="this.select(); showDropdown('drink', this)" oninput="filterDropdown('drink', this)" onblur="setTimeout(closeAllDropdowns, 200)">
                       <div class="custom-dropdown d-none"></div>
                     </div>
-                    <div class="col-3">
-                      <input type="text" class="form-control fw-bold text-secondary custom-placeholder drink-custom" placeholder="客製" enterkeyhint="next" onfocus="this.select()">
+                    <div style="flex: 2.5;">
+                      <input type="text" class="form-control fw-bold custom-placeholder drink-custom px-1" placeholder="客製" enterkeyhint="next" onfocus="this.select()">
                     </div>
-                    <div class="col-2">
-                      <select class="form-select fw-bold px-1 drink-qty" style="text-align: center; padding-right: 15px; background-position: right 2px center;">
-                        <option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option>
+                    <div class="position-relative" style="flex: 2.5;">
+                      <input type="text" inputmode="numeric" class="form-control fw-bold custom-placeholder drink-price px-1" placeholder="單價" enterkeyhint="done" onblur="onAmountBlur(this)" onfocus="this.select()">
+                      <input type="text" class="dummy-trap" tabindex="0" inputmode="none" onfocus="this.blur();">
+                    </div>
+                    <div style="flex: 1.8;">
+                      <select class="form-select fw-bold px-1 drink-qty" style="text-align: center; padding-right: 12px; background-position: right 0.15rem center; background-size: 8px 10px;">
+                        <option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option>
                       </select>
                     </div>
-                    <div class="col-3 position-relative d-flex align-items-center">
-                      <input type="text" inputmode="numeric" class="form-control fw-bold custom-placeholder drink-price" placeholder="單價" enterkeyhint="done" onblur="onAmountBlur(this)" onfocus="this.select()">
-                      <input type="text" class="dummy-trap" tabindex="0" inputmode="none" onfocus="this.blur();">
-                      <div style="width: 24px;"></div>
+                    <div style="flex: 0 0 22px; text-align: right;">
+                      <!-- 🔥 紅色垃圾桶 -->
+                      <button type="button" class="row-remove-btn" onclick="removeRow(this, 'drink')">🗑️</button>
                     </div>
                   </div>
                 </div>
@@ -306,7 +308,20 @@
       function closeAllDropdowns() { document.querySelectorAll('.custom-dropdown').forEach(dd => dd.classList.add('d-none')); }
       document.addEventListener('click', function(e) { if (!e.target.closest('.position-relative')) closeAllDropdowns(); });
 
-      // 🔥 動態新增點餐列邏輯
+      // 🔥 刪除列的安全防護 (最後一列只清空不刪除)
+      function removeRow(btn, type) {
+        const row = btn.closest('.' + type + '-row');
+        const container = document.getElementById(type + 'RowsContainer');
+        if (container.querySelectorAll('.' + type + '-row').length > 1) {
+          row.remove();
+        } else {
+          row.querySelector('.' + type + '-name').value = '';
+          row.querySelector('.' + type + '-custom').value = '';
+          row.querySelector('.' + type + '-qty').value = '1';
+          row.querySelector('.' + type + '-price').value = '';
+        }
+      }
+
       function addRow(type) {
         const container = document.getElementById(type + 'RowsContainer');
         const firstRow = container.querySelector('.' + type + '-row');
@@ -316,21 +331,9 @@
         newRow.querySelector('.' + type + '-qty').value = '1';
         newRow.querySelector('.' + type + '-price').value = '';
         newRow.querySelector('.custom-dropdown').classList.add('d-none');
-        
-        // 加入刪除按鈕
-        let delBox = newRow.querySelector('.d-flex');
-        let placeholder = delBox.querySelector('div');
-        if(placeholder) placeholder.remove();
-        if(!delBox.querySelector('.row-remove-btn')) {
-          let delBtn = document.createElement('button');
-          delBtn.className = 'row-remove-btn'; delBtn.type = 'button'; delBtn.innerHTML = '✖';
-          delBtn.onclick = function() { newRow.remove(); };
-          delBox.appendChild(delBtn);
-        }
         container.appendChild(newRow);
       }
 
-      // 🔥 智慧彙整：將後端拆單的多行資料，合併成一人一行顯示
       function processCurrentOrders(orders) {
         if (!orders || orders.length === 0) return;
         let bentoNames = []; let drinkNames = []; let groupedOrders = {};
@@ -381,7 +384,6 @@
         return name.substring(0, splitIdx) + '<br>' + name.substring(splitIdx);
       }
 
-      // 🔥 TOP 5 自動抓出數量計算
       function processLeaderboard(itemsArray, type) {
         if (!itemsArray || itemsArray.length === 0) return;
         let counts = {}; 
@@ -428,7 +430,6 @@
         }
       });
 
-      // 🔥 骨架屏載入邏輯：手機有暫存就瞬間畫出介面
       function loadData() {
         const cachedOptions = localStorage.getItem('OPH_Options');
         if (cachedOptions) {
@@ -437,7 +438,7 @@
             renderClinicAndRank(opts.clinics, opts.ranks);
             document.getElementById('loadingScreen').classList.add('d-none');
             document.getElementById('mainContent').classList.remove('d-none');
-            document.getElementById('miniLoader').classList.remove('d-none'); // 顯示頂部正在同步提示
+            document.getElementById('miniLoader').classList.remove('d-none'); 
             document.getElementById('submitBtn').disabled = true;
             document.getElementById('submitBtn').innerText = '載入中，請稍候...';
           } catch(e) {
@@ -449,7 +450,6 @@
 
         document.getElementById('closedScreen').classList.add('d-none');
 
-        // 背景同步最新資料
         fetchWithRetry(GAS_API_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action: "getSystemData" }) })
         .then(response => {
           document.getElementById('loadingScreen').classList.add('d-none');
@@ -516,7 +516,7 @@
         }
       }
 
-      // 🔥 多單明細計算與送出引擎
+      // 🔥 全新明細對話框：單一品項自動隱藏總計
       function submitOrder() {
         if (!isSystemReady) return; 
         const clinic = document.querySelector('input[name="clinic"]:checked') ? document.querySelector('input[name="clinic"]:checked').value : "";
@@ -529,50 +529,62 @@
 
         let bentoRows = document.querySelectorAll('.bento-row');
         let drinkRows = document.querySelectorAll('.drink-row');
-        let orders = []; let maxRows = Math.max(bentoRows.length, drinkRows.length);
-        let totalGrandAmount = 0; let msgLines = [];
+        let orders = []; 
+        let totalGrandAmount = 0; 
+        let totalItemCount = 0; // 用來計算總共點了幾「份」東西
+        
+        let msgLines = [];
+        let orderLines = [];
         const rankOrName = clinic === '非診間' ? name : rank;
         msgLines.push(`【${clinic}  ${rankOrName}】`);
-        msgLines.push(`------------------`);
 
-        for(let i=0; i<maxRows; i++) {
-           let bName = "", bCustom = "", bQty = 1, bPrice = 0, bTotal = 0;
-           let dName = "", dCustom = "", dQty = 1, dPrice = 0, dTotal = 0;
-
-           if (i < bentoRows.length) {
-              bName = bentoRows[i].querySelector('.bento-name').value.trim();
-              bCustom = bentoRows[i].querySelector('.bento-custom').value.trim();
-              bQty = parseInt(bentoRows[i].querySelector('.bento-qty').value) || 1;
-              bPrice = parseFloat(bentoRows[i].querySelector('.bento-price').value) || 0;
-              if (bName && !bPrice) { alert("請輸入餐點單價！"); bentoRows[i].querySelector('.bento-price').focus(); return; }
-              if (bName) { bTotal = bPrice * bQty; totalGrandAmount += bTotal; }
-           }
+        for(let i=0; i<bentoRows.length; i++) {
+           let bName = bentoRows[i].querySelector('.bento-name').value.trim();
+           if (!bName) continue;
+           let bCustom = bentoRows[i].querySelector('.bento-custom').value.trim();
+           let bQty = parseInt(bentoRows[i].querySelector('.bento-qty').value) || 1;
+           let bPrice = parseFloat(bentoRows[i].querySelector('.bento-price').value) || 0;
+           if (!bPrice) { alert("請輸入餐點單價！"); bentoRows[i].querySelector('.bento-price').focus(); return; }
            
-           if (i < drinkRows.length) {
-              dName = drinkRows[i].querySelector('.drink-name').value.trim();
-              dCustom = drinkRows[i].querySelector('.drink-custom').value.trim();
-              dQty = parseInt(drinkRows[i].querySelector('.drink-qty').value) || 1;
-              dPrice = parseFloat(drinkRows[i].querySelector('.drink-price').value) || 0;
-              if (dName && !dPrice) { alert("請輸入飲料單價！"); drinkRows[i].querySelector('.drink-price').focus(); return; }
-              if (dName) { dTotal = dPrice * dQty; totalGrandAmount += dTotal; }
-           }
-
-           if (!bName && !dName) continue; 
-
+           let bTotal = bPrice * bQty; 
+           totalGrandAmount += bTotal;
+           totalItemCount += bQty;
+           
            let finalBento = bName + (bQty > 1 ? ` x${bQty}` : "") + (bCustom ? ` (${bCustom})` : "");
-           let finalDrink = dName + (dQty > 1 ? ` x${dQty}` : "") + (dCustom ? ` (${dCustom})` : "");
-           orders.push({ bentoItem: finalBento, bentoAmount: bTotal, drinkItem: finalDrink, drinkAmount: dTotal });
+           orders.push({ bentoItem: finalBento, bentoAmount: bTotal, drinkItem: "", drinkAmount: 0 });
+           orderLines.push(`🍱 ${finalBento} $${bTotal}`);
+        }
+
+        for(let i=0; i<drinkRows.length; i++) {
+           let dName = drinkRows[i].querySelector('.drink-name').value.trim();
+           if (!dName) continue;
+           let dCustom = drinkRows[i].querySelector('.drink-custom').value.trim();
+           let dQty = parseInt(drinkRows[i].querySelector('.drink-qty').value) || 1;
+           let dPrice = parseFloat(drinkRows[i].querySelector('.drink-price').value) || 0;
+           if (!dPrice) { alert("請輸入飲料單價！"); drinkRows[i].querySelector('.drink-price').focus(); return; }
            
-           if(bName) msgLines.push(`🍱 ${finalBento} $${bTotal}`);
-           if(dName) msgLines.push(`🥤 ${finalDrink} $${dTotal}`);
+           let dTotal = dPrice * dQty; 
+           totalGrandAmount += dTotal;
+           totalItemCount += dQty;
+           
+           let finalDrink = dName + (dQty > 1 ? ` x${dQty}` : "") + (dCustom ? ` (${dCustom})` : "");
+           orders.push({ bentoItem: "", bentoAmount: 0, drinkItem: finalDrink, drinkAmount: dTotal });
+           orderLines.push(`🥤 ${finalDrink} $${dTotal}`);
         }
 
         if(orders.length === 0) { alert("請至少輸入一項餐點或飲料！"); return; }
         
+        msgLines.push(...orderLines);
+
         const notes = document.getElementById('notes').value.trim();
-        if (notes) { msgLines.push(`------------------`); msgLines.push(`📝 備註: ${notes}`); }
-        msgLines.push(`==================`);
-        msgLines.push(`💰 總計金額: $${totalGrandAmount}`);
+        if (notes) { msgLines.push(`📝 備註: ${notes}`); }
+
+        // 🔥 智慧總計：只有點 2 份以上的東西時，才顯示虛線與總金額
+        if (totalItemCount > 1) {
+            msgLines.push(`------------------`);
+            msgLines.push(`💰 總計金額: $${totalGrandAmount}`);
+        }
+        
         msgLines.push(`\n👉 確定要送出訂單嗎？`);
         
         if (!confirm(msgLines.join('\n'))) return;
@@ -584,7 +596,7 @@
           body: JSON.stringify({ action: "submitOrder", data: { clinic: clinic, rank: rank, name: name, notes: notes, orders: orders }})
         }).then(data => {
           if(data.success) { 
-            alert(data.message); window.location.reload(); // 送出成功後重整，恢復乾淨單列狀態
+            alert(data.message); window.location.reload(); 
           } else alert("錯誤：" + data.message);
         }).catch(error => { alert("送出訂單發生錯誤：" + error.message); }).finally(() => { btn.disabled = false; btn.innerText = '送出訂單'; });
       }
