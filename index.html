@@ -352,7 +352,6 @@
         }, 50);
       }
 
-      // 🔥 全新對齊與群組化引擎
       function processCurrentOrders(orders) {
         if (!orders || orders.length === 0) return;
         let bentoNames = []; let drinkNames = []; let groupedOrders = {};
@@ -381,7 +380,6 @@
         
         for (let clinicName of clinicKeys) {
           let bgColor = bgColors[colorIdx % 2]; colorIdx++;
-          // 每一個診次獨立成一個漂亮的區塊
           listHtml += `<div style="background-color: ${bgColor}; padding: 8px 12px; border-bottom: 2px solid #e9ecef;">`;
           
           let isFirstPerson = true;
@@ -390,9 +388,7 @@
             let bStr = person.bentos.join('<br>') || '';
             let dStr = person.drinks.join('<br>') || '';
             
-            // 智慧隱藏重複的診次名稱
             let displayClinic = isFirstPerson ? clinicName : '';
-            // 加上極淡的虛線區隔不同人員
             let borderStyle = isFirstPerson ? '' : 'border-top: 1px dashed #dee2e6; padding-top: 6px; margin-top: 6px;';
             
             listHtml += `
@@ -530,6 +526,7 @@
         }
       }
 
+      // 🔥 修改為乾淨整齊的送出明細框
       function submitOrder() {
         if (!isSystemReady) return; 
         const clinic = document.querySelector('input[name="clinic"]:checked') ? document.querySelector('input[name="clinic"]:checked').value : "";
@@ -549,7 +546,7 @@
         let msgLines = [];
         let orderLines = [];
         const rankOrName = clinic === '非診間' ? name : rank;
-        msgLines.push(`【${clinic}  ${rankOrName}】`);
+        msgLines.push(`【${clinic}  ${rankOrName}】\n`);
 
         for(let i=0; i<bentoRows.length; i++) {
            let bName = bentoRows[i].querySelector('.bento-name').value.trim();
@@ -565,7 +562,7 @@
            
            let finalBento = bName + (bQty > 1 ? ` x${bQty}` : "") + (bCustom ? ` (${bCustom})` : "");
            orders.push({ bentoItem: finalBento, bentoAmount: bTotal, drinkItem: "", drinkAmount: 0 });
-           orderLines.push(`🍱 ${finalBento} $${bTotal}`);
+           orderLines.push(`${finalBento} $${bTotal}`);
         }
 
         for(let i=0; i<drinkRows.length; i++) {
@@ -582,7 +579,7 @@
            
            let finalDrink = dName + (dQty > 1 ? ` x${dQty}` : "") + (dCustom ? ` (${dCustom})` : "");
            orders.push({ bentoItem: "", bentoAmount: 0, drinkItem: finalDrink, drinkAmount: dTotal });
-           orderLines.push(`🥤 ${finalDrink} $${dTotal}`);
+           orderLines.push(`${finalDrink} $${dTotal}`);
         }
 
         if(orders.length === 0) { alert("請至少輸入一項餐點或飲料！"); return; }
@@ -590,14 +587,13 @@
         msgLines.push(...orderLines);
 
         const notes = document.getElementById('notes').value.trim();
-        if (notes) { msgLines.push(`📝 備註: ${notes}`); }
+        if (notes) { msgLines.push(`\n備註: ${notes}`); }
 
         if (totalItemCount > 1) {
-            msgLines.push(`------------------`);
-            msgLines.push(`💰 總計金額: $${totalGrandAmount}`);
+            msgLines.push(`\n總計 $${totalGrandAmount}`);
         }
         
-        msgLines.push(`\n👉 確定要送出訂單嗎？`);
+        msgLines.push(`\n\n確定要送出訂單嗎？`);
         
         if (!confirm(msgLines.join('\n'))) return;
 
