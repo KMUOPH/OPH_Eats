@@ -18,43 +18,31 @@
       body { background-color: #ffffff; padding: 0; padding-bottom: 30px; font-family: "微軟正黑體", sans-serif; }
       
       .form-label { font-weight: bold; color: #343a40; margin-bottom: 8px; }
-      
       .text-theme { color: #536e86 !important; }
       .btn-theme { background-color: #536e86; border-color: #536e86; color: white; }
       .btn-theme:hover, .btn-theme:focus { background-color: #40586e; border-color: #40586e; color: white; }
       
       .btn-outline-dark-theme { color: #212529; border-color: #adb5bd !important; border-width: 1px; border-radius: 5px !important; }
       .btn-check:checked + .btn-outline-dark-theme { background-color: #ced4da; color: #212529; border-color: #adb5bd !important; font-weight: bold; }
+      @media (hover: hover) { .btn-outline-dark-theme:hover { background-color: #e9ecef; color: #212529; } }
       
-      @media (hover: hover) {
-        .btn-outline-dark-theme:hover { background-color: #e9ecef; color: #212529; }
-      }
+      .form-control, .form-select { border-color: #343a40 !important; border-width: 1px !important; }
+      .form-control:focus, .form-select:focus { border-color: #86b7fe !important; box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25) !important; }
       
-      .form-control { border-color: #343a40 !important; border-width: 1px !important; }
-      .form-control:focus { border-color: #86b7fe !important; box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25) !important; }
-      
-      #loadingScreen, #closedScreen { text-align: center; padding: 40px 20px; }
       .menu-img { width: 100%; border-radius: 8px; margin-bottom: 10px; display: none; box-shadow: 0 2px 5px rgba(0,0,0,0.15); border: 1px solid #e2e8f0; }
-      
       .banner-header { background-color: #536e86; color: white; height: 60px; margin-bottom: 16px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); width: 100%; display: flex; justify-content: space-between; align-items: center; padding-right: 15px; }
       
+      /* 🔥 頂部提示載入條 (骨架屏使用) */
+      #miniLoader { background-color: #e2e8f0; color: #3a4f63; font-size: 0.85rem; padding: 6px 0; text-align: center; font-weight: bold; margin-bottom: 16px; border-radius: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+
       .section-block { margin-bottom: 16px; }
       
+      /* 🔥 標題加深：莫蘭迪灰藍漸層 */
       .section-header { 
-        color: #3a4f63; 
-        padding: 6px 8px 6px 14px; 
-        font-size: 1.05rem; 
-        font-weight: bold; 
-        margin-bottom: 10px; 
-        margin-left: -16px; 
-        display: flex; 
-        justify-content: space-between; 
-        align-items: center; 
-        border-left: 12px solid #536e86; 
-        box-shadow: inset 0 -1px 0 #f1f3f5; 
-        background: linear-gradient(to right, #f8f9fa, #ffffff);
-        border-top-right-radius: 4px;
-        border-bottom-right-radius: 4px;
+        color: #1e3a5f; padding: 6px 8px 6px 14px; font-size: 1.05rem; font-weight: bold; 
+        margin-bottom: 10px; margin-left: -16px; display: flex; justify-content: space-between; align-items: center; 
+        border-left: 12px solid #3a5a78; box-shadow: inset 0 -1px 0 #d1d9e0; 
+        background: linear-gradient(to right, #e8edf2, #ffffff); border-top-right-radius: 4px; border-bottom-right-radius: 4px;
       }
       
       .clinic-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; }
@@ -68,89 +56,29 @@
       .custom-placeholder::placeholder { color: #adb5bd !important; opacity: 1 !important; font-weight: normal !important; }
       .dummy-trap { position: absolute; opacity: 0; width: 1px; height: 1px; padding: 0; border: none; margin: 0; }
 
-      .btn-top5 { 
-        background-color: #e2e8f0 !important; 
-        border: 1px solid #cbd5e1 !important; 
-        color: #343a40 !important; 
-        transition: transform 0.1s; 
-      }
+      .btn-top5 { background-color: #e2e8f0 !important; border: 1px solid #cbd5e1 !important; color: #343a40 !important; transition: transform 0.1s; }
       .btn-top5:active { background-color: #cbd5e1 !important; transform: scale(0.98); }
       .btn-top5:focus { outline: none !important; box-shadow: none !important; }
 
       .top5-container { display: flex; flex-wrap: nowrap; gap: 8px; padding: 10px 2px 6px 2px; width: 100%; }
-      .top5-card {
-        position: relative;
-        flex: 1 1 0; min-width: 0; 
-        background-color: #e2e8f0; 
-        color: #343a40; 
-        border: 1px solid #cbd5e1; 
-        border-radius: 6px;
-        padding: 4px 2px;
-        cursor: pointer;
-        text-align: center;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.05); 
-        transition: transform 0.1s;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        min-height: 48px; 
-      }
+      .top5-card { position: relative; flex: 1 1 0; min-width: 0; background-color: #e2e8f0; color: #343a40; border: 1px solid #cbd5e1; border-radius: 6px; padding: 4px 2px; cursor: pointer; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.05); transition: transform 0.1s; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 48px; }
       .top5-card:active { transform: scale(0.95); background-color: #cbd5e1; }
       
-      .top5-badge {
-        position: absolute;
-        top: -6px;
-        right: -6px;
-        background-color: #dc3545; 
-        color: white;
-        border-radius: 50%;
-        width: 18px;
-        height: 18px;
-        font-size: 0.65rem;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-weight: bold;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-        border: 2px solid #ffffff;
-        z-index: 2;
-      }
+      .top5-badge { position: absolute; top: -6px; right: -6px; background-color: #dc3545; color: white; border-radius: 50%; width: 18px; height: 18px; font-size: 0.65rem; display: flex; align-items: center; justify-content: center; font-weight: bold; box-shadow: 0 2px 4px rgba(0,0,0,0.2); border: 2px solid #ffffff; z-index: 2; }
       .top5-name { font-size: 0.75rem; font-weight: bold; line-height: 1.2; width: 100%; }
 
-      .custom-dropdown {
-        position: absolute;
-        top: 100%;
-        left: 0;
-        right: 0;
-        background: white;
-        border: 1px solid #dee2e6; 
-        border-radius: 6px;
-        z-index: 1000;
-        max-height: 275px; 
-        overflow-y: scroll; 
-        -webkit-overflow-scrolling: touch; 
-        box-shadow: 0 8px 16px rgba(0,0,0,0.12); 
-        margin-top: 4px;
-      }
+      .custom-dropdown { position: absolute; top: 100%; left: 0; right: 0; background: white; border: 1px solid #dee2e6; border-radius: 6px; z-index: 1000; max-height: 275px; overflow-y: scroll; -webkit-overflow-scrolling: touch; box-shadow: 0 8px 16px rgba(0,0,0,0.12); margin-top: 4px; }
       .custom-dropdown::-webkit-scrollbar { width: 5px; background: transparent; display: block; }
       .custom-dropdown::-webkit-scrollbar-track { background: transparent; }
       .custom-dropdown::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.25); border-radius: 10px; }
-
-      .custom-dropdown div {
-        padding: 0 12px;
-        height: 42px; 
-        display: flex;
-        align-items: center;
-        border-bottom: 1px solid #f1f3f5;
-        font-size: 0.95rem;
-        color: #212529;
-        font-weight: bold;
-        cursor: pointer;
-        box-sizing: border-box;
-      }
+      .custom-dropdown div { padding: 0 12px; height: 42px; display: flex; align-items: center; border-bottom: 1px solid #f1f3f5; font-size: 0.95rem; color: #212529; font-weight: bold; cursor: pointer; box-sizing: border-box; }
       .custom-dropdown div:last-child { border-bottom: none; }
       .custom-dropdown div:active { background-color: #f8f9fa; }
+
+      /* 🔥 動態加點按鈕 */
+      .btn-add-row { background: #f8f9fa; border: 1px dashed #adb5bd; border-radius: 6px; font-size: 0.85rem; padding: 6px 12px; color: #495057; font-weight: bold; width: 100%; margin-top: 4px; }
+      .btn-add-row:active { background: #e9ecef; }
+      .row-remove-btn { color: #dc3545; background: none; border: none; font-size: 1.2rem; line-height: 1; padding: 0 4px; font-weight: bold; }
     </style>
   </head>
   <body>
@@ -167,15 +95,19 @@
       <div class="row justify-content-center">
         <div class="col-md-8 col-lg-6 px-3">
             
-          <div id="loadingScreen">
+          <div id="loadingScreen" class="text-center p-4">
             <div class="spinner-border text-theme" role="status"></div>
-            <!-- 🔥 1. 更新載入中文字 -->
-            <h5 class="mt-3 text-secondary">資料載入中，請耐心等候...</h5>
+            <h5 class="mt-3 text-secondary">首次啟動中，請稍候...</h5>
           </div>
 
-          <div id="closedScreen" class="d-none">
-            <h2 class="text-danger fw-bold mb-3 text-center" id="closedTitle">今日點餐已關閉</h2>
-            <p class="text-secondary text-center" id="closedDesc">目前不在開放點餐時間，請稍後再試或洽詢管理員。</p>
+          <!-- 🔥 微型背景載入提示 (骨架屏模式下顯示) -->
+          <div id="miniLoader" class="d-none">
+            <span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true" style="color: #536e86;"></span> 正在同步今日菜單與排行榜...
+          </div>
+
+          <div id="closedScreen" class="d-none text-center p-4">
+            <h2 class="text-danger fw-bold mb-3" id="closedTitle">今日點餐已關閉</h2>
+            <p class="text-secondary" id="closedDesc">目前不在開放點餐時間，請稍後再試或洽詢管理員。</p>
           </div>
           
           <div id="mainContent" class="d-none">
@@ -203,11 +135,9 @@
                 </div>
               </div>
 
-              <!-- 餐點區塊 -->
+              <!-- 餐點區塊 (動態增列設計) -->
               <div class="section-block" id="bentoSectionBlock">
-                <div class="section-header" id="bentoSectionTitle">
-                  <span>餐點</span>
-                </div>
+                <div class="section-header" id="bentoSectionTitle"><span>餐點</span></div>
                 <img id="bentoMenuImg" class="menu-img" alt="餐點菜單" onerror="handleImgError('bento')">
                 <div id="bentoImgError" class="text-center p-3 mb-2 border rounded" style="background-color: #f8f9fa; border-color: #dee2e6 !important; display: none;">
                   <span class="text-secondary fw-bold small">圖片載入超時，請點擊上方「🔄 圖片重整」</span>
@@ -215,26 +145,35 @@
                 
                 <div id="bentoLeaderboard" class="mb-2" style="display: none;"></div>
                 
-                <div class="row g-2 mb-2">
-                  <div class="col-5 position-relative">
-                    <input type="text" class="form-control fw-bold custom-placeholder" id="bentoName" placeholder="餐點" enterkeyhint="next" onfocus="this.select(); showDropdown('bento')" oninput="filterDropdown('bento')" onblur="setTimeout(closeAllDropdowns, 200)">
-                    <div id="bentoDropdown" class="custom-dropdown d-none"></div>
-                  </div>
-                  <div class="col-4">
-                    <input type="text" class="form-control fw-bold text-secondary custom-placeholder" id="bentoCustom" placeholder="客製項目" enterkeyhint="next" onfocus="this.select()">
-                  </div>
-                  <div class="col-3 position-relative">
-                    <input type="text" inputmode="numeric" class="form-control fw-bold custom-placeholder" id="bentoAmount" placeholder="金額" enterkeyhint="done" onblur="onAmountBlur('bentoAmount')" onfocus="this.select()">
-                    <input type="text" class="dummy-trap" tabindex="0" inputmode="none" onfocus="this.blur();">
+                <div id="bentoRowsContainer">
+                  <!-- 基礎第一列 (品名4 : 客製3 : 數量2 : 單價3) -->
+                  <div class="row g-1 mb-2 align-items-center bento-row">
+                    <div class="col-4 position-relative">
+                      <input type="text" class="form-control fw-bold custom-placeholder bento-name" placeholder="餐點" enterkeyhint="next" onfocus="this.select(); showDropdown('bento', this)" oninput="filterDropdown('bento', this)" onblur="setTimeout(closeAllDropdowns, 200)">
+                      <div class="custom-dropdown d-none"></div>
+                    </div>
+                    <div class="col-3">
+                      <input type="text" class="form-control fw-bold text-secondary custom-placeholder bento-custom" placeholder="客製" enterkeyhint="next" onfocus="this.select()">
+                    </div>
+                    <div class="col-2">
+                      <select class="form-select fw-bold px-1 bento-qty" style="text-align: center; padding-right: 15px; background-position: right 2px center;">
+                        <option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option>
+                      </select>
+                    </div>
+                    <div class="col-3 position-relative d-flex align-items-center">
+                      <input type="text" inputmode="numeric" class="form-control fw-bold custom-placeholder bento-price" placeholder="單價" enterkeyhint="done" onblur="onAmountBlur(this)" onfocus="this.select()">
+                      <input type="text" class="dummy-trap" tabindex="0" inputmode="none" onfocus="this.blur();">
+                      <!-- 佔位用，對齊刪除鈕空間 -->
+                      <div style="width: 24px;"></div>
+                    </div>
                   </div>
                 </div>
+                <button type="button" class="btn-add-row" onclick="addRow('bento')">➕ 另外加點餐點</button>
               </div>
 
               <!-- 飲料區塊 -->
               <div class="section-block" id="drinkSectionBlock">
-                <div class="section-header" id="drinkSectionTitle">
-                  <span>飲料</span>
-                </div>
+                <div class="section-header" id="drinkSectionTitle"><span>飲料</span></div>
                 <img id="drinkMenuImg" class="menu-img" alt="飲料菜單" onerror="handleImgError('drink')">
                 <div id="drinkImgError" class="text-center p-3 mb-2 border rounded" style="background-color: #f8f9fa; border-color: #dee2e6 !important; display: none;">
                   <span class="text-secondary fw-bold small">圖片載入超時，請點擊上方「🔄 圖片重整」</span>
@@ -242,19 +181,28 @@
                 
                 <div id="drinkLeaderboard" class="mb-2" style="display: none;"></div>
                 
-                <div class="row g-2 mb-2">
-                  <div class="col-5 position-relative">
-                    <input type="text" class="form-control fw-bold custom-placeholder" id="drinkName" placeholder="飲料" enterkeyhint="next" onfocus="this.select(); showDropdown('drink')" oninput="filterDropdown('drink')" onblur="setTimeout(closeAllDropdowns, 200)">
-                    <div id="drinkDropdown" class="custom-dropdown d-none"></div>
-                  </div>
-                  <div class="col-4">
-                    <input type="text" class="form-control fw-bold text-secondary custom-placeholder" id="drinkCustom" placeholder="客製項目" enterkeyhint="next" onfocus="this.select()">
-                  </div>
-                  <div class="col-3 position-relative">
-                    <input type="text" inputmode="numeric" class="form-control fw-bold custom-placeholder" id="drinkAmount" placeholder="金額" enterkeyhint="done" onblur="onAmountBlur('drinkAmount')" onfocus="this.select()">
-                    <input type="text" class="dummy-trap" tabindex="0" inputmode="none" onfocus="this.blur();">
+                <div id="drinkRowsContainer">
+                  <div class="row g-1 mb-2 align-items-center drink-row">
+                    <div class="col-4 position-relative">
+                      <input type="text" class="form-control fw-bold custom-placeholder drink-name" placeholder="飲料" enterkeyhint="next" onfocus="this.select(); showDropdown('drink', this)" oninput="filterDropdown('drink', this)" onblur="setTimeout(closeAllDropdowns, 200)">
+                      <div class="custom-dropdown d-none"></div>
+                    </div>
+                    <div class="col-3">
+                      <input type="text" class="form-control fw-bold text-secondary custom-placeholder drink-custom" placeholder="客製" enterkeyhint="next" onfocus="this.select()">
+                    </div>
+                    <div class="col-2">
+                      <select class="form-select fw-bold px-1 drink-qty" style="text-align: center; padding-right: 15px; background-position: right 2px center;">
+                        <option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option>
+                      </select>
+                    </div>
+                    <div class="col-3 position-relative d-flex align-items-center">
+                      <input type="text" inputmode="numeric" class="form-control fw-bold custom-placeholder drink-price" placeholder="單價" enterkeyhint="done" onblur="onAmountBlur(this)" onfocus="this.select()">
+                      <input type="text" class="dummy-trap" tabindex="0" inputmode="none" onfocus="this.blur();">
+                      <div style="width: 24px;"></div>
+                    </div>
                   </div>
                 </div>
+                <button type="button" class="btn-add-row" onclick="addRow('drink')">➕ 另外加點飲料</button>
               </div>
               
               <div class="section-block" id="notesSectionTitle">
@@ -285,6 +233,7 @@
 
       let globalBentoList = [];
       let globalDrinkList = [];
+      let isSystemReady = false; 
 
       async function fetchWithRetry(url, options, retries = 2) {
         for (let i = 0; i <= retries; i++) {
@@ -303,7 +252,6 @@
       function addNote(text) { const n = document.getElementById('notes'); n.value = n.value ? n.value + "。" + text : text; }
       function handleImgError(type) { document.getElementById(type + 'MenuImg').style.display = 'none'; document.getElementById(type + 'ImgError').style.display = 'block'; }
       function forceRetryImagesAll() { forceRetryImages('bento'); forceRetryImages('drink'); }
-
       function forceRetryImages(type) {
         const img = document.getElementById(type + 'MenuImg');
         const errorDiv = document.getElementById(type + 'ImgError');
@@ -326,34 +274,63 @@
         }
       }
 
-      function showDropdown(type) {
+      function showDropdown(type, inputEl) {
         closeAllDropdowns();
         const list = type === 'bento' ? globalBentoList : globalDrinkList;
         if (list.length === 0) return;
-        renderDropdown(type, list); document.getElementById(type + 'Dropdown').classList.remove('d-none');
+        const dd = inputEl.parentNode.querySelector('.custom-dropdown');
+        dd.innerHTML = list.map(item => `<div onmousedown="event.preventDefault(); fillName(this, '${item}')">${item}</div>`).join('');
+        dd.classList.remove('d-none');
       }
 
-      function filterDropdown(type) {
-        const inputVal = document.getElementById(type + 'Name').value.toLowerCase();
+      function filterDropdown(type, inputEl) {
+        const inputVal = inputEl.value.toLowerCase();
         const list = type === 'bento' ? globalBentoList : globalDrinkList;
         const filtered = list.filter(item => item.toLowerCase().includes(inputVal));
-        const dd = document.getElementById(type + 'Dropdown');
+        const dd = inputEl.parentNode.querySelector('.custom-dropdown');
         if (filtered.length === 0) dd.classList.add('d-none');
-        else { renderDropdown(type, filtered); dd.classList.remove('d-none'); }
+        else { 
+          dd.innerHTML = filtered.map(item => `<div onmousedown="event.preventDefault(); fillName(this, '${item}')">${item}</div>`).join('');
+          dd.classList.remove('d-none'); 
+        }
       }
 
-      function renderDropdown(type, items) {
-        const dd = document.getElementById(type + 'Dropdown');
-        dd.innerHTML = items.map(item => `<div onmousedown="event.preventDefault(); fillName('${type}Name', '${item}')">${item}</div>`).join('');
+      function fillName(divEl, name) {
+        const inputEl = divEl.parentNode.parentNode.querySelector('input');
+        inputEl.value = name;
+        inputEl.style.transition = 'background-color 0.2s'; inputEl.style.backgroundColor = '#d1e7dd';
+        setTimeout(() => { inputEl.style.backgroundColor = ''; }, 300);
+        closeAllDropdowns(); 
       }
 
-      function closeAllDropdowns() {
-        document.getElementById('bentoDropdown').classList.add('d-none');
-        document.getElementById('drinkDropdown').classList.add('d-none');
-      }
-
+      function closeAllDropdowns() { document.querySelectorAll('.custom-dropdown').forEach(dd => dd.classList.add('d-none')); }
       document.addEventListener('click', function(e) { if (!e.target.closest('.position-relative')) closeAllDropdowns(); });
 
+      // 🔥 動態新增點餐列邏輯
+      function addRow(type) {
+        const container = document.getElementById(type + 'RowsContainer');
+        const firstRow = container.querySelector('.' + type + '-row');
+        const newRow = firstRow.cloneNode(true);
+        newRow.querySelector('.' + type + '-name').value = '';
+        newRow.querySelector('.' + type + '-custom').value = '';
+        newRow.querySelector('.' + type + '-qty').value = '1';
+        newRow.querySelector('.' + type + '-price').value = '';
+        newRow.querySelector('.custom-dropdown').classList.add('d-none');
+        
+        // 加入刪除按鈕
+        let delBox = newRow.querySelector('.d-flex');
+        let placeholder = delBox.querySelector('div');
+        if(placeholder) placeholder.remove();
+        if(!delBox.querySelector('.row-remove-btn')) {
+          let delBtn = document.createElement('button');
+          delBtn.className = 'row-remove-btn'; delBtn.type = 'button'; delBtn.innerHTML = '✖';
+          delBtn.onclick = function() { newRow.remove(); };
+          delBox.appendChild(delBtn);
+        }
+        container.appendChild(newRow);
+      }
+
+      // 🔥 智慧彙整：將後端拆單的多行資料，合併成一人一行顯示
       function processCurrentOrders(orders) {
         if (!orders || orders.length === 0) return;
         let bentoNames = []; let drinkNames = []; let groupedOrders = {};
@@ -361,35 +338,41 @@
         orders.forEach(o => {
           let bBase = o.bento ? o.bento.split('(')[0].split('（')[0].trim() : '';
           let dBase = o.drink ? o.drink.split('(')[0].split('（')[0].trim() : '';
+          let bMatch = bBase.match(/(.*)\s+x(\d+)$/i); if(bMatch) bBase = bMatch[1].trim();
+          let dMatch = dBase.match(/(.*)\s+x(\d+)$/i); if(dMatch) dBase = dMatch[1].trim();
           if (bBase) bentoNames.push(bBase); if (dBase) drinkNames.push(dBase);
-          if (!groupedOrders[o.clinic]) groupedOrders[o.clinic] = [];
-          if (bBase || dBase) groupedOrders[o.clinic].push({ rankName: o.rankName, bBase, dBase });
+          
+          if (!groupedOrders[o.clinic]) groupedOrders[o.clinic] = {};
+          if (!groupedOrders[o.clinic][o.rankName]) groupedOrders[o.clinic][o.rankName] = { bentos: [], drinks: [] };
+          if (o.bento) groupedOrders[o.clinic][o.rankName].bentos.push(o.bento);
+          if (o.drink) groupedOrders[o.clinic][o.rankName].drinks.push(o.drink);
         });
 
         let listHtml = ''; let bgColors = ['#ffffff', '#f1f3f5']; let colorIdx = 0;
         for (let clinicName in groupedOrders) {
-          if (groupedOrders[clinicName].length === 0) continue;
           let bgColor = bgColors[colorIdx % 2]; colorIdx++;
           listHtml += `<div style="background-color: ${bgColor}; padding: 8px 12px;">`;
-          groupedOrders[clinicName].forEach(o => {
+          for(let rankName in groupedOrders[clinicName]) {
+            let person = groupedOrders[clinicName][rankName];
+            let bStr = person.bentos.join(', ') || '-';
+            let dStr = person.drinks.join(', ') || '-';
             listHtml += `
               <div style="display: grid; grid-template-columns: 20% 22% 29% 29%; gap: 4px; font-size: 0.85rem; padding: 4px 0; align-items: center; color: #495057; font-weight: bold; text-align: left;">
                 <div style="color: #6c757d; text-align: center;">${clinicName}</div>
-                <div class="text-truncate" title="${o.rankName}">${o.rankName}</div>
-                <div class="text-truncate" title="${o.bBase}">${o.bBase}</div>
-                <div class="text-truncate" title="${o.dBase}">${o.dBase}</div>
+                <div class="text-truncate" title="${rankName}">${rankName}</div>
+                <div class="text-truncate" title="${bStr}">${bStr}</div>
+                <div class="text-truncate" title="${dStr}">${dStr}</div>
               </div>`;
-          });
+          }
           listHtml += `</div>`;
         }
 
         if (listHtml) document.getElementById('todayOrderList').innerHTML = listHtml;
-        
-        // 🔥 2. 將萃取出的品項陣列加上 localeCompare 筆畫排序
         globalBentoList = [...new Set(bentoNames)].sort((a, b) => a.localeCompare(b, 'zh-TW')); 
         globalDrinkList = [...new Set(drinkNames)].sort((a, b) => a.localeCompare(b, 'zh-TW'));
 
-        processLeaderboard(bentoNames, 'bento'); processLeaderboard(drinkNames, 'drink');
+        processLeaderboard(orders.map(o=>o.bento).filter(Boolean), 'bento'); 
+        processLeaderboard(orders.map(o=>o.drink).filter(Boolean), 'drink');
       }
 
       function formatTop5Name(name) {
@@ -398,9 +381,18 @@
         return name.substring(0, splitIdx) + '<br>' + name.substring(splitIdx);
       }
 
+      // 🔥 TOP 5 自動抓出數量計算
       function processLeaderboard(itemsArray, type) {
         if (!itemsArray || itemsArray.length === 0) return;
-        let counts = {}; itemsArray.forEach(item => { counts[item] = (counts[item] || 0) + 1; });
+        let counts = {}; 
+        itemsArray.forEach(item => { 
+          let base = item.split('(')[0].split('（')[0].trim();
+          let count = 1;
+          let match = base.match(/(.*)\s+x(\d+)$/i);
+          if(match) { base = match[1].trim(); count = parseInt(match[2]); }
+          if (base) counts[base] = (counts[base] || 0) + count; 
+        });
+
         let sorted = Object.entries(counts).sort((a, b) => b[1] - a[1]).slice(0, 5);
         if (sorted.length === 0) return;
 
@@ -408,39 +400,21 @@
         sorted.forEach((entry) => {
           let name = entry[0], count = entry[1];
           let formattedName = formatTop5Name(name); 
-          html += `<div class="top5-card" onclick="fillName('${type}Name', '${name}')"><div class="top5-badge">${count}</div><div class="top5-name">${formattedName}</div></div>`;
+          html += `<div class="top5-card" onclick="fillName(document.querySelector('.${type}-name').parentNode, '${name}')"><div class="top5-badge">${count}</div><div class="top5-name">${formattedName}</div></div>`;
         });
         html += `</div>`;
         const lbDiv = document.getElementById(type + 'Leaderboard'); 
         lbDiv.innerHTML = html; lbDiv.style.display = 'block';
       }
 
-      function fillName(inputId, name) {
-        const el = document.getElementById(inputId); el.value = name;
-        el.style.transition = 'background-color 0.2s'; el.style.backgroundColor = '#d1e7dd';
-        setTimeout(() => { el.style.backgroundColor = ''; }, 300);
-        closeAllDropdowns(); 
-      }
-
       function handleRankChange(radioId) {
-        setTimeout(() => {
-          const el = document.getElementById(radioId);
-          if (el && el.nextElementSibling) {
-            const targetY = window.scrollY + el.nextElementSibling.getBoundingClientRect().top - 15;
-            window.scrollTo({ top: Math.max(0, targetY), behavior: 'smooth' });
-          }
-        }, 350); 
+        setTimeout(() => { const el = document.getElementById(radioId); if (el && el.nextElementSibling) window.scrollTo({ top: Math.max(0, window.scrollY + el.nextElementSibling.getBoundingClientRect().top - 15), behavior: 'smooth' }); }, 350); 
       }
 
-      function onAmountBlur(inputId) {
+      function onAmountBlur(el) {
         setTimeout(() => {
-          const active = document.activeElement;
-          if (active && active.tagName === 'INPUT' && !active.classList.contains('dummy-trap')) return;
-          const el = document.getElementById(inputId);
-          if (el) {
-            const targetY = window.scrollY + el.getBoundingClientRect().top - 15;
-            window.scrollTo({ top: Math.max(0, targetY), behavior: 'smooth' });
-          }
+          const active = document.activeElement; if (active && active.tagName === 'INPUT' && !active.classList.contains('dummy-trap')) return;
+          if (el) window.scrollTo({ top: Math.max(0, window.scrollY + el.getBoundingClientRect().top - 15), behavior: 'smooth' });
         }, 400); 
       }
 
@@ -449,36 +423,51 @@
           const isKeyboardAlreadyUp = window.visualViewport && (window.visualViewport.height < window.innerHeight * 0.85);
           const delayTime = isKeyboardAlreadyUp ? 50 : 400;
           setTimeout(() => {
-            if (window.visualViewport) {
-              const rect = e.target.getBoundingClientRect();
-              const targetY = window.scrollY + rect.top - (window.visualViewport.height * 0.25);
-              window.scrollTo({ top: Math.max(0, targetY), behavior: 'smooth' });
-            }
+            if (window.visualViewport) window.scrollTo({ top: Math.max(0, window.scrollY + e.target.getBoundingClientRect().top - (window.visualViewport.height * 0.25)), behavior: 'smooth' });
           }, delayTime);
         }
       });
 
+      // 🔥 骨架屏載入邏輯：手機有暫存就瞬間畫出介面
       function loadData() {
-        document.getElementById('loadingScreen').classList.remove('d-none');
-        document.getElementById('mainContent').classList.add('d-none');
+        const cachedOptions = localStorage.getItem('OPH_Options');
+        if (cachedOptions) {
+          try {
+            const opts = JSON.parse(cachedOptions);
+            renderClinicAndRank(opts.clinics, opts.ranks);
+            document.getElementById('loadingScreen').classList.add('d-none');
+            document.getElementById('mainContent').classList.remove('d-none');
+            document.getElementById('miniLoader').classList.remove('d-none'); // 顯示頂部正在同步提示
+            document.getElementById('submitBtn').disabled = true;
+            document.getElementById('submitBtn').innerText = '載入中，請稍候...';
+          } catch(e) {
+            document.getElementById('loadingScreen').classList.remove('d-none'); document.getElementById('mainContent').classList.add('d-none');
+          }
+        } else {
+          document.getElementById('loadingScreen').classList.remove('d-none'); document.getElementById('mainContent').classList.add('d-none');
+        }
+
         document.getElementById('closedScreen').classList.add('d-none');
 
+        // 背景同步最新資料
         fetchWithRetry(GAS_API_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action: "getSystemData" }) })
         .then(response => {
           document.getElementById('loadingScreen').classList.add('d-none');
+          document.getElementById('miniLoader').classList.add('d-none'); 
+          isSystemReady = true;
 
           if(response.success && response.data.isOpen) {
             document.getElementById('mainContent').classList.remove('d-none');
+            document.getElementById('submitBtn').disabled = false;
+            document.getElementById('submitBtn').innerText = '送出訂單';
+            
+            localStorage.setItem('OPH_Options', JSON.stringify({ clinics: response.data.clinics, ranks: response.data.ranks }));
             
             let isToday = false; let m = "", d = "", w = "";
-            const today = new Date();
-            const todayStr = `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`;
-            
+            const today = new Date(); const todayStr = `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`;
             if (response.data.menuDate) {
-              const parts = response.data.menuDate.split('-');
-              const dObj = new Date(parts[0], parts[1]-1, parts[2]);
-              m = parts[1].replace(/^0+/, ''); d = parts[2].replace(/^0+/, '');
-              w = ['日', '一', '二', '三', '四', '五', '六'][dObj.getDay()];
+              const parts = response.data.menuDate.split('-'); const dObj = new Date(parts[0], parts[1]-1, parts[2]);
+              m = parts[1].replace(/^0+/, ''); d = parts[2].replace(/^0+/, ''); w = ['日', '一', '二', '三', '四', '五', '六'][dObj.getDay()];
               isToday = (response.data.menuDate === todayStr);
             }
 
@@ -486,31 +475,17 @@
 
             const bTitle = document.getElementById('bentoSectionTitle');
             if (response.data.bentoMenuUrl && response.data.menuDate) bTitle.innerHTML = `<span>${m}/${d} 週${w} ${response.data.bentoShopName}</span> ${badgeHtml}`;
-            
             const dTitle = document.getElementById('drinkSectionTitle');
             if (response.data.drinkMenuUrl && response.data.menuDate) dTitle.innerHTML = `<span>${m}/${d} 週${w} ${response.data.drinkShopName}</span> ${badgeHtml}`;
             
             if(response.data.bentoMenuUrl) { const bImg = document.getElementById('bentoMenuImg'); bImg.src = formatDriveImageUrl(response.data.bentoMenuUrl); bImg.style.display = 'block'; }
             if(response.data.drinkMenuUrl) { const dImg = document.getElementById('drinkMenuImg'); dImg.src = formatDriveImageUrl(response.data.drinkMenuUrl); dImg.style.display = 'block'; }
 
-            const clinicContainer = document.getElementById('clinicGroup'); clinicContainer.innerHTML = '';
-            response.data.clinics.forEach((c, idx) => {
-              const spanClass = (c === '非診間') ? 'style="grid-column: span 2;"' : '';
-              clinicContainer.innerHTML += `<div ${spanClass}><input type="radio" class="btn-check clinic-radio" name="clinic" id="c_${idx}" value="${c}" onchange="toggleRankName()"><label class="btn btn-outline-dark-theme fw-bold" for="c_${idx}">${c}</label></div>`;
-            });
-
-            const rankContainer = document.getElementById('rankGroup'); rankContainer.innerHTML = '';
-            response.data.ranks.forEach((r, idx) => {
-              rankContainer.innerHTML += `<div class="col-4"><input type="radio" class="btn-check rank-radio" name="rank" id="r_${idx}" value="${r}" onchange="handleRankChange('r_${idx}')"><label class="btn btn-outline-dark-theme w-100 fw-bold rank-label-custom" for="r_${idx}">${r}</label></div>`;
-            });
-
-            if (response.data.currentOrders) {
-              processCurrentOrders(response.data.currentOrders);
-            }
+            renderClinicAndRank(response.data.clinics, response.data.ranks);
+            if (response.data.currentOrders) processCurrentOrders(response.data.currentOrders);
 
           } else { 
-            document.getElementById('mainContent').classList.add('d-none');
-            document.getElementById('closedScreen').classList.remove('d-none'); 
+            document.getElementById('mainContent').classList.add('d-none'); document.getElementById('closedScreen').classList.remove('d-none'); 
           }
         }).catch(err => {
           document.getElementById('loadingScreen').classList.add('d-none'); document.getElementById('closedScreen').classList.remove('d-none');
@@ -518,21 +493,32 @@
         });
       };
 
+      function renderClinicAndRank(clinics, ranks) {
+        const clinicContainer = document.getElementById('clinicGroup'); clinicContainer.innerHTML = '';
+        clinics.forEach((c, idx) => {
+          const spanClass = (c === '非診間') ? 'style="grid-column: span 2;"' : '';
+          clinicContainer.innerHTML += `<div ${spanClass}><input type="radio" class="btn-check clinic-radio" name="clinic" id="c_${idx}" value="${c}" onchange="toggleRankName()"><label class="btn btn-outline-dark-theme fw-bold" for="c_${idx}">${c}</label></div>`;
+        });
+        const rankContainer = document.getElementById('rankGroup'); rankContainer.innerHTML = '';
+        ranks.forEach((r, idx) => {
+          rankContainer.innerHTML += `<div class="col-4"><input type="radio" class="btn-check rank-radio" name="rank" id="r_${idx}" value="${r}" onchange="handleRankChange('r_${idx}')"><label class="btn btn-outline-dark-theme w-100 fw-bold rank-label-custom" for="r_${idx}">${r}</label></div>`;
+        });
+      }
+
       window.onload = () => loadData();
 
       function toggleRankName() {
         const c = document.querySelector('input[name="clinic"]:checked');
         if (c && c.value === "非診間") { 
-          document.getElementById('rankDiv').classList.add('d-none'); 
-          document.getElementById('nameDiv').classList.remove('d-none'); 
-          document.getElementById('name').focus(); 
+          document.getElementById('rankDiv').classList.add('d-none'); document.getElementById('nameDiv').classList.remove('d-none'); document.getElementById('name').focus(); 
         } else { 
-          document.getElementById('rankDiv').classList.remove('d-none'); 
-          document.getElementById('nameDiv').classList.add('d-none'); 
+          document.getElementById('rankDiv').classList.remove('d-none'); document.getElementById('nameDiv').classList.add('d-none'); 
         }
       }
 
+      // 🔥 多單明細計算與送出引擎
       function submitOrder() {
+        if (!isSystemReady) return; 
         const clinic = document.querySelector('input[name="clinic"]:checked') ? document.querySelector('input[name="clinic"]:checked').value : "";
         const rank = document.querySelector('input[name="rank"]:checked') ? document.querySelector('input[name="rank"]:checked').value : "";
         const name = document.getElementById('name').value.trim();
@@ -541,55 +527,66 @@
         if(clinic === "非診間" && !name) { alert("請填寫姓名！"); document.getElementById('name').focus(); return; }
         if(clinic !== "非診間" && !rank) { alert("請選擇職級！"); document.getElementById('rankGroup').scrollIntoView({ behavior: 'smooth', block: 'center' }); return; }
 
-        const bName = document.getElementById('bentoName').value.trim(); 
-        const bCustom = document.getElementById('bentoCustom').value.trim(); 
-        const bAmt = document.getElementById('bentoAmount').value.trim();
-        
-        const dName = document.getElementById('drinkName').value.trim(); 
-        const dCustom = document.getElementById('drinkCustom').value.trim(); 
-        const dAmt = document.getElementById('drinkAmount').value.trim();
-        
-        if (bName && !bAmt) { alert("請輸入餐點的金額！"); document.getElementById('bentoAmount').focus(); return; }
-        if (dName && !dAmt) { alert("請輸入飲料的金額！"); document.getElementById('drinkAmount').focus(); return; }
+        let bentoRows = document.querySelectorAll('.bento-row');
+        let drinkRows = document.querySelectorAll('.drink-row');
+        let orders = []; let maxRows = Math.max(bentoRows.length, drinkRows.length);
+        let totalGrandAmount = 0; let msgLines = [];
+        const rankOrName = clinic === '非診間' ? name : rank;
+        msgLines.push(`【${clinic}  ${rankOrName}】`);
+        msgLines.push(`------------------`);
+
+        for(let i=0; i<maxRows; i++) {
+           let bName = "", bCustom = "", bQty = 1, bPrice = 0, bTotal = 0;
+           let dName = "", dCustom = "", dQty = 1, dPrice = 0, dTotal = 0;
+
+           if (i < bentoRows.length) {
+              bName = bentoRows[i].querySelector('.bento-name').value.trim();
+              bCustom = bentoRows[i].querySelector('.bento-custom').value.trim();
+              bQty = parseInt(bentoRows[i].querySelector('.bento-qty').value) || 1;
+              bPrice = parseFloat(bentoRows[i].querySelector('.bento-price').value) || 0;
+              if (bName && !bPrice) { alert("請輸入餐點單價！"); bentoRows[i].querySelector('.bento-price').focus(); return; }
+              if (bName) { bTotal = bPrice * bQty; totalGrandAmount += bTotal; }
+           }
+           
+           if (i < drinkRows.length) {
+              dName = drinkRows[i].querySelector('.drink-name').value.trim();
+              dCustom = drinkRows[i].querySelector('.drink-custom').value.trim();
+              dQty = parseInt(drinkRows[i].querySelector('.drink-qty').value) || 1;
+              dPrice = parseFloat(drinkRows[i].querySelector('.drink-price').value) || 0;
+              if (dName && !dPrice) { alert("請輸入飲料單價！"); drinkRows[i].querySelector('.drink-price').focus(); return; }
+              if (dName) { dTotal = dPrice * dQty; totalGrandAmount += dTotal; }
+           }
+
+           if (!bName && !dName) continue; 
+
+           let finalBento = bName + (bQty > 1 ? ` x${bQty}` : "") + (bCustom ? ` (${bCustom})` : "");
+           let finalDrink = dName + (dQty > 1 ? ` x${dQty}` : "") + (dCustom ? ` (${dCustom})` : "");
+           orders.push({ bentoItem: finalBento, bentoAmount: bTotal, drinkItem: finalDrink, drinkAmount: dTotal });
+           
+           if(bName) msgLines.push(`🍱 ${finalBento} $${bTotal}`);
+           if(dName) msgLines.push(`🥤 ${finalDrink} $${dTotal}`);
+        }
+
+        if(orders.length === 0) { alert("請至少輸入一項餐點或飲料！"); return; }
         
         const notes = document.getElementById('notes').value.trim();
+        if (notes) { msgLines.push(`------------------`); msgLines.push(`📝 備註: ${notes}`); }
+        msgLines.push(`==================`);
+        msgLines.push(`💰 總計金額: $${totalGrandAmount}`);
+        msgLines.push(`\n👉 確定要送出訂單嗎？`);
         
-        const finalBentoItem = bName + (bCustom ? ` (${bCustom})` : "");
-        const finalDrinkItem = dName + (dCustom ? ` (${dCustom})` : "");
-
-        let msgLines = [];
-        const rankOrName = clinic === '非診間' ? name : rank;
-        msgLines.push(`${clinic}  ${rankOrName}`);
-        
-        if (bName) msgLines.push(`${finalBentoItem} $${bAmt}`);
-        if (dName) msgLines.push(`${finalDrinkItem} $${dAmt}`);
-        if (notes) msgLines.push(`${notes}`);
-        
-        if (bAmt && dAmt) {
-          const totalAmount = parseFloat(bAmt) + parseFloat(dAmt);
-          msgLines.push(`------------------`);
-          msgLines.push(`總共 $${totalAmount}`);
-        }
-        
-        msgLines.push(`\n👉 確定要送出嗎？`);
         if (!confirm(msgLines.join('\n'))) return;
 
         const btn = document.getElementById('submitBtn'); btn.disabled = true; btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> 處理中...';
 
         fetchWithRetry(GAS_API_URL, {
           method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-          body: JSON.stringify({ action: "submitOrder", data: { clinic: clinic, rank: rank, name: name, notes: notes, bentoItem: finalBentoItem, bentoAmount: bAmt, drinkItem: finalDrinkItem, drinkAmount: dAmt }})
+          body: JSON.stringify({ action: "submitOrder", data: { clinic: clinic, rank: rank, name: name, notes: notes, orders: orders }})
         }).then(data => {
           if(data.success) { 
-            alert(data.message); 
-            document.getElementById('orderForm').reset(); 
-            document.querySelectorAll('.btn-check').forEach(radio => radio.checked = false); 
-            toggleRankName(); 
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+            alert(data.message); window.location.reload(); // 送出成功後重整，恢復乾淨單列狀態
           } else alert("錯誤：" + data.message);
-        }).catch(error => {
-          alert("送出訂單發生錯誤：" + error.message);
-        }).finally(() => { btn.disabled = false; btn.innerText = '送出訂單'; });
+        }).catch(error => { alert("送出訂單發生錯誤：" + error.message); }).finally(() => { btn.disabled = false; btn.innerText = '送出訂單'; });
       }
     </script>
   </body>
