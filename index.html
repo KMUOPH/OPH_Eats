@@ -352,6 +352,7 @@
         }, 50);
       }
 
+      // 🔥 全新對齊與群組化引擎
       function processCurrentOrders(orders) {
         if (!orders || orders.length === 0) return;
         let bentoNames = []; let drinkNames = []; let groupedOrders = {};
@@ -376,24 +377,33 @@
             return idxA - idxB;
         });
 
-        let listHtml = ''; let bgColors = ['#ffffff', '#f1f3f5']; let colorIdx = 0;
+        let listHtml = ''; let bgColors = ['#ffffff', '#f8f9fa']; let colorIdx = 0;
         
         for (let clinicName of clinicKeys) {
           let bgColor = bgColors[colorIdx % 2]; colorIdx++;
-          listHtml += `<div style="background-color: ${bgColor}; padding: 8px 12px;">`;
+          // 每一個診次獨立成一個漂亮的區塊
+          listHtml += `<div style="background-color: ${bgColor}; padding: 8px 12px; border-bottom: 2px solid #e9ecef;">`;
+          
+          let isFirstPerson = true;
           for(let rankName in groupedOrders[clinicName]) {
             let person = groupedOrders[clinicName][rankName];
-            // 🔥 使用 <br> 換行，並移除文字截斷，完美顯示多品項
             let bStr = person.bentos.join('<br>') || '';
             let dStr = person.drinks.join('<br>') || '';
             
+            // 智慧隱藏重複的診次名稱
+            let displayClinic = isFirstPerson ? clinicName : '';
+            // 加上極淡的虛線區隔不同人員
+            let borderStyle = isFirstPerson ? '' : 'border-top: 1px dashed #dee2e6; padding-top: 6px; margin-top: 6px;';
+            
             listHtml += `
-              <div style="display: grid; grid-template-columns: 15% 18% 33.5% 33.5%; gap: 4px; font-size: 0.85rem; padding: 4px 0; align-items: start; color: #495057; font-weight: bold; text-align: left;">
-                <div style="color: #6c757d; text-align: center; margin-top: 2px;" class="text-truncate" title="${clinicName}">${clinicName}</div>
-                <div class="text-truncate" style="margin-top: 2px;" title="${rankName}">${rankName}</div>
-                <div style="line-height: 1.3;">${bStr}</div>
-                <div style="line-height: 1.3;">${dStr}</div>
+              <div style="display: grid; grid-template-columns: 15% 19% 33% 33%; gap: 2px; font-size: 0.85rem; align-items: start; color: #495057; font-weight: bold; text-align: left; ${borderStyle}">
+                <div style="color: #6c757d; text-align: center; line-height: 1.45;" class="text-truncate" title="${displayClinic}">${displayClinic}</div>
+                <div style="line-height: 1.45; color: #212529; padding-left: 2px;" class="text-truncate" title="${rankName}">${rankName}</div>
+                <div style="line-height: 1.45; padding-right: 4px;">${bStr}</div>
+                <div style="line-height: 1.45;">${dStr}</div>
               </div>`;
+              
+            isFirstPerson = false;
           }
           listHtml += `</div>`;
         }
