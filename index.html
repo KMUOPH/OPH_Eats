@@ -29,7 +29,6 @@
       .form-control, .form-select { border-color: #343a40 !important; border-width: 1px !important; }
       .form-control:focus, .form-select:focus { border-color: #86b7fe !important; box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25) !important; }
       
-      .menu-img { width: 100%; border-radius: 8px; margin-bottom: 10px; display: none; box-shadow: 0 2px 5px rgba(0,0,0,0.15); border: 1px solid #e2e8f0; }
       .banner-header { background-color: #536e86; color: white; height: 60px; margin-bottom: 16px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); width: 100%; display: flex; justify-content: space-between; align-items: center; padding-right: 15px; }
       
       #syncLoader { background-color: #fff8e1; color: #664d03; font-size: 0.85rem; padding: 6px 0; text-align: center; font-weight: bold; margin-bottom: 16px; border-radius: 4px; border: 1px solid #ffecb5; transition: opacity 0.3s; }
@@ -77,6 +76,11 @@
       .row-remove-btn:active { opacity: 1; transform: scale(0.9); }
 
       .form-select.bento-qty, .form-select.drink-qty { height: calc(2.25rem + 2px) !important; }
+
+      /* 🔥 全新圖片載入體驗 CSS */
+      .menu-img { width: 100%; border-radius: 8px; margin-bottom: 10px; display: none; box-shadow: 0 2px 5px rgba(0,0,0,0.15); border: 1px solid #e2e8f0; animation: fadeIn 0.4s ease-in-out; }
+      .img-placeholder { width: 100%; height: 160px; background-color: #f8f9fa; border-radius: 8px; border: 1px dashed #ced4da; margin-bottom: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #adb5bd; font-size: 0.85rem; font-weight: bold; }
+      @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
   </head>
   <body>
@@ -134,7 +138,14 @@
               <!-- 餐點區塊 -->
               <div class="section-block" id="bentoSectionBlock">
                 <div class="section-header" id="bentoSectionTitle"><span>餐點</span></div>
+                
+                <!-- 🔥 圖片載入佔位框 -->
+                <div id="bentoImgPlaceholder" class="img-placeholder d-none">
+                  <div class="spinner-border spinner-border-sm text-secondary mb-2" role="status"></div>
+                  <span>菜單載入中...</span>
+                </div>
                 <img id="bentoMenuImg" class="menu-img" alt="餐點菜單" onerror="handleImgError('bento')">
+                
                 <div id="bentoImgError" class="text-center p-3 mb-2 border rounded" style="background-color: #f8f9fa; border-color: #dee2e6 !important; display: none;">
                   <span class="text-secondary fw-bold small">圖片載入超時，請點擊上方「🔄 圖片重整」</span>
                 </div>
@@ -162,10 +173,7 @@
                     <div style="flex: 0 0 22px; text-align: right;">
                       <button type="button" class="row-remove-btn" onclick="removeRow(this, 'bento')">
                         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#b55c61" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                          <polyline points="3 6 5 6 21 6"></polyline>
-                          <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                          <line x1="10" y1="11" x2="10" y2="17"></line>
-                          <line x1="14" y1="11" x2="14" y2="17"></line>
+                          <polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line>
                         </svg>
                       </button>
                     </div>
@@ -177,7 +185,14 @@
               <!-- 飲料區塊 -->
               <div class="section-block" id="drinkSectionBlock">
                 <div class="section-header" id="drinkSectionTitle"><span>飲料</span></div>
+                
+                <!-- 🔥 圖片載入佔位框 -->
+                <div id="drinkImgPlaceholder" class="img-placeholder d-none">
+                  <div class="spinner-border spinner-border-sm text-secondary mb-2" role="status"></div>
+                  <span>菜單載入中...</span>
+                </div>
                 <img id="drinkMenuImg" class="menu-img" alt="飲料菜單" onerror="handleImgError('drink')">
+                
                 <div id="drinkImgError" class="text-center p-3 mb-2 border rounded" style="background-color: #f8f9fa; border-color: #dee2e6 !important; display: none;">
                   <span class="text-secondary fw-bold small">圖片載入超時，請點擊上方「🔄 圖片重整」</span>
                 </div>
@@ -205,10 +220,7 @@
                     <div style="flex: 0 0 22px; text-align: right;">
                       <button type="button" class="row-remove-btn" onclick="removeRow(this, 'drink')">
                         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#b55c61" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                          <polyline points="3 6 5 6 21 6"></polyline>
-                          <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                          <line x1="10" y1="11" x2="10" y2="17"></line>
-                          <line x1="14" y1="11" x2="14" y2="17"></line>
+                          <polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line>
                         </svg>
                       </button>
                     </div>
@@ -263,17 +275,24 @@
       }
 
       function addNote(text) { const n = document.getElementById('notes'); n.value = n.value ? n.value + "。" + text : text; }
-      function handleImgError(type) { document.getElementById(type + 'MenuImg').style.display = 'none'; document.getElementById(type + 'ImgError').style.display = 'block'; }
+      function handleImgError(type) { 
+        document.getElementById(type + 'ImgPlaceholder').classList.add('d-none');
+        document.getElementById(type + 'MenuImg').style.display = 'none'; 
+        document.getElementById(type + 'ImgError').style.display = 'block'; 
+      }
       function forceRetryImagesAll() { forceRetryImages('bento'); forceRetryImages('drink'); }
       function forceRetryImages(type) {
         const img = document.getElementById(type + 'MenuImg');
         const errorDiv = document.getElementById(type + 'ImgError');
+        const placeholder = document.getElementById(type + 'ImgPlaceholder');
         if (img && img.src && img.src !== window.location.href) {
           if (errorDiv) errorDiv.style.display = 'none';
+          placeholder.classList.remove('d-none');
+          img.style.display = 'none';
           let currentSrc = img.src;
           if(currentSrc.includes('&retry=')) currentSrc = currentSrc.replace(/&retry=\d+/, '&retry=' + new Date().getTime());
           else currentSrc += '&retry=' + new Date().getTime();
-          img.style.display = 'none'; setTimeout(() => { img.src = currentSrc; img.style.display = 'block'; }, 50);
+          setTimeout(() => { img.src = currentSrc; }, 50);
         }
       }
 
@@ -464,7 +483,20 @@
         }
       });
 
+      // 🔥 圖片載入綁定事件
+      function setupImageLoaders() {
+        const bImg = document.getElementById('bentoMenuImg');
+        const bPlaceholder = document.getElementById('bentoImgPlaceholder');
+        bImg.onload = () => { bPlaceholder.classList.add('d-none'); bImg.style.display = 'block'; };
+
+        const dImg = document.getElementById('drinkMenuImg');
+        const dPlaceholder = document.getElementById('drinkImgPlaceholder');
+        dImg.onload = () => { dPlaceholder.classList.add('d-none'); dImg.style.display = 'block'; };
+      }
+
       function loadData() {
+        setupImageLoaders();
+
         fetchWithRetry(GAS_API_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action: "getSystemData" }) })
         .then(response => {
           document.getElementById('syncLoader').classList.add('d-none');
@@ -491,8 +523,14 @@
             const dTitle = document.getElementById('drinkSectionTitle');
             if (response.data.drinkMenuUrl && response.data.menuDate) dTitle.innerHTML = `<span>${m}/${d} 週${w} ${response.data.drinkShopName}</span> ${badgeHtml}`;
             
-            if(response.data.bentoMenuUrl) { const bImg = document.getElementById('bentoMenuImg'); bImg.src = formatDriveImageUrl(response.data.bentoMenuUrl); bImg.style.display = 'block'; }
-            if(response.data.drinkMenuUrl) { const dImg = document.getElementById('drinkMenuImg'); dImg.src = formatDriveImageUrl(response.data.drinkMenuUrl); dImg.style.display = 'block'; }
+            if(response.data.bentoMenuUrl) { 
+              document.getElementById('bentoImgPlaceholder').classList.remove('d-none');
+              document.getElementById('bentoMenuImg').src = formatDriveImageUrl(response.data.bentoMenuUrl); 
+            }
+            if(response.data.drinkMenuUrl) { 
+              document.getElementById('drinkImgPlaceholder').classList.remove('d-none');
+              document.getElementById('drinkMenuImg').src = formatDriveImageUrl(response.data.drinkMenuUrl); 
+            }
 
             const clinicContainer = document.getElementById('clinicGroup'); clinicContainer.innerHTML = '';
             response.data.clinics.forEach((c, idx) => {
@@ -526,7 +564,6 @@
         }
       }
 
-      // 🔥 修改為乾淨整齊的送出明細框
       function submitOrder() {
         if (!isSystemReady) return; 
         const clinic = document.querySelector('input[name="clinic"]:checked') ? document.querySelector('input[name="clinic"]:checked').value : "";
