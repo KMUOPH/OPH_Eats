@@ -57,8 +57,7 @@
       .btn-top5:focus { outline: none !important; box-shadow: none !important; }
 
       .top5-container { display: flex; flex-wrap: nowrap; gap: 8px; padding: 10px 2px 6px 2px; width: 100%; }
-      /* 🔥 移除了 cursor: pointer 與 active 的縮放動畫，純展示 */
-      .top5-card { position: relative; flex: 1 1 0; min-width: 0; background-color: #e2e8f0; color: #343a40; border: 1px solid #cbd5e1; border-radius: 6px; padding: 4px 2px; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.05); display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 48px; }
+      .top5-card { position: relative; flex: 1 1 0; min-width: 0; background-color: #e2e8f0; color: #343a40; border: 1px solid #cbd5e1; border-radius: 6px; padding: 4px 2px; cursor: default; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.05); display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 48px; }
       
       .top5-badge { position: absolute; top: -6px; right: -6px; background-color: #dc3545; color: white; border-radius: 50%; width: 18px; height: 18px; font-size: 0.65rem; display: flex; align-items: center; justify-content: center; font-weight: bold; box-shadow: 0 2px 4px rgba(0,0,0,0.2); border: 2px solid #ffffff; z-index: 2; }
       .top5-name { font-size: 0.75rem; font-weight: bold; line-height: 1.2; width: 100%; }
@@ -76,6 +75,9 @@
       
       .row-remove-btn { background: none; border: none; padding: 0; margin-top: 2px; display: flex; align-items: center; justify-content: center; width: 24px; height: 24px; opacity: 0.8; }
       .row-remove-btn:active { opacity: 1; transform: scale(0.9); }
+
+      /* 🔥 強制對齊高度，解決排版落差 */
+      .form-select.bento-qty, .form-select.drink-qty { height: calc(2.25rem + 2px) !important; }
     </style>
   </head>
   <body>
@@ -141,14 +143,14 @@
                 <div id="bentoLeaderboard" class="mb-2" style="display: none;"></div>
                 
                 <div id="bentoRowsContainer">
-                  <!-- 🔥 比例大精修：客製變寬、單價與數量壓縮 -->
+                  <!-- 🔥 比例大精修：客製變寬到100px -->
                   <div class="d-flex align-items-center mb-2 bento-row gap-1">
                     <div class="position-relative" style="flex: 1 1 0;">
                       <input type="text" class="form-control fw-bold custom-placeholder bento-name px-1" placeholder="餐點" enterkeyhint="next" onfocus="this.select(); showDropdown('bento', this)" oninput="filterDropdown('bento', this)" onblur="setTimeout(closeAllDropdowns, 200)">
                       <div class="custom-dropdown d-none"></div>
                     </div>
-                    <!-- 🔥 移除客製化格子的淡色設定 (text-secondary) -->
-                    <div style="flex: 0 1 85px;">
+                    <div style="flex: 0 1 100px;">
+                      <!-- 🔥 確保客製化文字顏色與其他一致 -->
                       <input type="text" class="form-control fw-bold custom-placeholder bento-custom px-1" placeholder="客製" enterkeyhint="next" onfocus="this.select()">
                     </div>
                     <div class="position-relative" style="flex: 0 0 54px;">
@@ -156,8 +158,7 @@
                       <input type="text" class="dummy-trap" tabindex="0" inputmode="none" onfocus="this.blur();">
                     </div>
                     <div style="flex: 0 0 44px;">
-                      <!-- 🔥 修正數量的內距與置中對齊，讓數字不再貼緊左邊 -->
-                      <select class="form-select fw-bold bento-qty" style="padding: 4px 10px 4px 4px !important; text-align: center; text-align-last: center; background-position: right 2px center; background-size: 8px 10px;">
+                      <select class="form-select fw-bold px-0 bento-qty" style="text-align: center; text-align-last: center; background-position: right 2px center; background-size: 8px 10px;">
                         <option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option>
                       </select>
                     </div>
@@ -192,7 +193,7 @@
                       <input type="text" class="form-control fw-bold custom-placeholder drink-name px-1" placeholder="飲料" enterkeyhint="next" onfocus="this.select(); showDropdown('drink', this)" oninput="filterDropdown('drink', this)" onblur="setTimeout(closeAllDropdowns, 200)">
                       <div class="custom-dropdown d-none"></div>
                     </div>
-                    <div style="flex: 0 1 85px;">
+                    <div style="flex: 0 1 100px;">
                       <input type="text" class="form-control fw-bold custom-placeholder drink-custom px-1" placeholder="客製" enterkeyhint="next" onfocus="this.select()">
                     </div>
                     <div class="position-relative" style="flex: 0 0 54px;">
@@ -200,7 +201,7 @@
                       <input type="text" class="dummy-trap" tabindex="0" inputmode="none" onfocus="this.blur();">
                     </div>
                     <div style="flex: 0 0 44px;">
-                      <select class="form-select fw-bold drink-qty" style="padding: 4px 10px 4px 4px !important; text-align: center; text-align-last: center; background-position: right 2px center; background-size: 8px 10px;">
+                      <select class="form-select fw-bold px-0 drink-qty" style="text-align: center; text-align-last: center; background-position: right 2px center; background-size: 8px 10px;">
                         <option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option>
                       </select>
                     </div>
@@ -247,6 +248,7 @@
 
       let globalBentoList = [];
       let globalDrinkList = [];
+      let globalClinicsOrder = []; // 🔥 記錄原始的診次順序，讓排行榜能乖乖排隊
       let isSystemReady = false; 
 
       async function fetchWithRetry(url, options, retries = 2) {
@@ -343,6 +345,15 @@
         newRow.querySelector('.' + type + '-price').value = '';
         newRow.querySelector('.custom-dropdown').classList.add('d-none');
         container.appendChild(newRow);
+
+        // 🔥 自動聚焦並顯示下拉清單
+        setTimeout(() => {
+          const newNameInput = newRow.querySelector('.' + type + '-name');
+          if(newNameInput) {
+            newNameInput.focus();
+            showDropdown(type, newNameInput);
+          }
+        }, 50);
       }
 
       function processCurrentOrders(orders) {
@@ -362,17 +373,29 @@
           if (o.drink) groupedOrders[o.clinic][o.rankName].drinks.push(o.drink);
         });
 
+        // 🔥 使用從 Google 拿到的原始診次順序來對清單進行完美排序
+        let clinicKeys = Object.keys(groupedOrders);
+        clinicKeys.sort((a, b) => {
+            let idxA = globalClinicsOrder.indexOf(a); if(idxA === -1) idxA = 999;
+            let idxB = globalClinicsOrder.indexOf(b); if(idxB === -1) idxB = 999;
+            return idxA - idxB;
+        });
+
         let listHtml = ''; let bgColors = ['#ffffff', '#f1f3f5']; let colorIdx = 0;
-        for (let clinicName in groupedOrders) {
+        
+        for (let clinicName of clinicKeys) {
           let bgColor = bgColors[colorIdx % 2]; colorIdx++;
           listHtml += `<div style="background-color: ${bgColor}; padding: 8px 12px;">`;
           for(let rankName in groupedOrders[clinicName]) {
             let person = groupedOrders[clinicName][rankName];
-            let bStr = person.bentos.join(', ') || '-';
-            let dStr = person.drinks.join(', ') || '-';
+            // 🔥 空白判斷：如果沒有該項目就不會出現破折號
+            let bStr = person.bentos.join(', ') || '';
+            let dStr = person.drinks.join(', ') || '';
+            
+            // 🔥 完美壓縮的欄寬分配 15% 18% 33.5% 33.5%
             listHtml += `
-              <div style="display: grid; grid-template-columns: 20% 22% 29% 29%; gap: 4px; font-size: 0.85rem; padding: 4px 0; align-items: center; color: #495057; font-weight: bold; text-align: left;">
-                <div style="color: #6c757d; text-align: center;">${clinicName}</div>
+              <div style="display: grid; grid-template-columns: 15% 18% 33.5% 33.5%; gap: 4px; font-size: 0.85rem; padding: 4px 0; align-items: center; color: #495057; font-weight: bold; text-align: left;">
+                <div style="color: #6c757d; text-align: center;" class="text-truncate" title="${clinicName}">${clinicName}</div>
                 <div class="text-truncate" title="${rankName}">${rankName}</div>
                 <div class="text-truncate" title="${bStr}">${bStr}</div>
                 <div class="text-truncate" title="${dStr}">${dStr}</div>
@@ -409,12 +432,10 @@
         let sorted = Object.entries(counts).sort((a, b) => b[1] - a[1]).slice(0, 5);
         if (sorted.length === 0) return;
 
-        // 🔥 將標題改為單純顯示，移除 (點擊帶入)
         let html = `<div style="font-size: 0.8rem; font-weight: bold; color: #6c757d; margin: 0 0 4px 0;">🔥 TOP 5 排行榜</div><div class="top5-container">`;
         sorted.forEach((entry) => {
           let name = entry[0], count = entry[1];
           let formattedName = formatTop5Name(name); 
-          // 🔥 移除 onclick 事件
           html += `<div class="top5-card"><div class="top5-badge">${count}</div><div class="top5-name">${formattedName}</div></div>`;
         });
         html += `</div>`;
@@ -451,9 +472,10 @@
 
           if(response.success && response.data.isOpen) {
             const submitBtn = document.getElementById('submitBtn');
-            submitBtn.disabled = false;
-            submitBtn.innerText = '送出訂單';
+            submitBtn.disabled = false; submitBtn.innerText = '送出訂單';
             
+            globalClinicsOrder = response.data.clinics; // 記住診次排序
+
             let isToday = false; let m = "", d = "", w = "";
             const today = new Date(); const todayStr = `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`;
             if (response.data.menuDate) {
