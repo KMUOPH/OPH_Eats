@@ -32,9 +32,8 @@
       .menu-img { width: 100%; border-radius: 8px; margin-bottom: 10px; display: none; box-shadow: 0 2px 5px rgba(0,0,0,0.15); border: 1px solid #e2e8f0; }
       .banner-header { background-color: #536e86; color: white; height: 60px; margin-bottom: 16px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); width: 100%; display: flex; justify-content: space-between; align-items: center; padding-right: 15px; }
       
-      #miniLoader { background-color: #e2e8f0; color: #3a4f63; font-size: 0.85rem; padding: 6px 0; text-align: center; font-weight: bold; margin-bottom: 16px; border-radius: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
-
       .section-block { margin-bottom: 16px; }
+      
       .section-header { 
         color: #1e3a5f; padding: 6px 8px 6px 14px; font-size: 1.05rem; font-weight: bold; 
         margin-bottom: 10px; margin-left: -16px; display: flex; justify-content: space-between; align-items: center; 
@@ -75,7 +74,6 @@
       .btn-add-row { background: #f8f9fa; border: 1px dashed #adb5bd; border-radius: 6px; font-size: 0.85rem; padding: 6px 12px; color: #495057; font-weight: bold; width: 100%; margin-top: 4px; }
       .btn-add-row:active { background: #e9ecef; }
       
-      /* 🔥 垃圾桶按鈕樣式 */
       .row-remove-btn { color: #dc3545; background: none; border: none; font-size: 1.1rem; line-height: 1; padding: 0; margin-top: 2px; }
     </style>
   </head>
@@ -93,13 +91,10 @@
       <div class="row justify-content-center">
         <div class="col-md-8 col-lg-6 px-3">
             
+          <!-- 🔥 乾淨的原生載入畫面，修正文字 -->
           <div id="loadingScreen" class="text-center p-4">
             <div class="spinner-border text-theme" role="status"></div>
-            <h5 class="mt-3 text-secondary">首次啟動中，請稍候...</h5>
-          </div>
-
-          <div id="miniLoader" class="d-none">
-            <span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true" style="color: #536e86;"></span> 正在同步今日菜單與排行榜...
+            <h5 class="mt-3 text-secondary">資料載入中，請耐心等候...</h5>
           </div>
 
           <div id="closedScreen" class="d-none text-center p-4">
@@ -143,7 +138,6 @@
                 <div id="bentoLeaderboard" class="mb-2" style="display: none;"></div>
                 
                 <div id="bentoRowsContainer">
-                  <!-- 🔥 全新優化的輸入列：使用自訂 Flex 比例，確保各種手機畫面都能完美對齊 -->
                   <div class="d-flex align-items-center mb-2 bento-row gap-1">
                     <div class="position-relative" style="flex: 3.5;">
                       <input type="text" class="form-control fw-bold custom-placeholder bento-name px-1" placeholder="餐點" enterkeyhint="next" onfocus="this.select(); showDropdown('bento', this)" oninput="filterDropdown('bento', this)" onblur="setTimeout(closeAllDropdowns, 200)">
@@ -162,7 +156,6 @@
                       </select>
                     </div>
                     <div style="flex: 0 0 22px; text-align: right;">
-                      <!-- 🔥 紅色垃圾桶 -->
                       <button type="button" class="row-remove-btn" onclick="removeRow(this, 'bento')">🗑️</button>
                     </div>
                   </div>
@@ -199,7 +192,6 @@
                       </select>
                     </div>
                     <div style="flex: 0 0 22px; text-align: right;">
-                      <!-- 🔥 紅色垃圾桶 -->
                       <button type="button" class="row-remove-btn" onclick="removeRow(this, 'drink')">🗑️</button>
                     </div>
                   </div>
@@ -308,7 +300,6 @@
       function closeAllDropdowns() { document.querySelectorAll('.custom-dropdown').forEach(dd => dd.classList.add('d-none')); }
       document.addEventListener('click', function(e) { if (!e.target.closest('.position-relative')) closeAllDropdowns(); });
 
-      // 🔥 刪除列的安全防護 (最後一列只清空不刪除)
       function removeRow(btn, type) {
         const row = btn.closest('.' + type + '-row');
         const container = document.getElementById(type + 'RowsContainer');
@@ -430,38 +421,19 @@
         }
       });
 
+      // 🔥 單純的載入邏輯，沒有 LocalStorage，沒有骨架屏
       function loadData() {
-        const cachedOptions = localStorage.getItem('OPH_Options');
-        if (cachedOptions) {
-          try {
-            const opts = JSON.parse(cachedOptions);
-            renderClinicAndRank(opts.clinics, opts.ranks);
-            document.getElementById('loadingScreen').classList.add('d-none');
-            document.getElementById('mainContent').classList.remove('d-none');
-            document.getElementById('miniLoader').classList.remove('d-none'); 
-            document.getElementById('submitBtn').disabled = true;
-            document.getElementById('submitBtn').innerText = '載入中，請稍候...';
-          } catch(e) {
-            document.getElementById('loadingScreen').classList.remove('d-none'); document.getElementById('mainContent').classList.add('d-none');
-          }
-        } else {
-          document.getElementById('loadingScreen').classList.remove('d-none'); document.getElementById('mainContent').classList.add('d-none');
-        }
-
+        document.getElementById('loadingScreen').classList.remove('d-none');
+        document.getElementById('mainContent').classList.add('d-none');
         document.getElementById('closedScreen').classList.add('d-none');
 
         fetchWithRetry(GAS_API_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action: "getSystemData" }) })
         .then(response => {
           document.getElementById('loadingScreen').classList.add('d-none');
-          document.getElementById('miniLoader').classList.add('d-none'); 
           isSystemReady = true;
 
           if(response.success && response.data.isOpen) {
             document.getElementById('mainContent').classList.remove('d-none');
-            document.getElementById('submitBtn').disabled = false;
-            document.getElementById('submitBtn').innerText = '送出訂單';
-            
-            localStorage.setItem('OPH_Options', JSON.stringify({ clinics: response.data.clinics, ranks: response.data.ranks }));
             
             let isToday = false; let m = "", d = "", w = "";
             const today = new Date(); const todayStr = `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`;
@@ -481,7 +453,16 @@
             if(response.data.bentoMenuUrl) { const bImg = document.getElementById('bentoMenuImg'); bImg.src = formatDriveImageUrl(response.data.bentoMenuUrl); bImg.style.display = 'block'; }
             if(response.data.drinkMenuUrl) { const dImg = document.getElementById('drinkMenuImg'); dImg.src = formatDriveImageUrl(response.data.drinkMenuUrl); dImg.style.display = 'block'; }
 
-            renderClinicAndRank(response.data.clinics, response.data.ranks);
+            const clinicContainer = document.getElementById('clinicGroup'); clinicContainer.innerHTML = '';
+            response.data.clinics.forEach((c, idx) => {
+              const spanClass = (c === '非診間') ? 'style="grid-column: span 2;"' : '';
+              clinicContainer.innerHTML += `<div ${spanClass}><input type="radio" class="btn-check clinic-radio" name="clinic" id="c_${idx}" value="${c}" onchange="toggleRankName()"><label class="btn btn-outline-dark-theme fw-bold" for="c_${idx}">${c}</label></div>`;
+            });
+            const rankContainer = document.getElementById('rankGroup'); rankContainer.innerHTML = '';
+            response.data.ranks.forEach((r, idx) => {
+              rankContainer.innerHTML += `<div class="col-4"><input type="radio" class="btn-check rank-radio" name="rank" id="r_${idx}" value="${r}" onchange="handleRankChange('r_${idx}')"><label class="btn btn-outline-dark-theme w-100 fw-bold rank-label-custom" for="r_${idx}">${r}</label></div>`;
+            });
+
             if (response.data.currentOrders) processCurrentOrders(response.data.currentOrders);
 
           } else { 
@@ -492,18 +473,6 @@
           document.getElementById('closedTitle').innerText = "⚠️ 系統連線失敗"; document.getElementById('closedDesc').innerHTML = `無法取得最新資料。<br><b>錯誤原因：</b>${err.message}`;
         });
       };
-
-      function renderClinicAndRank(clinics, ranks) {
-        const clinicContainer = document.getElementById('clinicGroup'); clinicContainer.innerHTML = '';
-        clinics.forEach((c, idx) => {
-          const spanClass = (c === '非診間') ? 'style="grid-column: span 2;"' : '';
-          clinicContainer.innerHTML += `<div ${spanClass}><input type="radio" class="btn-check clinic-radio" name="clinic" id="c_${idx}" value="${c}" onchange="toggleRankName()"><label class="btn btn-outline-dark-theme fw-bold" for="c_${idx}">${c}</label></div>`;
-        });
-        const rankContainer = document.getElementById('rankGroup'); rankContainer.innerHTML = '';
-        ranks.forEach((r, idx) => {
-          rankContainer.innerHTML += `<div class="col-4"><input type="radio" class="btn-check rank-radio" name="rank" id="r_${idx}" value="${r}" onchange="handleRankChange('r_${idx}')"><label class="btn btn-outline-dark-theme w-100 fw-bold rank-label-custom" for="r_${idx}">${r}</label></div>`;
-        });
-      }
 
       window.onload = () => loadData();
 
@@ -516,7 +485,6 @@
         }
       }
 
-      // 🔥 全新明細對話框：單一品項自動隱藏總計
       function submitOrder() {
         if (!isSystemReady) return; 
         const clinic = document.querySelector('input[name="clinic"]:checked') ? document.querySelector('input[name="clinic"]:checked').value : "";
@@ -531,7 +499,7 @@
         let drinkRows = document.querySelectorAll('.drink-row');
         let orders = []; 
         let totalGrandAmount = 0; 
-        let totalItemCount = 0; // 用來計算總共點了幾「份」東西
+        let totalItemCount = 0; 
         
         let msgLines = [];
         let orderLines = [];
@@ -579,7 +547,6 @@
         const notes = document.getElementById('notes').value.trim();
         if (notes) { msgLines.push(`📝 備註: ${notes}`); }
 
-        // 🔥 智慧總計：只有點 2 份以上的東西時，才顯示虛線與總金額
         if (totalItemCount > 1) {
             msgLines.push(`------------------`);
             msgLines.push(`💰 總計金額: $${totalGrandAmount}`);
